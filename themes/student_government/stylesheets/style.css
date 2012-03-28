@@ -1,0 +1,368 @@
+/**
+ * Global declarations
+ * ------------------------------------------
+ */
+
+body {
+	color: #7B8084;
+	font-family: Arial, Helvetica, sans-serif;
+	margin: 0px;
+	padding: 0px;
+}
+
+img {
+	border: none;
+}
+
+a, a:visited {
+	color: #7B8084;
+	text-decoration: none;	
+}
+
+a:hover {
+	color: #44BBFF;
+}
+
+a:active {
+	color: #C36;
+}
+
+/**
+ * Common styles
+ * ------------------------------------------
+ */
+
+a.highlight {
+	color: #44BBFF;
+	text-decoration: none;	
+}
+
+a.highlight:active {
+	color: #C36;
+}
+
+h2.red {
+	background: #FDEBF3;
+	border-left: 4px solid #EDDBE3;
+	color: #F49AC1;
+	padding-left: 5px;
+}
+
+h2.orange {
+	background: #FDF0D5;
+	border-left: 4px solid #FCE4B3;
+	color: #F7B42C;
+	padding-left: 5px;
+}
+
+h2.blue {
+	background: #E9F7FB;
+	border-left: 4px solid #D7F0F8;
+	color: #90D5EC;
+	padding-left: 5px;
+}
+
+h2.green {
+	background: #EEF6DC;
+	border-left: 4px solid #E0EFC0;
+	color: #AAD450;
+	padding-left: 5px;
+}
+
+/**
+ * Login and sign-up panel
+ * ------------------------------------------
+ */
+
+section.login {
+	background: #000000;
+	clear: both;
+	display: none;
+	font-size: 12px;
+	height: 275px;
+	padding: 10px 10% 10px 10%;
+}
+
+section.login div.left {
+	background: #000000;
+	float: left;
+	width: 33%;
+}
+
+section.login div.center {
+	background: #000000;
+	border-left: 1px solid #FFFFFF;
+	float: left;
+	height: 275px;
+	padding-left: 3%;
+	width: 30%;
+}
+
+section.login div.center h2 {
+	color: #AAD450;
+	font-size: 14px;
+	text-align: center;
+}
+
+section.login div.right {
+	background: #000000;
+	border-left: 1px solid #FFFFFF;
+	float: left;
+	height: 275px;
+	padding-left: 3%;
+	width: 30%;
+}
+
+section.login div.right h2 {
+	color: #F49AC1;
+	font-size: 14px;
+	text-align: center;
+}
+
+/**
+ * Header bar
+ * ------------------------------------------
+ */
+
+nav.main {
+	background: url(../images/ribbon.png) repeat-x #F0F1F4;
+	border-bottom: 1px solid #D8DDE1;
+	clear: both;
+	display: block;
+	height: 73px;
+	padding: 19px 10% 10px 10%;
+	width: 80%;
+}
+
+nav.main ul {
+	float: left;
+	font-weight: bolder;
+	margin: 0px;
+	padding: 0px;
+}
+
+nav.main ul li {
+	display: inline-block;
+	list-style: none;
+	margin: 0px;
+	padding: 0px 10px 0px 10px;
+	vertical-align: middle;
+}
+
+nav.main ul li.logo {
+	padding: 0px 10px 0px 0px;
+}
+
+/**
+ * Question of the week
+ * ------------------------------------------
+ */
+
+nav.main section {
+	float: right;
+	max-width: 275px;
+	padding-right: 20px;
+	position: relative;
+}
+
+nav.main section h2 {
+	margin: 0px;
+	padding: 0px;
+}
+
+nav.main section p {
+	font-size: 12px;
+	margin: 0px;
+	padding: 7px 0px 0px 0px;
+}
+
+nav.main section img.tag {
+	position: absolute;
+	right: -45px;
+	top: -19px;
+}
+
+/**
+ * Main content
+ * ------------------------------------------
+ */
+
+h1.title {
+	font-size: 24px;
+	margin-bottom: 0px;
+	padding-left: 10%;
+}
+
+section.body {
+	padding: 10px 0px 10px 10%;
+	width: 80%;
+}
+
+section.body.left {
+	float: left;
+	padding: 10px 0px 10px 10%;
+	width: 54%;
+}
+
+section.body.right {
+	float: right;
+	padding: 10px 10% 10px 0px;
+	width: 54%;
+}
+
+/**
+ * Sidebar
+ * ------------------------------------------
+ */
+
+aside.sidebar.left {
+	float: left;
+	font-size: 13px;
+	padding: 10px 0px 10px 10%;
+	width: 23%;
+}
+
+aside.sidebar.right {
+	float: right;
+	font-size: 13px;
+	padding: 10px 10% 10px 0px;
+	width: 23%;
+}
+
+/**
+ * Footer common styles
+ * ------------------------------------------
+ */
+
+footer section.main {
+	background: #F0F1F4;
+	border-bottom: 1px solid #D8DDE1;
+	border-top: 1px solid #D8DDE1;
+	overflow: hidden;
+	padding: 10px 10% 10px 10%;
+	width: 80%;
+}
+
+footer section.main nav a {
+	color: #000000;
+	font-size: 14px;
+}
+
+footer section.main nav a:hover {
+	color: #44BBFF;
+}
+
+footer section.main nav a:active {
+	color: #C36;
+}
+
+/**
+ * Footer link list
+ * ------------------------------------------
+ */
+
+footer section.main nav ul {
+	color: #000000;
+	display: table;
+	float: left;
+	list-style: none;
+	padding-left: 0px;	
+	table-layout: fixed;
+	width: 75%;
+}
+
+footer section.main nav ul li {
+	display: table-cell;
+	vertical-align: top;
+	width: auto;
+}
+
+footer section.main nav ul li ul {
+	padding-left: 0px;	
+}
+
+footer section.main nav ul li ul li {
+	display: list-item;
+	padding: 5px 0px 5px 0px;
+}
+
+footer section.main nav ul li ul li:first-child {
+	font-weight: bolder;
+	padding: 0px 0px 15px 0px;
+}
+
+footer section.main nav ul li ul li a.red {
+	color: #F27490;
+	font-size: 16px;
+}
+
+footer section.main nav ul li ul li a.orange {
+	color: #F7B42C;
+	font-size: 16px;
+}
+
+footer section.main nav ul li ul li a.blue {
+	color: #4BF;
+	font-size: 16px;
+}
+
+footer section.main nav ul li ul li a.green {
+	color: #AAD450;
+	font-size: 16px;
+}
+
+footer section.main nav ul li ul li a:hover {
+	color: #44BBFF;
+}
+
+footer section.main nav ul li ul li a:active {
+	color: #C36;
+}
+
+/**
+ * About us box
+ * ------------------------------------------
+ */
+
+footer section.main section {
+	background: #FBFBFC;
+	border: 1px solid #D8DDE1;
+	float: right;
+	padding: 20px;
+	margin: 10px 0px 10px 0px;
+	width: 20%;
+}
+
+footer section.main section h2 {
+	margin: 0px;
+	padding: 0px;
+}
+
+footer section.main section p.networking {
+	margin-bottom: 0px;
+}
+
+/**
+ * Absolute footer
+ * ------------------------------------------
+ */
+
+footer section.footer {
+	font-size: 12px;
+	padding: 0px 10% 0px 10%;
+}
+
+footer section.footer p {
+	color: #999999;
+	float: left;
+}
+
+footer section.footer ul {
+	float: right;
+	list-style: none;
+}
+
+footer section.footer ul li {
+	display: inline-block;
+	padding: 0px 10px 0px 10px;
+}

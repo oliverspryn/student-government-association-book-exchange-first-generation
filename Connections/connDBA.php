@@ -5,11 +5,12 @@ error_reporting(0);
 
 /* Begin core functions */
 	//Root address for entire site
-	$root = "http://" . $_SERVER['HTTP_HOST'] . "/admin/";
+	$root = "http://" . $_SERVER['HTTP_HOST'] . "/SGA/";
 	$strippedRoot = str_replace("http://" . $_SERVER['HTTP_HOST'], "", $root);
+	$dirRoot = str_replace("Connections\connDBA.php", "", __FILE__);
 
 	//Database connection
-	$databaseName = "ensigma_rebuild";
+	$databaseName = "SGA";
 	$connDBA = mysql_connect("localhost", "root", "Oliver99");
 	$dbSelect = mysql_select_db($databaseName, $connDBA);
 	
@@ -17,6 +18,10 @@ error_reporting(0);
 	$timeZoneGrabber = mysql_query("SELECT * FROM `siteprofiles` WHERE `id` = '1'", $connDBA);
 	$timeZone = mysql_fetch_array($timeZoneGrabber);
 	date_default_timezone_set($timeZone['timeZone']);
+	
+	//Grab the site's data
+	$siteInfoGrabber = mysql_query("SELECT * FROM `siteprofiles` WHERE `id` = '1'", $connDBA);
+	$siteInfo = mysql_fetch_array($siteInfoGrabber);
 	
 	//Grab the user's data
 	function userData() {
@@ -66,655 +71,79 @@ error_reporting(0);
 /* End messages functions */
 
 /* Begin site layout functions */	
-	//Call site title
-	function title($title) {
-		global $connDBA;
-		global $root;
-		
-		$strippedTitle = stripslashes($title);
-		$siteNameGrabber = mysql_fetch_array(mysql_query("SELECT * FROM siteprofiles", $connDBA));
-		$siteName = stripslashes($siteNameGrabber['siteName']);
-		$value = "<title>{$siteName} | {$strippedTitle}</title>";
-		echo $value;
-	}
-	
-	//Include a stylesheet and basic javascripts
-	function headers() {
-		global $connDBA;
-		global $root;
-		
-		$siteStyleGrabber = mysql_fetch_array(mysql_query("SELECT * FROM siteprofiles", $connDBA));
-		$siteStyle = $siteStyleGrabber['style'];
-		
-		echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"" . $root . "styles/common/universal.css\" />
-<link rel=\"stylesheet\" type=\"text/css\" href=\"" . $root . "styles/themes/" . $siteStyle . "\" />
-<link rel=\"stylesheet\" type=\"text/css\" href=\"" . $root . "styles/jQuery/jquery-ui.custom.css\" />
-<link type=\"";
-		
-		$iconExtensionGrabber = mysql_query("SELECT * FROM siteprofiles", $connDBA);
-		$iconExtension = mysql_fetch_array($iconExtensionGrabber);
-		
-		switch ($iconExtension['iconType']) {
-			case "ico" : echo "image/x-icon"; break;
-			case "jpg" : echo "image/jpeg"; break;
-			case "gif" : echo "image/gif"; break;
-			case "png" : echo "image/png"; break;
-		}
-		
-		echo "\" rel=\"shortcut icon\" href=\"" . $root . "images/icon." . $iconExtension['iconType'] . "\" />";
-		
-		$requestURL = $_SERVER['REQUEST_URI'];
-		
-		if (strstr($requestURL, "enable_javascript.php")) {
-			//Do nothing
-		} else {
-			echo "
-<noscript><meta http-equiv=\"refresh\" content=\"0; url=" . $root . "enable_javascript.php\"></noscript>
-";
-		}
-		
-		$requestURL = $_SERVER['REQUEST_URI'];
-		
-		if (strstr($requestURL, "enable_javascript.php")) {
-			echo "
-<script type=\"text/javascript\">window.location = \"index.php\"</script>
-";
-		}
-		
-		echo "<script type=\"text/javascript\" src=\"" . $root . "javascripts/jQuery/jquery.min.js\"></script>
-<script type=\"text/javascript\" src=\"" . $root . "javascripts/jQuery/jquery-ui.custom.min.js\"></script>
-";
-	}
-	
-	//Include user login status
-	function loginStatus() {
-		global $connDBA;
-		global $root;
-			
-		if (isset ($_SESSION['MM_Username'])) {
-			$userName = $_SESSION['MM_Username'];
-			$nameGrabber = mysql_query ("SELECT * FROM users WHERE userName = '{$userName}'", $connDBA);
-			$name = mysql_fetch_array($nameGrabber);
-			$firstName = $name['firstName'];
-			$lastName = $name['lastName'];
-			
-			switch($_SESSION['MM_UserGroup']) {
-				case "User" : $profileURL = "<a href=\"" . $root . "admin/users/profile.php?id=" . $name['id'] . "\">"; break;
-				case "Administrator" : $profileURL = "<a href=\"" . $root . "admin/users/profile.php?id=" . $name['id'] . "\">"; break;
-			}
-			
-			echo "You are logged in as " . $profileURL . $firstName . " " . $lastName . "</a> <a href=\"" . $root . "logout.php\">(Logout)</a>";
-		}
-	}
-	
-	//Include the logo
-	function logo() {
-		global $connDBA;
-		global $root;
-		
-		$imageInfoGrabber = mysql_query("SELECT * FROM siteprofiles WHERE id = '1'", $connDBA);	
-		$imageInfo = mysql_fetch_array($imageInfoGrabber);
-	
-		echo "<div style=\"padding-top:" . $imageInfo['paddingTop'] . "px; padding-bottom:" . $imageInfo['paddingBottom'] . "px; padding-left:" .  $imageInfo['paddingLeft'] . "px; padding-right:" . $imageInfo['paddingRight'] . "px;\">";
-		if (isset ($_SESSION['MM_UserGroup'])) {
-			 echo "<a href=\"" . $root . "admin/index.php\">";
-		} else {
-			echo "<a href=\"" . $root . "index.php\">";
-		}
-		
-		echo "<img src=\"" . "" . $root . "images/banner.png\"";
-		if ($imageInfo['auto'] !== "on") {
-			echo " width=\"" . $imageInfo['width'] . "\" height=\"" . $imageInfo['height'] . "\"";
-		} 
-		
-		echo " alt=\"" . $imageInfo['siteName'] . "\" title=\"" . $imageInfo['siteName'] . "\"></a></div>";
-	}
-	
-	//Meta information
-	function meta($description = "", $additionalKeywords = "") {
-		global $connDBA;
-		global $root;
-		
-		$meta = mysql_fetch_array(mysql_query ("SELECT * FROM siteprofiles", $connDBA));
-	
-		echo "<meta name=\"author\" content=\"" . stripslashes($meta['author']) . "\" />
-		<meta http-equiv=\"content-language\" content=\"" . stripslashes($meta['language']) . "\" />
-		<meta name=\"copyright\" content=\"" . stripslashes($meta['copyright']) . "\" />";
-		
-		if ($description == "") {
-			echo "<meta name=\"description\" content=\"" . stripslashes($meta['description']) . "\" />";
-		} else {
-			echo "<meta name=\"description\" content=\"" . stripslashes(strip_tags($description)) . "\" />";
-		}
-		
-		if ($additionalKeywords == "") {
-			echo "<meta name=\"keywords\" content=\"" . stripslashes($meta['meta']) . "\" />";
-		} else {
-			echo "<meta name=\"keywords\" content=\"" . stripslashes($meta['meta']) . ", " . $additionalKeywords . "\" />";
-		}
-			
-		echo "<meta name=\"generator\" content=\"Ensigma Pro\" />
-		<meta name=\"robots\" content=\"index,follow\">";
-	}
-
-	//Include a navigation bar
-	function navigation($URL, $linkBack) {
-		global $connDBA;
-		global $root;
-		global $strippedRoot;
-		
-		$requestURL = $_SERVER['REQUEST_URI'];
-		echo "<div id=\"navbar_bg\"><div class=\"navbar clearfix\"><div class=\"breadcrumb\"><div class=\"menu\"><ul class=\"headerNavigation\">";
-		
-		switch ($URL) {
-		//If this is the public website navigation bar
-			case "public" :
-				$pageData = mysql_query("SELECT * FROM pages WHERE visible = 'on' AND `published` != '0' AND `parentPage` = '0' ORDER BY position ASC", $connDBA);	
-				$lastPageCheck = mysql_fetch_array(mysql_query("SELECT * FROM pages WHERE visible = 'on' AND `published` != '0' ORDER BY position DESC LIMIT 1", $connDBA));
-				$count = 1;
-				
-				if (isset ($_GET['page']) && !empty($_GET['page'])) {
-					$currentPage = $_GET['page'];
-				}
-				
-				while ($pageInfoPrep = mysql_fetch_array($pageData)) {
-					$pageInfo = unserialize($pageInfoPrep['content' . $pageInfoPrep['display']]);
-					
-					if (isset ($currentPage)) {
-						if ($currentPage == $pageInfoPrep['id']) {
-							if ($count++ != "1") {
-								echo "<li><a class=\"topCurrentPageNav\" href=\"index.php?page=" . $pageInfoPrep['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>";
-							} else {
-								echo "<li><a class=\"topCurrentPageNav\" href=\"index.php?page=" . $pageInfoPrep['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>";
-							}
-						} else {
-							if ($count++ != "1") {
-								echo "<li><a class=\"topPageNav\" href=\"index.php?page=" . $pageInfoPrep['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>";
-							} else {
-								echo "<li><a class=\"topPageNav\" href=\"index.php?page=" . $pageInfoPrep['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>";
-							}
-						}
-					} else {
-						if ($count++ == "1") {
-							if ($pageInfoPrep['position'] == "1") {
-								$currentPage = $pageInfoPrep['id'];
-								
-								echo "<li><a class=\"topCurrentPageNav\" href=\"index.php?page=" . $pageInfoPrep['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>";
-							} else {
-								echo "<li><a class=\"topPageNav\" href=\"index.php?page=" . $pageInfoPrep['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>";
-							}
-						} else {
-							if ($pageInfoPrep['position'] != "1") {
-								$currentPage = $pageInfoPrep['id'];
-								
-								echo "<li><a class=\"topPageNav\" href=\"index.php?page=" . $pageInfoPrep['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>";
-							} else {
-								echo "<li><a class=\"topPageNav\" href=\"index.php?page=" . $pageInfoPrep['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>";
-							} 
-						}
-					}
-				}
-				
-				break;
-				
-		//If this is the administrator navigation bar
-			case "administrator" : 
-				echo "<li><a class=\"";
-				if (!strstr($requestURL, "admin/collaboration") && !strstr($requestURL, "admin/pages") && !strstr($requestURL, "admin/users") && !strstr($requestURL, "admin/cms") && !strstr($requestURL, "admin/statistics")) {echo "topCurrentPageNav";} else {echo "topPageNav";}
-				echo "\" href=\"";
-				echo $root . "admin/index.php";
-				echo "\">Home</a></li>";
-				
-				echo "<li><a class=\"";
-				if (strstr($requestURL, "admin/collaboration")) {echo "topCurrentPageNav";} else {echo "topPageNav";}
-				echo "\" href=\"";
-				echo $root . "admin/collaboration/index.php";
-				echo "\">Collaboration</a></li>";
-				
-				echo "<li><a class=\"";
-				if (strstr($requestURL, "admin/pages")) {echo "topCurrentPageNav";} else {echo "topPageNav";}
-				echo "\" href=\"";
-				echo $root . "admin/pages/index.php";
-				echo "\">Staff Pages</a></li>";
-				
-				echo "<li><a class=\"";
-				if (strstr($requestURL, "admin/users")) {echo "topCurrentPageNav";} else {echo "topPageNav";}
-				echo "\" href=\"";
-				echo $root . "admin/users/index.php";
-				echo "\">Users</a></li>";
-				
-				echo "<li><a class=\"";
-				if (strstr($requestURL, "admin/cms") || strstr($requestURL, "admin/statistics")) {echo "topCurrentPageNav";} else {echo "topPageNav";}
-				echo "\" href=\"";
-				echo $root . "admin/cms/index.php";
-				echo "\">Public Website</a></li>";
-				
-				echo "<li><a class=\"topPageNav\" href=\"";
-				echo $root . "logout.php"; 
-				echo "\">Logout</a></li>";
-				break;
-		
-	//If this is the user navigation bar
-			case "user" : 
-				echo "<li><a class=\"";
-				if (!strstr($requestURL, "admin/pages") && !strstr($requestURL, "admin/collaboration") && !strstr($requestURL, "admin/cms") && !strstr($requestURL, "admin/statistics")) {echo "topCurrentPageNav";} else {echo "topPageNav";}
-				echo "\" href=\"";
-				echo $root . "admin/index.php";
-				echo "\">Home</a></li>";
-				
-				if (privileges("sendEmail") == "true") {
-					echo "<li><a class=\"";
-					if (strstr($requestURL, "admin/collaboration")) {echo "topCurrentPageNav";} else {echo "topPageNav";}
-					echo "\" href=\"";
-					echo $root . "admin/collaboration/index.php";
-					echo "\">Collaboration</a></li>";
-				}
-				
-				if (privileges("viewStaffPage") == "true") {
-					echo "<li><a class=\"";
-					if (strstr($requestURL, "admin/pages")) {echo "topCurrentPageNav";} else {echo "topPageNav";}
-					echo "\" href=\"";
-					echo $root . "admin/pages/index.php";
-					echo "\">Staff Pages</a></li>";
-				}
-				
-				if (privileges("createPage") == "true" || privileges("editPage") == "true" || privileges("deletePage") == "true" || privileges("siteSettings") == "true" || privileges("createSideBar") == "true" || privileges("editSideBar") == "true" || privileges("deleteSideBar") == "true" || privileges("sideBarSettings") == "true" || privileges("viewStatistics") == "true") {
-					echo "<li><a class=\"";
-					if (strstr($requestURL, "admin/cms") || strstr($requestURL, "admin/statistics")) {echo "topCurrentPageNav";} else {echo "topPageNav";}
-					echo "\" href=\"";
-					echo $root . "admin/cms/index.php";
-					echo "\">Public Website</a></li>";
-				}
-				
-				echo "<li><a class=\"topPageNav\" href=\"";
-				echo $root . "logout.php"; 
-				echo "\">Logout</a></li>";
-				break;
-		}
-		
-		echo "</ul></div></div></div></div>";
-		
-		if ($URL == "public" && $linkBack == true) {
-			$backTrack = array();
-			
-			function backTrack($id, &$backTrack) {
-				if (exist("pages", "id", $id) && $id != "0") {
-					 $currentPage = query("SELECT * FROM `pages` WHERE `id` = '{$id}'");
-					 $nextPage = query("SELECT * FROM `pages` WHERE `id` = '{$currentPage['parentPage']}'");
-					 $title = unserialize($nextPage['content' . $nextPage['display']]);
-					 $backTrack[] = array($title['title'], $nextPage['id']);
-					 backTrack($nextPage['id'], $backTrack);
-				}
-			}
-			
-			backTrack($currentPage, $backTrack);
-			
-			for($count = sizeof($backTrack) - 1; $count >= 0; $count--) {
-				if (!empty($backTrack[$count]['1']) && !empty($backTrack[$count]['0'])) {
-					$return .= "<a href=\"index.php?page=" . $backTrack[$count]['1'] . "\">" . prepare($backTrack[$count]['0']) . "</a> &#9658 ";
-				}
-			}
-			
-			$currentTitle = query("SELECT * FROM `pages` WHERE `id` = '{$currentPage}'");
-			$title = unserialize($currentTitle['content' . $currentTitle['display']]);
-			$returnPrep = trim($return, " &#9658 ");
-			
-			if (!empty($returnPrep)) {
-				echo "<div style=\"padding-left:12px\"><h4>" . $returnPrep . " &#9658 " . $title['title'] . "</h4></div>";
-			}
-		}
-		
-	//Display back tracking
-		if ($URL != "public") {
-			$URL = $_SERVER['PHP_SELF'];
-			$backTrack = "<div style=\"padding-left:12px;\" align=\"left\">";
-			
-			if (strstr($URL, $strippedRoot . "admin/index.php")) {
-				$backTrack .= "Home";
-			}
-			
-			//Collaboration
-			if (strstr($URL, $strippedRoot . "admin/collaboration/index.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 Collaboration";
-			}
-			
-			if (strstr($URL, $strippedRoot . "admin/collaboration/manage_announcement.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/collaboration/index.php\">Collaboration</a> &#9658 Manage Announcement";
-			}
-			
-			if (strstr($URL, $strippedRoot . "admin/collaboration/manage_agenda.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/collaboration/index.php\">Collaboration</a> &#9658 Manage Agenda";
-			}
-			
-			if (strstr($URL, $strippedRoot . "admin/collaboration/manage_files.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/collaboration/index.php\">Collaboration</a> &#9658 Manage File Share";
-			}
-			
-			if (strstr($URL, $strippedRoot . "admin/collaboration/manage_poll.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/collaboration/index.php\">Collaboration</a> &#9658 Manage Polling";
-			}
-			
-			if (strstr($URL, $strippedRoot . "admin/collaboration/manage_forum.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/collaboration/index.php\">Collaboration</a> &#9658 Manage Forum";
-			}
-			
-			if (strstr($URL, $strippedRoot . "admin/collaboration/send_email.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/collaboration/index.php\">Collaboration</a> &#9658 Send Mass Email";
-			}
-			
-			//Staff Pages
-			if (strstr($URL, $strippedRoot . "admin/pages/index.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 Staff Pages";
-			}
-			
-			if (strstr($URL, $strippedRoot . "admin/pages/manage_page.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/pages/index.php\">Staff Pages</a> &#9658 Manage Page";
-			}
-			
-			if (strstr($URL, $strippedRoot . "admin/pages/page.php")) {
-				if (isset($_GET['page']) && !empty($_GET['page'])) {
-					$id = $_GET['page'];
-				} else {
-					$pageData = query("SELECT * FROM `staffpages` WHERE `position` = '1'");
-					$id = $pageData['id'];
-				}
-				
-				$pageNameGrabber = mysql_query("SELECT * FROM `staffpages` WHERE `id` = '{$id}'", $connDBA);
-				$pageNamePrep = mysql_fetch_array($pageNameGrabber);
-				$pageName = unserialize($pageNamePrep['content' . $pageNamePrep['display']]);
-				
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/pages/index.php\">Staff Pages</a> &#9658 " . stripslashes($pageName['title']);
-			}
-			
-			//Users
-			if (strstr($URL, $strippedRoot . "admin/users/index.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 Users";
-			}
-			
-			if (strstr($URL, $strippedRoot . "admin/users/manage_user.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/users/index.php\">Users</a> &#9658 Manage User";
-			}
-			
-			if (strstr($URL, $strippedRoot . "admin/users/privileges.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/users/index.php\">Users</a> &#9658 User Privileges";
-			}
-			
-			if (strstr($URL, $strippedRoot . "admin/users/failed.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/users/index.php\">Users</a> &#9658 Failed Logins";
-			}
-			
-			if (strstr($URL, $strippedRoot . "admin/users/search.php")) {
-				if (!isset($_GET['keywords'])) {
-					$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/users/index.php\">Users</a> &#9658 Search for Users";
-				} else {
-					$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/users/index.php\">Users</a> &#9658 <a href=\"" . $root . "admin/users/search.php\">Search for Users</a> &#9658 Search Results";
-				}
-			}
-			
-			//CMS
-			//Public Website
-			if (strstr($URL, $strippedRoot . "admin/cms/index.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 Public Website";
-			}
-			
-			if (strstr($URL, $strippedRoot . "admin/cms/manage_page.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/cms/index.php\">Public Website</a> &#9658 Manage Page";
-			}
-			
-			if (strstr($URL, $strippedRoot . "admin/cms/site_settings.php")) {
-				if (!isset($_GET['type'])) {
-					$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/cms/index.php\">Public Website</a> &#9658 Site Settings";
-				} else {
-					switch($_GET['type']) {
-						case "logo" : 
-							$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/cms/index.php\">Public Website</a> &#9658 <a href=\"" . $root . "admin/cms/site_settings.php\">Site Settings</a> &#9658 Site Logo";
-							break;
-							
-						case "icon" : 
-							$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/cms/index.php\">Public Website</a> &#9658 <a href=\"" . $root . "admin/cms/site_settings.php\">Site Settings</a> &#9658 Browser Icon";
-							break;
-							
-						case "meta" : 
-							$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/cms/index.php\">Public Website</a> &#9658 <a href=\"" . $root . "admin/cms/site_settings.php\">Site Settings</a> &#9658 Site Information";
-							break;
-							
-						case "theme" : 
-							$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/cms/index.php\">Public Website</a> &#9658 <a href=\"" . $root . "admin/cms/site_settings.php\">Site Settings</a> &#9658 Site Theme";
-							break;
-							
-						case "security" : 
-							$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/cms/index.php\">Public Website</a> &#9658 <a href=\"" . $root . "admin/cms/site_settings.php\">Site Settings</a> &#9658 Security";
-							break;
-					}
-				}
-			}
-			
-			//Sidebar
-			if (strstr($URL, $strippedRoot . "admin/cms/sidebar/index.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/cms/index.php\">Public Website</a> &#9658 Sidebar";
-			}
-			
-			if (strstr($URL, $strippedRoot . "admin/cms/sidebar/manage_sidebar.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/cms/index.php\">Public Website</a> &#9658 <a href=\"" . $root . "admin/cms/sidebar/index.php\">Sidebar</a> &#9658 Manage Box";
-			}
-			
-			if (strstr($URL, $strippedRoot . "admin/cms/sidebar/sidebar_settings.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/cms/index.php\">Public Website</a> &#9658 <a href=\"" . $root . "admin/cms/sidebar/index.php\">Sidebar</a> &#9658 Sidebar Settings";
-			}
-			
-			//External Content
-			if (strstr($URL, $strippedRoot . "admin/cms/external/index.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/cms/index.php\">Public Website</a> &#9658 External Content";
-			}
-			
-			if (strstr($URL, $strippedRoot . "admin/cms/external/manage_external.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/cms/index.php\">Public Website</a> &#9658 <a href=\"" . $root . "admin/cms/external/index.php\">External Content</a> &#9658 Manage Tab";
-			}
-			
-			//Statistics
-			if (strstr($URL, $strippedRoot . "admin/statistics/index.php")) {
-				$backTrack .= "<a href=\"" . $root . "admin/index.php\">Home</a> &#9658 <a href=\"" . $root . "admin/cms/index.php\">Public Website</a> &#9658 Statistics";
-			}
-			
-			$backTrack .= "</div>";
-			
-			echo "<h4>" . $backTrack . "</h4>";
-		}
-	}
-	
 	//Include all top-page items
-	function topPage($URL = "false", $linkBack = false) {
-		global $connDBA;
-		global $root;
+	function topPage($type, $title, $HTML = "") {
+		global $dirRoot, $root, $connDBA;
 		
-		$siteName = mysql_fetch_array(mysql_query("SELECT * FROM siteprofiles", $connDBA));
-		
-		if ($URL == "false") {
-			if (isset($_SESSION['MM_UserGroup'])) {
-				switch ($_SESSION['MM_UserGroup']) {
-					case "User" : $URL = "user"; break;
-					case "Administrator" : $URL = "administrator"; break;
-				}
-			} else {
-				$URL = "public";
-			}
+	//Some system scripts to always include
+		if ($HTML == "") {
+			$HTML = "<script src=\"http://code.jquery.com/jquery-latest.min.js\"></script>\n";
+		} else {
+			$HTML = "<script src=\"http://code.jquery.com/jquery-latest.min.js\"></script>\n" . $HTML . "\n";
 		}
 		
-		echo "<div id=\"page\">
-		<div id=\"header_bg\">
-		<div id=\"header\" class=\"clearfix\"><h1 class=\"headermain\">";
-		echo $siteName['siteName'];
-		echo "</h1><div class=\"headermenu\"><div class=\"logininfo\">";
-		loginStatus();
-		echo "</div></div></div><div id=\"banner_bg\"><div id=\"banner\">";
-		logo();
-		echo "</div></div>";
-		navigation($URL, $linkBack);
-		echo "</div>";
-		echo "<div id=\"content\"><div class=\"box generalboxcontent boxaligncenter\">";		
+	//Include the theme intended for the top of a public webpage
+		if ($type == "public") {
+		//Generate the navigation bar
+			$pageData = mysql_query("SELECT * FROM pages WHERE visible = 'on' AND published != '0' AND parentPage = '0' ORDER BY position ASC", $connDBA);
+			$navigation = "";
+			
+			while ($page = mysql_fetch_array($pageData)) {
+			//Extract the data from the encoded array
+				$pageInfo = unserialize($page['content' . $page['display']]);
+			 
+			//If we are visiting this page on the menu bar, then highlight it
+			//The link will be highlighted if:
+			// - the "page" URL parameter matches the URL of the page
+			// - the "page" URL parameter isn't set or is empty and we are on the home page (i.e.: within "index.php")
+				if (($_GET['page'] && $_GET['page'] == $page['id']) || ((!$_GET['page'] || $_GET['page'] == "") && $page['position'] == "1" && $page['parentPage'] == "0" && end(explode("/", $_SERVER['PHP_SELF'])) == "index.php")) {
+					$navigation .= "<li><a class=\"highlight\" href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
+			//... otherwise just show a regular link
+				} else {
+					$navigation .= "<li><a href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
+				}
+			}
+			
+			require_once($dirRoot . "themes/student_government/top.php");
+		}
 	}
 	
 	//Include a footer
-	function footer($URL = "false") {
-		global $connDBA;
-		global $root;
-		$requestURL = $_SERVER['REQUEST_URI'];
+	function footer($type) {
+		global $dirRoot, $root, $connDBA, $siteInfo;
 		
-		echo "</div></div><div id=\"footer\"><div>&nbsp;</div><div class=\"breadcrumb\">";
-		
-		if ($URL == "false") {
-			if (isset($_SESSION['MM_UserGroup'])) {
-				switch ($_SESSION['MM_UserGroup']) {
-					case "User" : $URL = "user"; break;
-					case "Administrator" : $URL = "administrator"; break;
-				}
-			} else {
-				$URL = "public";
-			}
-		}
-		
-		switch ($URL) {
-		//If this is the public website footer bar
-			case "public" :
-				$pageData = mysql_query("SELECT * FROM pages WHERE visible = 'on' AND `published` != '0' AND `parentPage` = '0' ORDER BY position ASC", $connDBA);	
-				$lastPageCheck = mysql_fetch_array(mysql_query("SELECT * FROM pages WHERE visible = 'on' AND `published` != '0' ORDER BY position DESC LIMIT 1", $connDBA));
-				$count = 1;
-				
-				if (isset ($_GET['page']) && !empty($_GET['page'])) {
-					$currentPage = $_GET['page'];
-				}
+	//Include the theme intended for the bottom of a public webpage
+		if ($type == "public") {
+		//Generate the navigation bar
+			$pageData = mysql_query("SELECT * FROM pages WHERE visible = 'on' AND published != '0' AND parentPage = '0' ORDER BY position ASC", $connDBA);
+			$navigation = "<ul>\n";
 			
-				while ($pageInfoPrep = mysql_fetch_array($pageData)) {
-					$pageInfo = unserialize($pageInfoPrep['content' . $pageInfoPrep['display']]);
+			while ($page = mysql_fetch_array($pageData)) {
+				$navigation .= "<li>\n<ul>\n";
+				
+			//Extract the data from the encoded array
+				$pageInfo = unserialize($page['content' . $page['display']]);
+			 
+			 //Show the top-level link
+				$navigation .= "<li><a href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
+				
+			//Show any sub-pages of the current parent-page
+				$subPageData = mysql_query("SELECT * FROM pages WHERE visible = 'on' AND published != '0' AND parentPage = '" . $page['id'] . "' ORDER BY subPosition ASC");
+				
+				while($subPage = mysql_fetch_array($subPageData)) {
+				//Extract the data from the encoded array
+					$subPageInfo = unserialize($subPage['content' . $subPage['display']]);
 					
-					if (isset ($currentPage)) {
-						if ($currentPage == $pageInfoPrep['id']) {
-							if ($count++ != "1") {
-								echo "<span class=\"arrow sep\">&bull;</span><a class=\"bottomCurrentPageNav\" href=\"index.php?page=" . $pageInfoPrep['id'] . "\">" . stripslashes($pageInfo['title']) . "</a>";
-							} else {
-								echo "<a class=\"bottomCurrentPageNav\" href=\"index.php?page=" . $pageInfoPrep['id'] . "\">" . stripslashes($pageInfo['title']) . "</a>";
-							}
-						} else {
-							if ($count++ != "1") {
-								echo "<span class=\"arrow sep\">&bull;</span><a class=\"bottomPageNav\" href=\"index.php?page=" . $pageInfoPrep['id'] . "\">" . stripslashes($pageInfo['title']) . "</a>";
-							} else {
-								echo "<a class=\"bottomPageNav\" href=\"index.php?page=" . $pageInfoPrep['id'] . "\">" . stripslashes($pageInfo['title']) . "</a>";
-							}
-						}
-					} else {
-						if ($count++ == "1") {
-							if ($pageInfoPrep['position'] == "1") {
-								echo "<a class=\"bottomCurrentPageNav\" href=\"index.php?page=" . $pageInfoPrep['id'] . "\">" . stripslashes($pageInfo['title']) . "</a>";
-							} else {
-								echo "<a class=\"bottomPageNav\" href=\"index.php?page=" . $pageInfoPrep['id'] . "\">" . stripslashes($pageInfo['title']) . "</a>";
-							}
-						} else {
-							if ($count++ != "1") {
-								echo "<span class=\"arrow sep\">&bull;</span><a class=\"bottomPageNav\" href=\"index.php?page=" . $pageInfoPrep['id'] . "\">" . stripslashes($pageInfo['title']) . "</a>";
-							} else {
-								echo "<a class=\"bottomPageNav\" href=\"index.php?page=" . $pageInfoPrep['id'] . "\">" . stripslashes($pageInfo['title']) . "</a>";
-							}
-						}
-					}
+					$navigation .= "<li><a href=\"" . $root . "index.php?page=" . $subPage['id'] . "\">" . stripslashes($subPageInfo['title']) . "</a></li>\n";
 				}
 				
-				break;
+				$navigation .= "</ul>\n</li>\n";
+			}
 			
-		//If this is the administrator footer bar
-			case "administrator" : 
-				echo "<a class=\"";
-				if (!strstr($requestURL, "admin/collaboration") && !strstr($requestURL, "admin/pages") && !strstr($requestURL, "admin/users") && !strstr($requestURL, "admin/cms") && !strstr($requestURL, "admin/statistics")) {echo "bottomCurrentPageNav";} else {echo "bottomPageNav";}
-				echo "\" href=\"";
-				echo $root . "admin/index.php";
-				echo "\">Home</a><span class=\"arrow sep\">&bull;</span>";
-				
-				echo "<a class=\"";
-				if (strstr($requestURL, "admin/collaboration")) {echo "bottomCurrentPageNav";} else {echo "bottomPageNav";}
-				echo "\" href=\"";
-				echo $root . "admin/collaboration/index.php";
-				echo "\">Collaboration</a><span class=\"arrow sep\">&bull;</span>";
-				
-				echo "<a class=\"";
-				if (strstr($requestURL, "admin/pages")) {echo "bottomCurrentPageNav";} else {echo "bottomPageNav";}
-				echo "\" href=\"";
-				echo $root . "admin/pages/index.php";
-				echo "\">Staff Pages</a><span class=\"arrow sep\">&bull;</span>";
-				
-				echo "<a class=\"";
-				if (strstr($requestURL, "admin/users")) {echo "bottomCurrentPageNav";} else {echo "bottomPageNav";}
-				echo "\" href=\"";
-				echo $root . "admin/users/index.php";
-				echo "\">Users</a><span class=\"arrow sep\">&bull;</span>";
-				
-				echo "<a class=\"";
-				if (strstr($requestURL, "admin/cms") || strstr($requestURL, "admin/statistics")) {echo "bottomCurrentPageNav";} else {echo "bottomPageNav";}
-				echo "\" href=\"";
-				echo $root . "admin/cms/index.php";
-				echo "\">Public Website</a><span class=\"arrow sep\">&bull;</span>";
-				
-				echo "<a class=\"bottomPageNav\" href=\"";
-				echo $root . "logout.php"; 
-				echo "\">Logout</a>";
-				break;
-				
-		//If this is the user footer bar
-			case "user" : 
-				echo "<a class=\"";
-				if (!strstr($requestURL, "admin/collaboration") && !strstr($requestURL, "admin/pages") && !strstr($requestURL, "admin/cms") && !strstr($requestURL, "admin/statistics")) {echo "bottomCurrentPageNav";} else {echo "bottomPageNav";}
-				echo "\" href=\"";
-				echo $root . "admin/index.php";
-				echo "\">Home</a><span class=\"arrow sep\">&bull;</span>";
-				
-				if (privileges("sendEmail") == "true") {
-					echo "<a class=\"";
-					if (strstr($requestURL, "admin/collaboration")) {echo "bottomCurrentPageNav";} else {echo "bottomPageNav";}
-					echo "\" href=\"";
-					echo $root . "admin/collaboration/index.php";
-					echo "\">Collaboration</a><span class=\"arrow sep\">&bull;</span>";
-				}
-				
-				if (privileges("viewStaffPage") == "true") {
-					echo "<a class=\"";
-					if (strstr($requestURL, "admin/pages")) {echo "bottomCurrentPageNav";} else {echo "bottomPageNav";}
-					echo "\" href=\"";
-					echo $root . "admin/pages/index.php";
-					echo "\">Staff Pages</a><span class=\"arrow sep\">&bull;</span>";
-				}
-				
-				if (privileges("createPage") == "true" || privileges("editPage") == "true" || privileges("deletePage") == "true" || privileges("siteSettings") == "true" || privileges("createSideBar") == "true" || privileges("editSideBar") == "true" || privileges("deleteSideBar") == "true" || privileges("sideBarSettings") == "true" || privileges("viewStatistics") == "true") {
-					echo "<a class=\"";
-					if (strstr($requestURL, "admin/cms") || strstr($requestURL, "admin/statistics")) {echo "bottomCurrentPageNav";} else {echo "bottomPageNav";}
-					echo "\" href=\"";
-					echo $root . "admin/cms/index.php";
-					echo "\">Public Website</a><span class=\"arrow sep\">&bull;</span>";
-				}
-				
-				echo "<a class=\"bottomPageNav\" href=\"";
-				echo $root . "logout.php"; 
-				echo "\">Logout</a>";
-				break;
+			$navigation .= "</ul>\n";
+			
+			require_once($dirRoot . "themes/student_government/bottom.php");
 		}
-		
-		echo "</div><div class=\"footer\">";
-		
-		$footerGrabber = mysql_query("SELECT * FROM siteprofiles", $connDBA);	
-		$footer= mysql_fetch_array($footerGrabber);
-		
-		echo stripslashes($footer['siteFooter']) . "</div></div></div>";
-		echo "<script type=\"text/javascript\">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-11478926-14']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>";
-		activity("true");
 	}
 /* End site layout functions */
 	

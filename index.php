@@ -1,39 +1,6 @@
-<?php require_once('Connections/connDBA.php'); ?>
-<?php login(); ?>
 <?php
-//Security question validator
-	if (isset($_POST['validateValue']) && isset($_POST['validateId']) && isset($_POST['validateError'])) {
-		$security = query("SELECT * FROM `siteprofiles` WHERE `id` = '1'");
-		$value = $_POST['validateValue'];
-		$id = $_POST['validateId'];
-		$message = $_POST['validateError'];
-		
-		$return = array();
-		$return[0] = $id;
-		$return[1] = $message;
-		
-		if ($security['saptcha'] == "auto") {
-			$answer = query("SELECT * FROM `saptcha` WHERE `id` = '{$id}'");
-			
-			if (strtolower($value) == strtolower(prepare($answer['answer']))) {
-				$return[2] = "true";
-				echo "{\"jsonValidateReturn\":" . json_encode($return) . "}";
-			} else {
-				$return[2] = "false";
-				echo "{\"jsonValidateReturn\":" . json_encode($return) . "}";
-			}
-		} else {
-			if (strtolower($value) == strtolower(prepare($security['answer']))) {
-				$return[2] = "true";
-				echo "{\"jsonValidateReturn\":" . json_encode($return) . "}";
-			} else {
-				$return[2] = "false";
-				echo "{\"jsonValidateReturn\":" . json_encode($return) . "}";
-			}
-		}
-		
-		exit;
-	}
+//Include the system core
+	require_once('Connections/connDBA.php'); 
 	
 //Check to see if any pages exist
 	$settingsGrabber = mysql_query("SELECT * FROM `privileges` WHERE `id` = '1'", $connDBA);
@@ -111,6 +78,40 @@
 //Grab the sidebar	
 	$sideBarCheck = mysql_query("SELECT * FROM sidebar WHERE visible = 'on' AND published != '0'", $connDBA);
 	$sideBarResult = mysql_fetch_array($sideBarCheck);
+	
+//Security question validator
+	if (isset($_POST['validateValue']) && isset($_POST['validateId']) && isset($_POST['validateError'])) {
+		$security = query("SELECT * FROM `siteprofiles` WHERE `id` = '1'");
+		$value = $_POST['validateValue'];
+		$id = $_POST['validateId'];
+		$message = $_POST['validateError'];
+		
+		$return = array();
+		$return[0] = $id;
+		$return[1] = $message;
+		
+		if ($security['saptcha'] == "auto") {
+			$answer = query("SELECT * FROM `saptcha` WHERE `id` = '{$id}'");
+			
+			if (strtolower($value) == strtolower(prepare($answer['answer']))) {
+				$return[2] = "true";
+				echo "{\"jsonValidateReturn\":" . json_encode($return) . "}";
+			} else {
+				$return[2] = "false";
+				echo "{\"jsonValidateReturn\":" . json_encode($return) . "}";
+			}
+		} else {
+			if (strtolower($value) == strtolower(prepare($security['answer']))) {
+				$return[2] = "true";
+				echo "{\"jsonValidateReturn\":" . json_encode($return) . "}";
+			} else {
+				$return[2] = "false";
+				echo "{\"jsonValidateReturn\":" . json_encode($return) . "}";
+			}
+		}
+		
+		exit;
+	}
 	
 //Process the comments
 	if (isset($_POST['submit']) && !empty($_POST['id']) && !empty($_POST['comment'])) {
@@ -244,9 +245,6 @@
 		}
 	}
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
 <?php
 	if ($pageInfoPrep == 0 && $pagesExist == 0) {
 		$title = "Setup Required";
@@ -264,18 +262,7 @@
 		$content = $pageInfo['content'];
 		$commentsDisplay = $pageInfo['comments'];
 	}
-	
-	title(stripslashes(htmlentities($title))); 
 ?>
-<?php headers(); ?>
-<?php tinyMCESimple(); ?>
-<?php validate(); ?>
-<?php menuBar(); ?>
-<?php meta(); ?>
-<script src="javascripts/common/goToURL.js" type="text/javascript"></script>
-</head>
-<body>
-<?php tooltip(); ?>
 <?php
 	topPage("public", true);
 ?>
