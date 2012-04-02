@@ -91,7 +91,6 @@ section.login div.left {
 
 section.login div.center {
 	background: #000000;
-	border-left: 1px solid #FFFFFF;
 	float: left;
 	height: 275px;
 	padding-left: 3%;
@@ -106,7 +105,6 @@ section.login div.center h2 {
 
 section.login div.right {
 	background: #000000;
-	border-left: 1px solid #FFFFFF;
 	float: left;
 	height: 275px;
 	padding-left: 3%;
@@ -125,23 +123,30 @@ section.login div.right h2 {
  */
 
 nav.main {
-	background: url(../images/ribbon.png) repeat-x #F0F1F4;
+	background: #F5F5F5;
+	background-image: url(../images/ribbon.png);
+	background-image: url(../images/ribbon.png), -webkit-gradient(linear, top, bottom, from(#FAFAFA), to(#F5F5F5));
+	background-image: url(../images/ribbon.png), -webkit-linear-gradient(top, #FAFAFA, #F5F5F5);
+	background-image: url(../images/ribbon.png), -moz-linear-gradient(top, #FAFAFA, #F5F5F5);
+	background-image: url(../images/ribbon.png), -ms-linear-gradient(top, #FAFAFA, #F5F5F5);
+	background-image: url(../images/ribbon.png), -o-linear-gradient(top, #FAFAFA, #F5F5F5);
+	background-image: url(../images/ribbon.png), linear-gradient(top, #FAFAFA, #F5F5F5);
+	background-repeat: repeat-x;
 	border-bottom: 1px solid #D8DDE1;
-	clear: both;
 	display: block;
-	height: 73px;
-	padding: 19px 10% 10px 10%;
-	width: 80%;
+	filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr=#FAFAFA, EndColorStr=#F5F5F5)";
+	padding-top: 19px;
+	position: relative;
+	width: 100%;
 }
 
-nav.main ul {
-	float: left;
+nav.main ul.nav {
 	font-weight: bolder;
 	margin: 0px;
-	padding: 0px;
+	padding: 0px 10% 0px 10%;
 }
 
-nav.main ul li {
+nav.main ul.nav li {
 	display: inline-block;
 	list-style: none;
 	margin: 0px;
@@ -149,37 +154,79 @@ nav.main ul li {
 	vertical-align: middle;
 }
 
-nav.main ul li.logo {
+nav.main ul.nav li {
+	display: inline-block;
+	list-style: none;
+	margin: 0px;
+	padding: 0px 10px 0px 10px;
+	vertical-align: middle;
+}
+
+nav.main ul.nav li a.locked {
+	background: url(../images/lock_sprite.png) no-repeat;
+	padding-left: 17px;
+}
+
+nav.main ul.nav li a.locked:hover {
+	background: url(../images/lock_sprite.png) no-repeat;
+	background-position: 0px -29px;
+	padding-left: 17px;
+}
+
+nav.main ul.nav li a.locked:active {
+	background: url(../images/lock_sprite.png) no-repeat;
+	background-position: 0px -58px;
+	padding-left: 17px;
+}
+
+nav.main ul.nav li.logo {
 	padding: 0px 10px 0px 0px;
 }
 
 /**
- * Question of the week
+ * Login flag
  * ------------------------------------------
  */
 
-nav.main section {
-	float: right;
-	max-width: 275px;
-	padding-right: 20px;
-	position: relative;
+nav.main section.flag {
+	position: absolute;
+	right: 6%;
+	top: 0px;
 }
 
-nav.main section h2 {
+nav.main section.flag img {
+	cursor: pointer;
+}
+
+/**
+ * Breadcrumb
+ * ------------------------------------------
+ */
+ 
+nav.main ul.breadcrumb {
+	border-top: 1px solid #D8DDE1;
+	background-color: #FCFCFC;
+	font-size: 11px;
 	margin: 0px;
 	padding: 0px;
 }
 
-nav.main section p {
-	font-size: 12px;
-	margin: 0px;
-	padding: 7px 0px 0px 0px;
+nav.main ul.breadcrumb li:first-child {
+	padding-left: 10%;
 }
 
-nav.main section img.tag {
-	position: absolute;
-	right: -45px;
-	top: -19px;
+nav.main ul.breadcrumb li {
+	display: inline-block;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+
+nav.main ul.breadcrumb li a {
+	background: url(../images/divider.png) no-repeat right;
+	color: #44BBFF;
+	padding-bottom: 5px;
+	padding-right: 12px;
+	padding-top: 5px;
 }
 
 /**
@@ -228,6 +275,44 @@ aside.sidebar.right {
 	padding: 10px 10% 10px 0px;
 	width: 23%;
 }
+
+/**
+ * Navigation within the sidebar
+ * ------------------------------------------
+ */
+ 
+aside.sidebar section.menu li {
+	border-bottom: 1px solid #D8DDE1;
+	color: #44BBFF;
+	list-style-type: square;
+}
+
+aside.sidebar section.menu li:hover {
+	border-bottom: 1px solid #44BBFF;
+}
+
+aside.sidebar section.menu li:active {
+	border-bottom: 1px solid #C36;
+	color: #C36;
+}
+
+aside.sidebar section.menu li a {
+	display: block;
+	padding: 5px 0px 5px 0px;
+}
+
+aside.sidebar section.menu li.up {
+	color: #C36;
+}
+
+aside.sidebar section.menu li.up:hover {
+	color: #44BBFF;
+}
+
+aside.sidebar section.menu li.up:active {
+	color: #C36;
+}
+
 
 /**
  * Footer common styles
@@ -296,9 +381,39 @@ footer section.main nav ul li ul li a.red {
 	font-size: 16px;
 }
 
+footer section.main nav ul li ul li a.red.locked {
+	background: url(../images/lock_sprite.png) no-repeat;
+	background-position: 0px -87px;
+	margin-left: -17px;
+	padding-left: 17px;
+}
+
+footer section.main nav ul li ul li a.red.locked:hover {
+	background-position: 0px -29px;
+}
+
+footer section.main nav ul li ul li a.red.locked:active {
+	background-position: 0px -58px;
+}
+
 footer section.main nav ul li ul li a.orange {
 	color: #F7B42C;
 	font-size: 16px;
+}
+
+footer section.main nav ul li ul li a.orange.locked {
+	background: url(../images/lock_sprite.png) no-repeat;
+	background-position: 0px -116px;
+	margin-left: -17px;
+	padding-left: 17px;
+}
+
+footer section.main nav ul li ul li a.orange.locked:hover {
+	background-position: 0px -29px;
+}
+
+footer section.main nav ul li ul li a.orange.locked:active {
+	background-position: 0px -58px;
 }
 
 footer section.main nav ul li ul li a.blue {
@@ -306,9 +421,39 @@ footer section.main nav ul li ul li a.blue {
 	font-size: 16px;
 }
 
+footer section.main nav ul li ul li a.blue.locked {
+	background: url(../images/lock_sprite.png) no-repeat;
+	background-position: 0px -29px;
+	margin-left: -17px;
+	padding-left: 17px;
+}
+
+footer section.main nav ul li ul li a.blue.locked:hover {
+	background-position: 0px -29px;
+}
+
+footer section.main nav ul li ul li a.blue.locked:active {
+	background-position: 0px -58px;
+}
+
 footer section.main nav ul li ul li a.green {
 	color: #AAD450;
 	font-size: 16px;
+}
+
+footer section.main nav ul li ul li a.green.locked {
+	background: url(../images/lock_sprite.png) no-repeat;
+	background-position: 0px -145px;
+	margin-left: -17px;
+	padding-left: 17px;
+}
+
+footer section.main nav ul li ul li a.green.locked:hover {
+	background-position: 0px -29px;
+}
+
+footer section.main nav ul li ul li a.green.locked:active {
+	background-position: 0px -58px;
 }
 
 footer section.main nav ul li ul li a:hover {
@@ -317,6 +462,21 @@ footer section.main nav ul li ul li a:hover {
 
 footer section.main nav ul li ul li a:active {
 	color: #C36;
+}
+
+footer section.main nav ul li ul li a.locked {
+	background: url(../images/lock_sprite.png) no-repeat;
+	background-position: 0px -172px;
+	margin-left: -17px;
+	padding-left: 17px;
+}
+
+footer section.main nav ul li ul li a.locked:hover {
+	background-position: 0px -201px;
+}
+
+footer section.main nav ul li ul li a.locked:active {
+	background-position: 0px -230px;
 }
 
 /**
@@ -365,4 +525,8 @@ footer section.footer ul {
 footer section.footer ul li {
 	display: inline-block;
 	padding: 0px 10px 0px 10px;
+}
+
+footer section.footer ul li:last-child {
+	padding-right: 0px;
 }
