@@ -17,23 +17,20 @@
 <div class="left">
 <p>Log into your account or register today to gain access to special member-only features, such as our newly redesigned student book exchange!</p>
 </div>
+
 <div class="center">
 <h2>Sign Up</h2>
-<p>First and last name:</p>
-<input type="text"/>
-<p>Email address:</p>
-<input type="email"/>
-<p>Password:</p>
-<input type="password"/>
+<p>First and last name:</p><input type="text"/>
+<p>Email address:</p><input type="email"/>
+<p>Password:</p><input type="password"/>
 <br /><br />
 <input type="submit" value="Sign Up" />
 </div>
+
 <div class="right">
 <h2>Login</h2>
-<p>Email address:</p>
-<input type="email"/>
-<p>Password:</p>
-<input type="password"/>
+<p>Email address:</p><input type="email"/>
+<p>Password:</p><input type="password"/>
 <br /><br />
 <input type="submit" value="Login" />
 </div>
@@ -44,15 +41,12 @@
 	}
 ?>
 <nav class="main">
-<ul>
+<ul class="nav">
 <li class="logo"><a href="<?php echo $root; ?>"><img src="<?php echo $root; ?>images/banner.png" /></a></li>
 <?php echo $navigation; ?>
 </ul>
 
-<section>
-<h2><a class="highlight" href="<?php echo $root; ?>question-of-the-week">Question of the Week</a></h2>
-<p>Our question for this week concerns certain...
-<br /><a class="highlight" href="<?php echo $root; ?>question-of-the-week">Read more &amp; answer</a> &gt;&gt;</p>
+<section class="flag">
 <img class="tag" src="<?php echo $root; ?>themes/student_government/images/login.png" />
 </section>
 </nav>

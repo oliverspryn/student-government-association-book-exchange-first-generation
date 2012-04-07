@@ -125,12 +125,12 @@ section.login div.right h2 {
 nav.main {
 	background: #F5F5F5;
 	background-image: url(../images/ribbon.png);
-	background-image: url(../images/ribbon.png), -webkit-gradient(linear, top, bottom, from(#FAFAFA), to(#F5F5F5));
-	background-image: url(../images/ribbon.png), -webkit-linear-gradient(top, #FAFAFA, #F5F5F5);
+	background-image: url(../images/ribbon.png), linear-gradient(top, #FAFAFA, #F5F5F5);
 	background-image: url(../images/ribbon.png), -moz-linear-gradient(top, #FAFAFA, #F5F5F5);
 	background-image: url(../images/ribbon.png), -ms-linear-gradient(top, #FAFAFA, #F5F5F5);
 	background-image: url(../images/ribbon.png), -o-linear-gradient(top, #FAFAFA, #F5F5F5);
-	background-image: url(../images/ribbon.png), linear-gradient(top, #FAFAFA, #F5F5F5);
+	background-image: url(../images/ribbon.png), -webkit-gradient(linear, top, bottom, from(#FAFAFA), to(#F5F5F5));
+	background-image: url(../images/ribbon.png), -webkit-linear-gradient(top, #FAFAFA, #F5F5F5);
 	background-repeat: repeat-x;
 	border-bottom: 1px solid #D8DDE1;
 	display: block;
@@ -280,36 +280,40 @@ aside.sidebar.right {
  * Navigation within the sidebar
  * ------------------------------------------
  */
- 
-aside.sidebar section.menu li {
+
+aside.sidebar section.menu ul {
+	padding-left: 17px;
+} 
+
+aside.sidebar section.menu ul li {
 	border-bottom: 1px solid #D8DDE1;
 	color: #44BBFF;
 	list-style-type: square;
 }
 
-aside.sidebar section.menu li:hover {
+aside.sidebar section.menu ul li:hover {
 	border-bottom: 1px solid #44BBFF;
 }
 
-aside.sidebar section.menu li:active {
+aside.sidebar section.menu ul li:active {
 	border-bottom: 1px solid #C36;
 	color: #C36;
 }
 
-aside.sidebar section.menu li a {
+aside.sidebar section.menu ul li a {
 	display: block;
 	padding: 5px 0px 5px 0px;
 }
 
-aside.sidebar section.menu li.up {
+aside.sidebar section.menu ul li.up {
 	color: #C36;
 }
 
-aside.sidebar section.menu li.up:hover {
+aside.sidebar section.menu ul li.up:hover {
 	color: #44BBFF;
 }
 
-aside.sidebar section.menu li.up:active {
+aside.sidebar section.menu ul li.up:active {
 	color: #C36;
 }
 
