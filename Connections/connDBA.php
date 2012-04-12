@@ -70,7 +70,10 @@ error_reporting(0);
 	}
 /* End messages functions */
 
-/* Begin site layout functions */	
+/* Begin site layout functions */
+	function title() {}
+	function headers() {}
+	
 	//Include all top-page items
 	function topPage($type, $title, $HTML = "") {
 		global $dirRoot, $root, $connDBA;
@@ -104,7 +107,7 @@ error_reporting(0);
 				}
 			}
 			
-			require_once($dirRoot . "themes/student_government/top.php");
+			require_once($dirRoot . "themes/public/student_government/top.php");
 		}
 	}
 	
@@ -142,7 +145,7 @@ error_reporting(0);
 			
 			$navigation .= "</ul>\n";
 			
-			require_once($dirRoot . "themes/student_government/bottom.php");
+			require_once($dirRoot . "themes/public/student_government/bottom.php");
 		}
 	}
 /* End site layout functions */

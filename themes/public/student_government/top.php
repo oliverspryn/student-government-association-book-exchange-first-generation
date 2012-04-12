@@ -4,8 +4,8 @@
 <meta charset="UTF-8" />
 <title><?php echo $title; ?></title>
 <?php echo $HTML; ?>
-<link href="<?php echo $root; ?>themes/student_government/stylesheets/style.min.css" rel="stylesheet" />
-<script src="<?php echo $root; ?>themes/student_government/javascripts/login_panel.min.js"></script>
+<link href="<?php echo $root; ?>themes/public/student_government/stylesheets/style.min.css" rel="stylesheet" />
+<script src="<?php echo $root; ?>themes/public/student_government/javascripts/login_panel.min.js"></script>
 </head>
 
 <body>
@@ -47,7 +47,7 @@
 </ul>
 
 <section class="flag">
-<img class="tag" src="<?php echo $root; ?>themes/student_government/images/login.png" />
+<img class="tag" src="<?php echo $root; ?>themes/public/student_government/images/login.png" />
 </section>
 </nav>
 

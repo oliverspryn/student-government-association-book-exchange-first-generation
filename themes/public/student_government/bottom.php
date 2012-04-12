@@ -10,8 +10,8 @@
 <h2>About Us</h2>
 <p><?php echo $siteInfo['description']; ?></p>
 <p class="networking">
-<a href="http://www.facebook.com/pages/Student-Government-Association-at-Grove-City-College/149828851728032" target="_blank"><img src="<?php echo $root; ?>themes/student_government/images/facebook.png" /></a>
-<a href="http://twitter.com/sgaatgcc" target="_blank"><img src="<?php echo $root; ?>themes/student_government/images/twitter.png" /></a>
+<a href="http://www.facebook.com/pages/Student-Government-Association-at-Grove-City-College/149828851728032" target="_blank"><img src="<?php echo $root; ?>themes/public/student_government/images/facebook.png" /></a>
+<a href="http://twitter.com/sgaatgcc" target="_blank"><img src="<?php echo $root; ?>themes/public/student_government/images/twitter.png" /></a>
 </p>
 </section>
 </section>
