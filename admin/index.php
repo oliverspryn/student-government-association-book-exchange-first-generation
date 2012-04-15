@@ -1,4 +1,4 @@
-<?php require_once('../Connections/connDBA.php'); ?>
+<?php require_once('../Connections/connDBA.php'); require_once('../Connections/jsonwrapper/jsonwrapper.php'); ?>
 <?php loggedIn() ? true : redirect($root  . "login.php?accesscheck=" . urlencode($_SERVER['REQUEST_URI'])); ?>
 <?php
 //Process the agenda
@@ -95,7 +95,7 @@
 	
 //Process the poll
 	if (isset($_POST['poll'])) {
-		if (isset($_POST['poll_' . $_POST['poll']]) && isset($_POST['submit_' . $_POST['poll']])) {
+		if (isset($_POST['poll_' . $_POST['poll']])) {
 			$userData = userData();
 			$pollData = query("SELECT * FROM `collaboration` WHERE `id` = '{$_POST['poll']}'");
 			$response = unserialize($pollData['responses']);
@@ -132,12 +132,14 @@
 			$return = serialize($response);
 			
 			query("UPDATE `collaboration` SET `responses` = '{$return}' WHERE `id` = '{$_POST['poll']}'");
-			redirect("index.php?message=poll");
+			
+			echo "success";
+			exit;
 		}
 	}
 	
 //Process the comments
-	if (isset($_POST['submit']) && !empty($_POST['id']) && !empty($_POST['itemID']) && !empty($_POST['comment_' . $_POST['itemID']])) {
+	if (!empty($_POST['id']) && !empty($_POST['itemID']) && !empty($_POST['comment_' . $_POST['itemID']])) {
 		$id = $_POST['id'];
 		$itemID = $_POST['itemID'];
 		$comment = $_POST['comment_' . $itemID];
@@ -163,7 +165,9 @@
 		}
 		
 		mysql_query("UPDATE `collaboration` SET `name` = '{$names}', `date` = '{$dates}', `comment` = '{$comments}' WHERE `id` = '{$itemID}'", $connDBA);
-		header("Location: index.php?message=comment");
+		
+		$return = array("id" => $id, "name" => $userData['firstName'] . " " . $userData['lastName'], "date" => date("l, M j, Y \\a\\t h:i:s A", $date), "comment" => nl2br(strip_tags($comment)));
+		echo json_encode($return);
 		exit;
 	}
 	
@@ -206,41 +210,15 @@
 				
 				mysql_query("UPDATE `collaboration` SET `name` = '{$names}', `date` = '{$dates}', `comment` = '{$comments}' WHERE `id` = '{$id}'", $connDBA);
 				
-				header("Location: index.php?message=deletedAll");
+				echo "success";
 				exit;
 			}
 		}
 	}
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<?php title("Staff Home Page"); ?>
-<?php headers(); ?>
-<?php customCheckbox(); ?>
-<?php validate(); ?>
-<?php tinyMCESimple(); ?>
-<script src="../javascripts/jQuery/adminAssist.jquery.js" type="text/javascript"></script>
-</head>
-<body>
-<?php tooltip(); ?>
-<?php topPage(); ?>
-<h1>Staff Home Page</h1>
-<p>This page is the main collaboration hub of this site. Check here regularly for updates and announcements.</p>
-<p>&nbsp;</p>
+<?php topPage("admin", "Dashboard", "home", array("dashboard", 1)); ?>
+<div style="width:100%; border-bottom: 1px solid #999999; border-top: 1px solid #999999; margin: 0px 0px 0px -15px; padding: 10px 15px 10px 15px; box-shadow: 0 0 7px 2px #CCCCCC; "><button class="button blue">Edit</button><button class="button red">Delete</button><button class="button green">Settings</button></div>
 <?php
-//Display the toolbar, if the user is an administrator
-	if ($_SESSION['MM_UserGroup'] == "Administrator") {
-		echo "<div class=\"toolBar\">
-<a class=\"toolBarItem announcementLink\" href=\"manage_announcement.php\">Create Announcement</a>
-<a class=\"toolBarItem agenda\" href=\"manage_agenda.php\">Create Agenda</a>
-<a class=\"toolBarItem fileShare\" href=\"manage_files.php\">Create File Share</a>
-<a class=\"toolBarItem statistics\" href=\"manage_poll.php\">Create a Poll</a>
-<a class=\"toolBarItem feedback\" href=\"manage_forum.php\">Create a Forum</a>
-</div>
-<br />
-";
-	}
 //Display announcements, file share, agenda, forum and polling modules
 	$itemsCheck = mysql_query("SELECT * FROM `collaboration` WHERE `visible` = 'on'", $connDBA);
 	
@@ -275,8 +253,9 @@
 					echo "
 
 <!-- Agenda: " . stripslashes($item['title']) . " -->
-<div class=\"agendaContent\">
-<p class=\"itemTitle\">" . stripslashes($item['title']) . "</p>
+<section class=\"dashboardItem agenda\">
+<h2>" . stripslashes($item['title']) . "</h2>
+
 " . stripslashes($item['content']) . "
 <div class=\"progressBar\" style=\"width:200px; height:20px;\"></div>
 <span class=\"percentage\"></span>
@@ -350,7 +329,7 @@
 					echo "</table>
 <input type=\"hidden\" class=\"totalItems\" value=\"" . (sizeof($task) - 1) . "\" />
 <input type=\"hidden\" class=\"totalComplete\" value=\"" . $totalComplete . "\" />
-</div>\n";
+</section>\n";
 					break;	
 				
 			//If this is an announcement
@@ -358,10 +337,11 @@
 					echo "
 
 <!-- Announcement: " . stripslashes($item['title']) . " -->
-<div class=\"announcementContent\">
-<p class=\"itemTitle\">" . stripslashes($item['title']) . "</p>
+<section class=\"dashboardItem announcement\">
+<h2>" . stripslashes($item['title']) . "</h2>
+
 " . stripslashes($item['content']) . "
-</div>\n";
+</section>\n";
 					break;
 			
 			//If this is a file share module
@@ -369,8 +349,9 @@
 					echo "
 
 <!-- File Share: " . stripslashes($item['title']) . " -->
-<div class=\"fileShareContent\">
-<p class=\"itemTitle\">" . stripslashes($item['title']) . "</p>
+<section class=\"dashboardItem fileShare\">
+<h2>" . stripslashes($item['title']) . "</h2>
+
 " . stripslashes($item['content']) . "
 ";
 					
@@ -456,7 +437,7 @@
 						echo "<div class=\"noResults\">No categories found</div>";
 					}
 					
-					echo "</div>";
+					echo "</section>";
 					break;
 					
 			//If this is a polling module
@@ -483,22 +464,22 @@
 					echo "
 
 <!-- Poll: " . stripslashes($item['title']) . " -->					
-<div class=\"pollContent\">
-<p class=\"itemTitle\">" . stripslashes($item['title']) . "</p>
+<section class=\"dashboardItem poll\">
+<h2>" . stripslashes($item['title']) . "</h2>
+
 " . stripslashes($item['content']) . "
 ";
 					
 				//If the user hasn't polled, then show the options
 					if ($polled == false) {
 						echo "
-<br />
-Select your answer:
-<blockquote>
-<input type=\"hidden\" name=\"poll\" value=\"" . $item['id'] . "\">
-";
+<input type=\"hidden\" class=\"id\" name=\"poll\" value=\"" . $item['id'] . "\">
+
+<div class=\"pollWrapper\">";
 						
 						foreach ($questions as $question) {
-							echo "<!-- Poll Option: " . $question . " -->
+							echo "
+<!-- Poll Option: " . $question . " -->
 <label><input type=\"radio\" name=\"poll_" . $item['id'] . "\" id=\"" . $item['id'] . "_" . $count . "\" value=\"" . $keys[$count] . "\" class=\"validate[required]\">" . $question . "</label>
 <br />
 ";
@@ -506,17 +487,18 @@ Select your answer:
 							$count ++;
 						}
 						
-						echo "<br />
-<input type=\"submit\" name=\"submit_" . $item['id'] . "\" id=\"submit\" value=\"Submit\" />
-</blockquote>
+						echo "						
+<br />
+<button class=\"button blue pollSubmit\">Vote</button>
+</div>
 ";
 					}
 					
-					echo "<br />
+					echo "
+<br />
 <br />
 
-<table>
-";
+<table>";
 					
 				//Display the poll results
 					$count = 0;
@@ -544,23 +526,25 @@ Select your answer:
 							}
 							
 							echo "<!-- Poll Result: " . prepare($questions[$question]) . " -->
-<tr>
+<tr class=\"1\">
 <td width=\"350\">
-<span style=\"border:thin black solid; display:block; width:100%; text-decoration: none;\">
-<span style=\"background-color:#090; display:block; width:" . $percent . "%; text-decoration: none;\">&nbsp;</span>
-</span>
-(" . $size . "/" . $toalReplies . ") " .  prepare($questions[$question]) . "
+<div class=\"ui-progressbar ui-widget ui-widget-content ui-corner-all\" style=\"height: 20px;\">
+<div style=\"width: " . $percent . "%;\" class=\"ui-progressbar-value ui-widget-header ui-corner-left\"></div>
+</div>
+
+" .  prepare($questions[$question]) . " - <span class=\"size\">" . $size . "</span>/<span class=\"total\">" . $toalReplies . "</span>
 </td>
 </tr>
 ";
 						} else {
-							echo "<!-- Poll Result: " . prepare($questions[$question]) . " -->
+							echo "
+<!-- Poll Result: " . prepare($questions[$question]) . " -->
 <tr>
 <td width=\"350\">
-<span style=\"border:thin black solid; display:block; width:100%; text-decoration: none;\">
-<span style=\"background-color:#090; display:block; width:0%; text-decoration: none;\">&nbsp;</span>
-</span>
-(0/" . $toalReplies . ") " . prepare($questions[$question]) . "
+<div class=\"ui-progressbar ui-widget ui-widget-content ui-corner-all\" style=\"height: 20px;\">
+<div style=\"width: 0%;\" class=\"ui-progressbar-value ui-widget-header ui-corner-left\"></div>
+</div>
+" .  prepare($questions[$question]) . " - <span class=\"size\">0</span>/<span class=\"total\">" . $toalReplies . "</span>
 </td>
 </tr>
 ";
@@ -569,9 +553,8 @@ Select your answer:
 						$count ++;
 					}
 					
-					echo "
-</table>
-</div>";
+					echo "</table>
+</section>";
 					
 					break;
 				
@@ -580,11 +563,14 @@ Select your answer:
 					echo "
 
 <!-- Forum: " . stripslashes($item['title']) . " -->	
-<div class=\"commentBox\">
-<p class=\"itemTitle\">" . stripslashes($item['title']) . "</p>
-" . stripslashes($item['content']) . "<br />";
+<section class=\"dashboardItem forum\">
+<h2>" . stripslashes($item['title']) . "</h2>
+
+" . stripslashes($item['content']) . "\n<br />";
 					
 					$arrayCheck = unserialize($item['comment']);
+					
+					echo "\n\n<div class=\"commentWrapper\">";
 					
 					if (is_array($arrayCheck) && !empty($arrayCheck)) {
 						$values = sizeof(unserialize($item['date'])) - 1;
@@ -592,58 +578,53 @@ Select your answer:
 						$dates = unserialize($item['date']);
 						$comments = unserialize($item['comment']);
 						
-						if (privileges("deleteForumComments") == "true" && !empty($comments)) {							
-							echo "<a class=\"action smallDelete\" href=\"index.php?id=" . $item['id'] . "&action=delete&comment=all\" onclick=\"return confirm('This action cannot be undone. Continue?')\" onmouseover=\"Tip('Delete all comments')\" onmouseout=\"UnTip()\"></a>";
-						}
-						
-						
 						for ($count = 0; $count <= $values; $count++) {
 							$userID = $names[$count];
+							
+							echo "\n<!-- Comment number: " . ($count + 1) . " -->\n<div>\n";
 							
 							if (exist("users", "id", $userID)) {
 								$userGrabber = mysql_query("SELECT * FROM `users` WHERE `id` = '{$userID}'", $connDBA);
 								$user = mysql_fetch_array($userGrabber);
-								echo "<p class=\"commentTitle\">" . $user['firstName'] . " " . $user['lastName'] . " commented on " .  date("l, M j, Y \\a\\t h:i:s A", $dates[$count]);
-							} else {
-								echo "<p class=\"commentTitle\">An unknown staff member commented on " .  date("l, M j, Y \\a\\t h:i:s A", $dates[$count]);
-							}
-							
-							if (privileges("deleteForumComments") == "true") {
-								if (isset ($_GET['page'])) {
-									$processor = "?page=" . $_GET['page'] . "&";
-								} else {
-									$processor = "?";
+								
+								if (privileges("deleteForumComments") == "true") {
+									echo "<span class=\"tip smallDelete commentDelete\" title=\"Delete comment\"></span>&nbsp;";
 								}
 								
-								$commentID = $count + 1;
-								
-								echo "<a class=\"action smallDelete\" href=\"index.php?id=" . $item['id'] . "&action=delete&comment=" . $commentID . "\" onclick=\"return confirm('This action cannot be undone. Continue?')\" onmouseover=\"Tip('Delete this comment')\" onmouseout=\"UnTip()\"></a>";
+								echo "\n<a class=\"user\" href=\"users/profile.php?id=" . $user['id'] . "\">" . $user['firstName'] . " " . $user['lastName'] . "</a>\n";
+							} else {
+								echo "\n<span class=\"user\">An unknown staff member</span>\n";
 							}
 							
-							echo "</p>";
-							echo stripslashes($comments[$count]);
+							echo "\n";
+							echo nl2br(strip_tags(stripslashes($comments[$count])));
+							echo "\n<br><br>\n";
+							echo "<span class=\"date\">" . date("l, M j, Y \\a\\t h:i:s A", $dates[$count]) . "</span>";
+							echo "\n</div>\n";
 							unset($userGrabber);
 							unset($user);
 						}
-					} else {
-						if (privileges("deleteForumComments") == "true" && !empty($comments)) {
-							echo "<a class=\"action smallDelete\" href=\"index.php?id=" . $item['id'] . "&action=delete&comment=all\" onclick=\"return confirm('This action cannot be undone. Continue?')\" onmouseover=\"Tip('Delete all comments')\" onmouseout=\"UnTip()\"></a>";
-						}
-						
-						echo "<div class=\"noResults\">No comments yet! Be the first to comment.</div>";
 					}
+					
+					echo "</div>\n";
 					
 					$userName = $_SESSION['MM_Username'];
 					$userGrabber = mysql_query("SELECT * FROM `users` WHERE `userName` = '{$userName}'", $connDBA);
 					$user = mysql_fetch_array($userGrabber);
 					
-					echo "<form name=\"comments\" id=\"validate_" . $item['id'] . "\" action=\"index.php\" method=\"post\"><input type=\"hidden\" name=\"itemID\" id=\"itemID\" value=\"" . $item['id'] . "\" /><input type=\"hidden\" name=\"id\" id=\"id\" value=\"" . $user['id'] . "\" />";
-					echo "<blockquote><textarea name=\"comment_" . $item['id'] . "\" id=\"comment_" . $item['id'] . "\" style=\"width:450px;\" class=\"validate[required]\"></textarea><br/><p>";
-					submit("submit", "Add Comment");
-					echo "</p></blockquote></form>";
-					
-					echo "</div>";
-					
+					echo "\n\n<input type=\"hidden\" name=\"itemID\" id=\"itemID\" value=\"" . $item['id'] . "\" />
+<input type=\"hidden\" name=\"id\" value=\"" . $user['id'] . "\" />
+<textarea name=\"comment_" . $item['id'] . "\" id=\"comment_" . $item['id'] . "\"></textarea>
+<br/>
+<button class=\"button blue forumSubmit\">Comment</button>\n";
+
+					if (privileges("deleteForumComments") == "true" && !empty($comments)) {							
+						echo "<button class=\"button red forumDelete\">Delete all comments</button>";
+					} else {
+						echo "<button class=\"button red forumDelete hidden\">Delete all comments</button>";
+					}
+						
+					echo "\n</section>";
 					break;
 			}
 		}
@@ -669,5 +650,3 @@ Select your answer:
 	}
 ?>
 <?php footer(); ?>
-</body>
-</html>

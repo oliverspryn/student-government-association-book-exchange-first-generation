@@ -75,14 +75,14 @@ error_reporting(0);
 	function headers() {}
 	
 	//Include all top-page items
-	function topPage($type, $title, $HTML = "") {
-		global $dirRoot, $root, $connDBA;
+	function topPage($type, $title, $headerClass, $highlight, $HTML = "") {
+		global $dirRoot, $root, $connDBA, $userData;
 		
 	//Some system scripts to always include
 		if ($HTML == "") {
-			$HTML = "<script src=\"http://code.jquery.com/jquery-latest.min.js\"></script>\n";
+			$HTML = "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js\"></script>";
 		} else {
-			$HTML = "<script src=\"http://code.jquery.com/jquery-latest.min.js\"></script>\n" . $HTML . "\n";
+			$HTML = "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js\"></script>\n" . $HTML . "\n";
 		}
 		
 	//Include the theme intended for the top of a public webpage
@@ -108,6 +108,17 @@ error_reporting(0);
 			}
 			
 			require_once($dirRoot . "themes/public/student_government/top.php");
+	//Include the theme intended for the top of an administration webpage
+		} else {
+			$main = $highlight['0'];
+			$subPage = $highlight['1'];
+			$HTML .= "
+<script src=\"https://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js\"></script>
+<script src=\"" . $root . "javascripts/common/admin.js\"></script>
+<link href=\"http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css\" rel=\"stylesheet\" />
+<link href=\"" . $root . "styles/common/admin.css\" rel=\"stylesheet\">\n";
+			
+			require_once($dirRoot . "themes/administration/simplistic/top.php");
 		}
 	}
 	
@@ -146,6 +157,9 @@ error_reporting(0);
 			$navigation .= "</ul>\n";
 			
 			require_once($dirRoot . "themes/public/student_government/bottom.php");
+	//Include the theme intended for the top of an administration webpage
+		} else {
+			require_once($dirRoot . "themes/administration/simplistic/bottom.php");
 		}
 	}
 /* End site layout functions */
