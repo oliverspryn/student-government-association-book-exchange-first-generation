@@ -1,0 +1,464 @@
+/**
+ * General styles
+ * ------------------------------------------
+ */
+
+html, body {
+	border: none;
+	font-family: Verdana, Geneva, sans-serif;
+	height: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+
+html {
+	background: #ECECEC url(../images/gradient.png) repeat-y;
+	background-position: 190px 0px; 
+}
+
+body {
+	background: #FFFFFF;
+	height: auto;
+	margin-left: 200px;
+	min-height: 100%;
+}
+
+h1 {
+	background: url(../images/header_icons.png) no-repeat;
+	font-size: 18px;
+	margin: 0px 0px 0px 15px;
+	padding: 15px 0px 15px 50px;
+}
+
+img {
+	border: none;
+}
+
+a {
+	color: #21759B;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #C36;
+}
+	
+/**
+ * Main content styles
+ * ------------------------------------------
+ */
+
+h1.home {
+	background-position: 0px 5px;
+}
+
+h1.collaboration {
+	background-position: 0px -42px;
+}
+
+h1.users {
+	background-position: 0px -89px;
+}
+
+h1.website {
+	background-position: 0px -142px;
+}
+
+h1.sidebar {
+	background-position: 0px -195px;
+}
+
+h1.external {
+	background-position: 0px -248px;
+}
+
+h1.settings {
+	background-position: 0px -298px;
+}
+
+h1.question {
+	background-position: 0px -352px;
+}
+
+h1.exchange {
+	background-position: 0px -406px;
+}
+
+section.body {
+	padding: 5px 15px 15px 15px;
+}
+
+footer {
+	border-top: 1px solid #CCCCCC;
+	color: #999999;
+	font-size: 12px;
+	margin: 0px 10% 0px 10%;
+	padding: 10px 0px 10px 0px;
+}
+	
+/**
+ * Administration bar general styles
+ * ------------------------------------------
+ */
+
+nav.admin {
+	background: #ECECEC url(../images/gradient.png) repeat-y;
+	background-position: right;
+	display: inline-block;
+	font-size: 12px;
+	height: 100%;
+	left: 0px;
+	position: absolute;
+	top: 0px;
+	width: 200px;
+	z-index: 2;
+}
+
+nav.admin a {
+	text-decoration: none;
+}
+
+nav.admin ul {
+	background: #FFFFFF url(../images/gradient.png) repeat-y;
+	background-position: right;
+	list-style: none;
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
+}
+
+nav.admin ul li.seperator {
+	background: #DFDFDF url(../images/gradient.png) repeat-y;
+	background-position: right;
+	border-bottom: 1px solid #CFCFCF;
+	border-top: 1px solid #CFCFCF;
+	height: 5px;
+}
+
+/**
+ * User account information
+ * ------------------------------------------
+ */
+ 
+nav.admin ul li section.user {
+	background: #ECECEC url(../images/gradient.png) repeat-y;
+	background-position: right;
+	clear: both;
+	overflow: auto;
+	padding: 5px 0px 5px 0px;
+	width: 100%;
+}
+
+nav.admin ul li section.user h2 {
+	font-size: 14px;
+	margin: 0px;
+	padding: 0px 0px 5px 5px;
+}
+
+nav.admin ul li section.user div.profile {
+	float: left;
+	max-width: 95px;
+	padding: 5px 0px 0px 5px;
+	width: 95px;
+}
+
+nav.admin ul li section.user div.links {
+	float: left;
+	max-width: 95px;
+	padding: 5px 5px 0px 0px;
+	width: 95px;
+}
+
+nav.admin ul li section.user div.links a {
+	color: #21759B;
+	margin-bottom: 10px;
+	padding: 3px;
+	text-decoration: none;
+}
+
+nav.admin ul li section.user div.links a:hover {
+	background: #EAF2FA;
+	color: #000000;
+}
+	
+/**
+ * Un-selected module title default display
+ * ------------------------------------------
+ */
+
+nav.admin ul li ul.inactive li.title {
+	background: #ECECEC url(../images/gradient.png) repeat-y;
+	background-position: right;
+	border-bottom: 2px solid #DFDFDF;
+	border-top: 1px solid #F9F9F9;
+	display: block;
+	font-weight: bolder;
+	position: relative;
+}
+
+nav.admin ul li ul.inactive li.title a {
+	color: #21759B;
+	display: block;
+	padding: 8px 0px 8px 5px;
+	text-decoration: none;
+}
+
+nav.admin ul li ul.inactive li.title span.arrow {
+	-moz-transform: matrix(-0.63,1,0.6,1,0,0);
+	-ms-transform: matrix(-0.63,1,0.6,1,0,0);
+	-o-transform: matrix(-0.63,1,0.6,1,0,0);
+	-webkit-transform: matrix(-0.63,1,0.6,1,0,0);
+	background-color: #E4E4E4;
+	display: none;
+	height: 16px;
+	position: absolute;
+	right: -7.5px;
+	transform: matrix(-0.63,1,0.6,1,0,0);
+	top: 7.5px;
+	width: 15px;
+	z-index: 4;
+}
+
+nav.admin ul li ul.inactive li a {
+	color: #21759B;
+}
+
+nav.admin ul li ul.inactive li a:hover {
+	color: #D54E21;
+}
+	
+/**
+ * Un-selected module title hover
+ * ------------------------------------------
+ */
+
+nav.admin ul li ul.inactive li.title.hover {
+	background: #E4E4E4;
+	background-image: none;
+}
+
+nav.admin ul li ul.inactive li.title.hover span.arrow {
+	display: inline-block;
+}
+
+/**
+ * Un-selected module sub-pages
+ * ------------------------------------------
+ */
+
+nav.admin ul li ul.inactive li {
+	background: none;
+	display: none;
+	position: relative;
+}
+
+nav.admin ul li ul.inactive li ul {
+	-moz-box-shadow: 2px 2px 5px #CCCCCC;
+	-ms-box-shadow: 2px 2px 5px #CCCCCC;
+	-o-box-shadow: 2px 2px 5px #CCCCCC;
+	-webkit-box-shadow: 2px 2px 5px #CCCCCC;
+	background: #FFFFFF none;
+	border: 1px solid #E4E4E4;
+	box-shadow: 2px 2px 5px #CCCCCC;
+	height: auto;
+	left: 200px;
+	min-width: 185px;
+	padding: 5px 0px 5px 0px;
+	position: absolute;
+	width: auto;
+	top: -32px;
+	z-index: 3;
+}
+
+nav.admin ul li ul.inactive li ul li {
+	background: #FFFFFF;
+	display: block;
+}
+
+nav.admin ul li ul.inactive li ul li a {
+	color: #21759B;
+	display: block;
+	padding: 6px 20px 6px 20px;
+	text-decoration: none;
+}
+
+nav.admin ul li ul.inactive li ul li a:hover {
+	background: #EAF2FA;
+	color: #000000;
+}
+	
+/**
+ * Un-selected module sub-pages
+ * ------------------------------------------
+ */
+
+nav.admin ul li ul.inactive li.hover {
+	display: list-item;
+}
+	
+/**
+ * Selected module title
+ * ------------------------------------------
+ */
+	
+nav.admin ul li ul.active li.title {
+	background-color: #6D6D6D;
+	background-image: linear-gradient(top, #6D6D6D, #808080);
+	background-image: -moz-linear-gradient(top, #6D6D6D, #808080);
+	background-image: -ms-linear-gradient(top, #6D6D6D, #808080);
+	background-image: -o-linear-gradient(top, #6D6D6D, #808080);
+	background-image: -webkit-gradient(linear, top, bottom, from(#6D6D6D), to(#808080));
+	background-image: -webkit-linear-gradient(top, #6D6D6D, #808080);
+	filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr=#6D6D6D, EndColorStr=#808080)";
+	font-weight: bolder;
+	padding: 8px 0px 8px 35px;
+	position: relative;
+}
+
+nav.admin ul li ul.active li.title a {
+	color: #FFFFFF;
+}
+
+nav.admin ul li ul.active li.title span.arrow {
+	-moz-transform: matrix(-0.63,1,0.6,1,0,0);
+	-ms-transform: matrix(-0.63,1,0.6,1,0,0);
+	-o-transform: matrix(-0.63,1,0.6,1,0,0);
+	-webkit-transform: matrix(-0.63,1,0.6,1,0,0);
+	background-color: #6D6D6D;
+	background-image: linear-gradient(top, #6D6D6D, #808080);
+	background-image: -moz-linear-gradient(top, #6D6D6D, #808080);
+	background-image: -ms-linear-gradient(top, #6D6D6D, #808080);
+	background-image: -o-linear-gradient(top, #6D6D6D, #808080);
+	background-image: -webkit-gradient(linear, top, bottom, from(#6D6D6D), to(#808080));
+	background-image: -webkit-linear-gradient(top, #6D6D6D, #808080);
+	display: inline-block;
+	filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr=#6D6D6D, EndColorStr=#808080)";
+	height: 16px;
+	position: absolute;
+	right: -7.5px;
+	transform: matrix(-0.63,1,0.6,1,0,0);
+	top: 7.5px;
+	width: 15px;
+	z-index: -1;
+}
+
+/**
+ * Selected module sub-pages
+ * ------------------------------------------
+ */
+	
+nav.admin ul li ul.active li ul {
+	padding: 3px 0px 3px 0px;
+}
+
+nav.admin ul li ul.active li ul li a {
+	display: block;
+	color: #21759B;
+	padding: 6px 0px 6px 5px;
+	text-decoration: none;
+}
+
+nav.admin ul li ul.active li ul li a.active {
+	color: #333333;
+	font-weight: bolder;
+}
+
+nav.admin ul li ul.active li ul li a:hover {
+	background: #EAF2FA url(../images/gradient.png) repeat-y;
+	background-position: right;
+	color: #000000;
+}
+	
+/**
+ * Un-selected module icon styles
+ * ------------------------------------------
+ */
+
+nav.admin ul li ul.inactive li.title a.icon {
+	background: url(../images/icons.png) no-repeat;
+	margin-left: 5px;
+	padding-left: 26px;
+}
+
+nav.admin ul li ul.inactive li.title a.home {
+	background-position: 0px 5px;
+}
+
+nav.admin ul li ul.inactive li.title a.collaboration {
+	background-position: 0px -45px;
+}
+
+nav.admin ul li ul.inactive li.title a.users {
+	background-position: 0px -95px;
+}
+
+nav.admin ul li ul.inactive li.title a.website {
+	background-position: 0px -151px;
+}
+
+nav.admin ul li ul.inactive li.title a.sidebar {
+	background-position: 0px -207px;
+}
+
+nav.admin ul li ul.inactive li.title a.external {
+	background-position: 0px -263px;
+}
+
+nav.admin ul li ul.inactive li.title a.settings {
+	background-position: 0px -317px;
+}
+
+nav.admin ul li ul.inactive li.title a.question {
+	background-position: 0px -373px;
+}
+
+nav.admin ul li ul.inactive li.title a.exchange {
+	background-position: 0px -431px;
+}
+
+/**
+ * Selected module icon styles
+ * ------------------------------------------
+ */
+ 	
+nav.admin ul li ul.active li.title a.icon {
+	background: url(../images/icons.png) no-repeat;
+	margin-left: -30px;
+	padding: 3px 0px 8px 26px;
+}
+
+nav.admin ul li ul.active li.title a.home {
+	background-position: 0px -25px;
+}
+
+nav.admin ul li ul.active li.title a.collaboration {
+	background-position: 0px -75px;
+}
+
+nav.admin ul li ul.active li.title a.users {
+	background-position: 0px -128px;
+}
+
+nav.admin ul li ul.active li.title a.website {
+	background-position: 0px -184px;
+}
+
+nav.admin ul li ul.active li.title a.sidebar {
+	background-position: 0px -240px;
+}
+
+nav.admin ul li ul.active li.title a.external {
+	background-position: 0px -295px;
+}
+
+nav.admin ul li ul.active li.title a.settings {
+	background-position: 0px -350px;
+}
+
+nav.admin ul li ul.active li.title a.question {
+	background-position: 0px -407px;
+}
+
+nav.admin ul li ul.active li.title a.exchange {
+	background-position: 0px -462px;
+}
