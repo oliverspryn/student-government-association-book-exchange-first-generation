@@ -1,7 +1,7 @@
 <?php
 session_start();
 ob_start();
-error_reporting(0);
+//error_reporting(0);
 
 /* Begin core functions */
 	//Root address for entire site
@@ -51,17 +51,17 @@ error_reporting(0);
 /* Begin messages functions */
 	//Alerts
 	function alert($errorContent = NULL) {
-		echo "<p><div align=\"center\"><div align=\"center\" class=\"toolBar noPadding toolBarAlert\">$errorContent</div></div></p><br />";
+		echo "<div align=\"center\"><div align=\"center\" class=\"message\">$errorContent</div></div><br />";
 	}
 	
 	//Response for errors
 	function errorMessage($errorContent = NULL) {
-		echo "<p><div align=\"center\"><div align=\"center\" class=\"error\">$errorContent</div></div></p><br />";
+		echo "<div align=\"center\"><div align=\"center\" class=\"error\">$errorContent</div></div><br />";
 	}
 
 	//Response for secuess
 	function successMessage($successContent) {
-		echo "<p><div align=\"center\"><div align=\"center\" class=\"success\">$successContent</div></div></p><br />";
+		echo "<div align=\"center\"><div align=\"center\" class=\"success\">$successContent</div></div><br />";
 	}
 	
 	//A centrally located div
@@ -111,7 +111,7 @@ error_reporting(0);
 	//Include the theme intended for the top of an administration webpage
 		} else {
 			$main = $highlight['0'];
-			$subPage = $highlight['1'];
+			$subpage = $highlight['1'];
 			$HTML .= "
 <script src=\"https://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js\"></script>
 <script src=\"" . $root . "javascripts/common/admin.js\"></script>

@@ -1,6 +1,7 @@
 <?php
 //Include the parent script
 	require_once('../../Connections/connDBA.php');
+	require('../../Connections/jsonwrapper/jsonwrapper.php');
 	
 //Generate the JSON array of possible names
 	$returnArray = array("Anyone", "Everyone");
@@ -82,7 +83,7 @@ Description UI
 ----------------------------------------------
 */
 
-$('a.loadDescription').live('click', function() {
+$('span.loadComment').live('click', function() {
 	var description = $(this);
     var task = description.parent().parent().children(':eq(1)').children(':input').val();
     var currentInput = description.parent().children(':hidden').val();
@@ -93,8 +94,8 @@ $('a.loadDescription').live('click', function() {
     	task = "<strong>" + task + "</strong>";
     }
     
-    $('<div title="Add Description"></div>')
-    .html('<p>A description may be added to ' + task + '.</p><p><textarea id="description" cols="45" rows="5" style="width:450px;"></textarea></p>')
+    $('<div title="Task Comment"></div>')
+    .html('<p>A comment may be added to ' + task + '.</p><p><textarea id="description" cols="45" rows="5" style="width:450px;"></textarea></p>')
     .dialog({
     	modal : true,
         draggable : false,
@@ -108,14 +109,23 @@ $('a.loadDescription').live('click', function() {
             	var newInput = $('#description', this).val();
                 
                 if (newInput == "") {
-                	description.removeClass('description').addClass('noDescription');
-                    description.removeAttr('onmouseover').attr('onmouseover', 'Tip("Add description")');
+                	description.removeClass('comment').addClass('noComment');
+                    description.attr('title', 'Add comment');
+                     $('.tip').tipTip();
                 } else {
-            		description.removeClass('noDescription').addClass('description');
-                    description.removeAttr('onmouseover').attr('onmouseover', 'Tip("Edit description")');
+            		description.removeClass('noComment').addClass('comment');
+                    description.attr('title', 'Edit description');
+                    $('.tip').tipTip();
                 }
                 
                 description.parent().children(':hidden').val(newInput); 
+            	$(this).dialog('close').remove();
+            },
+            'Delete Comment' : function() {
+            	description.removeClass('comment').addClass('noComment');
+                description.attr('title', 'Add comment');
+                $('.tip').tipTip();
+                description.parent().children(':hidden').val(''); 
             	$(this).dialog('close').remove();
             },
             'Cancel' : function() {

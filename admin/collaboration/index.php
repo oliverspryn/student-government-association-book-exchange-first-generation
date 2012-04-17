@@ -89,7 +89,7 @@
 		$setAvaliability = "UPDATE collaboration SET `visible` = '{$option}' WHERE id = '{$id}'";
 		mysql_query($setAvaliability, $connDBA);
 		
-		header ("Location: index.php");
+		echo "success";
 		exit;
 	}
 	
@@ -135,22 +135,7 @@
 		}
 	}
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<?php title("Collaboration"); ?>
-<?php headers(); ?>
-<?php liveSubmit(); ?>
-<?php customCheckbox("visible"); ?>
-</head>
-
-<body>
-<?php tooltip(); ?>
-<?php topPage(); ?>
-<h2>Collaboration</h2>
-<p>Communication can be established to registered users via announcements and mass emails.</p>
-<p>&nbsp;</p>
-<div class="toolBar"><a class="toolBarItem announcementLink" href="manage_announcement.php">Create Announcement</a><a class="toolBarItem agenda" href="manage_agenda.php">Create Agenda</a><a class="toolBarItem fileShare" href="manage_files.php">Create File Share</a><a class="toolBarItem statistics" href="manage_poll.php">Create a Poll</a><a class="toolBarItem feedback" href="manage_forum.php">Create a Forum</a><a class="toolBarItem email" href="email/index.php">Send Mass Email</a></div>
+<?php topPage("admin", "Collaboration", "collaboration", array("collaboration", 1)); ?>
 <?php 
 	if (isset ($_GET['added']) && $_GET['added'] == "announcement") {successMessage("The announcement was successfully added");}
     if (isset ($_GET['updated']) && $_GET['updated'] == "announcement") {successMessage("The announcement was successfully updated");}
@@ -163,8 +148,15 @@
 	if (isset ($_GET['added']) && $_GET['added'] == "forum") {successMessage("The forum was successfully added");}
     if (isset ($_GET['updated']) && $_GET['updated'] == "forum") {successMessage("The forum was successfully updated");}
 	if (isset ($_GET['email']) && $_GET['email'] == "success") {successMessage("The email was successfully sent");}
-	if (!isset ($_GET['updated']) && !isset ($_GET['added']) && !isset ($_GET['email'])) {echo "<br />";}
 ?>
+<div class="toolbar">
+<button class="button blue" onClick="javascript: document.location.href='manage_announcement.php'">New Announcement</button>
+<button class="button blue" onClick="javascript: document.location.href='manage_agenda.php'">New Agenda</button>
+<button class="button blue" onClick="javascript: document.location.href='manage_files.php'">New File Share</button>
+<button class="button blue" onClick="javascript: document.location.href='manage_poll.php'">New Poll</button>
+<button class="button blue" onClick="javascript: document.location.href='manage_forum.php'">New Forum</button>
+<button class="button green" onClick="javascript: document.location.href='email/index.php'">Send Email</button>
+</div>
 <?php
 //Table header, only displayed if items exist.
 	if ($itemGrabber !== 0) {
@@ -180,12 +172,20 @@
 		$currentTime = $time['hours'] . ":" . $minutes;
 		$currentDate = strtotime($time['mon'] . "/" . $time['mday'] . "/" . $time['year'] . " " . $currentTime);
 		
-	echo "<table class=\"dataTable\"><tbody><tr><th width=\"25\" class=\"tableHeader\"></th><th width=\"75\" class=\"tableHeader\">Order</th><th class=\"tableHeader\" width=\"200\">Type</th><th class=\"tableHeader\" width=\"200\">Title</th><th class=\"tableHeader\">Content</th><th width=\"50\" class=\"tableHeader\">Edit</th><th width=\"50\" class=\"tableHeader\">Delete</th></tr>";
+	echo "<table class=\"dataTable\">
+<tbody>
+<tr>
+<th width=\"75\">Display</th>
+<th width=\"200\">Type</th>
+<th width=\"200\">Title</th>
+<th>Content</th>
+<th width=\"75\">Manage</th>
+</tr>";
 	//Loop through each item
 		while($itemData = mysql_fetch_array($itemGrabber)) {
 			echo "<tr";
 		//Alternate the color of each row
-			if ($itemData['position'] & 1) {echo " class=\"odd\">";} else {echo " class=\"even\">";}
+			if ($itemData['position'] & 1) {echo " class=\"odd\">\n";} else {echo " class=\"even\">\n";}
 			
 			if ($itemData['fromDate'] != "") {
 				$from = strtotime($itemData['fromDate'] . " " . $itemData['fromTime']);
@@ -214,17 +214,28 @@
 				}
 							
 				if ($from > $currentDate) {
-					echo "<td width=\"25\"><span onmouseover=\"Tip('This item will display on <strong>" . $itemData['fromDate'] . " at " . $showTime . "</strong>')\" onmouseout=\"UnTip()\" class=\"action upcoming\"></span></td>";
+					echo "<td width=\"75\"><span class=\"tip future\" title=\"This item will display on " . $itemData['fromDate'] . " at " . $showTime . "\"></span>";
 				} elseif ($to <= $currentDate) {
-					echo "<td width=\"25\"><span onmouseover=\"Tip('This item has expired.<br />It was last visible on <strong>" . $itemData['toDate'] . " at " . $expiredTime . "</strong>.')\" onmouseout=\"UnTip()\" class=\"action expired\"></span></td>";
+					echo "<td width=\"75\"><span class=\"tip expired\" title=\"This item has expired. It was last visible on " . $itemData['toDate'] . " at " . $expiredTime . "\"></span>";
 				} else {
-					echo "<td width=\"25\"><span onmouseover=\"Tip('This item is currently being displayed')\" onmouseout=\"UnTip()\" class=\"action current\"></span></td>";
+					echo "<td width=\"75\"><span class=\"tip now\" title=\"This item is currently being displayed until " . $itemData['toDate'] . " at " . $expiredTime . "\"></span>";
 				}
 			} else {
-				echo "<td width=\"25\"><div align=\"center\"><form name=\"avaliability\" action=\"index.php\" method=\"post\"><input type=\"hidden\" name=\"action\" value=\"setAvaliability\"><a href=\"#option" . $itemData['id'] . "\" class=\"visible"; if ($itemData['visible'] == "") {echo " hidden";} echo "\"></a><input type=\"hidden\" name=\"id\" value=\"" . $itemData['id'] . "\"><div class=\"contentHide\"><input type=\"checkbox\" name=\"option\" id=\"option" . $itemData['id'] . "\" onclick=\"Spry.Utils.submitForm(this.form);\""; if ($itemData['visible'] == "on") {echo " checked=\"checked\"";} echo "></div></form></div></td>";
+				echo "<td width=\"75\">
+<span id=\"" .  $itemData['id'] . "\" class=\"tip visibleToggle ";
+
+				if ($itemData['visible'] == "on") {
+					echo "display\" title=\"This item is currently being displayed\"";
+				} else {
+					echo "noDisplay\" title=\"This item is currently hidden\"";
+				}
+				
+				echo "></span>";
 			}
 			
-			echo "<td width=\"75\"><form name=\"items\" action=\"index.php\"><input type=\"hidden\" name=\"id\" value=\"" . $itemData['id'] . "\"><input type=\"hidden\" name=\"currentPosition\" value=\"" .  $itemData['position'] .  "\"><input type=\"hidden\" name=\"action\" value=\"modifySettings\"><select name=\"position\" onchange=\"this.form.submit();\">";
+			echo "<input type=\"hidden\" class=\"currentPosition\" value=\"" .  $itemData['position'] .  "\">
+<select class=\"position\" id=\"" . $itemData['id'] . "\">
+";
 			
 			$itemCount = mysql_num_rows($itemGrabber);
 			for ($count=1; $count <= $itemCount; $count++) {
@@ -232,13 +243,16 @@
 				if ($itemData ['position'] == $count) {
 					echo " selected=\"selected\"";
 				}
-				echo ">" . $count . "</option>";
+				echo ">" . $count . "</option>
+";
 			}
 			
-			echo "</select></form></td><td width=\"200\">" . $itemData['type'] . "</td>";
+			echo "</select>
+</td>
+<td width=\"200\">" . $itemData['type'] . "</td>";
 			echo "<td width=\"200\">" . commentTrim(30, stripslashes($itemData['title'])) . "</td>";
 			echo "<td>" . commentTrim(60, stripslashes($itemData['content'])) . "</td>";
-			echo "<td width=\"50\"><a class=\"action edit\" href=\"manage_";
+			echo "<td align=\"center\" width=\"75\"><a class=\"edit\" href=\"manage_";
 			
 			switch ($itemData['type']) {
 				case "Agenda" : echo "agenda"; break;
@@ -248,20 +262,18 @@
 				case "Forum" : echo "forum"; break;
 			}
 			
-			echo ".php?id=" . $itemData['id'] . "\" onmouseover=\"Tip('Edit the <strong>" . htmlentities($itemData['title']) . "</strong> item')\" onmouseout=\"UnTip()\"></a></td>"; 
+			echo ".php?id=" . $itemData['id'] . "\" ></a>"; 
 			
 			if ($itemData['type'] == "File Share") {
-				echo "<td width=\"50\"><a class=\"action delete\" href=\"index.php?action=delete&item=" . $itemData['position'] . "&id=" . $itemData['id'] . "\" onclick=\"return confirm ('This action will delete all files within this file share item. Continue?');\" onmouseover=\"Tip('Delete the <strong>" . htmlentities($itemData['title']) . "</strong> item')\" onmouseout=\"UnTip()\"></a></td>";
+				echo "<a class=\"delete fileShare\" data-position=\"" . $itemData['position'] . "\" data-id=\"" . $itemData['id'] . "\"></a></td>";
 			} else {
-				echo "<td width=\"50\"><a class=\"action delete\" href=\"index.php?action=delete&item=" . $itemData['position'] . "&id=" . $itemData['id'] . "\" onclick=\"return confirm ('This action cannot be undone. Continue?');\" onmouseover=\"Tip('Delete the <strong>" . htmlentities($itemData['title']) . "</strong> item')\" onmouseout=\"UnTip()\"></a></td>";
+				echo "<a class=\"delete\" href=\"index.php?action=delete&item=" . $itemData['position'] . "&id=" . $itemData['id'] . "\"></a></td>";
 			}
 		}
 		
 		echo "</tr></tbody></table>";
 	 } else {
-		echo "<div class=\"noResults\">This site has no items. New items can be created by selecting an item from the tool bar above.</div>";
+		echo "<div class=\"spacer\">This site has no items. New items can be created by selecting an item from the tool bar above.</div>";
 	 } 
 ?>
-<?php footer(); ?>
-</body>
-</html>
+<?php footer("admin"); ?>

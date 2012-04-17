@@ -152,34 +152,17 @@
 		}
 	} 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
 <?php 
 	if (isset ($announcement)) {
-		$title = "Edit the " . stripslashes(htmlentities($announcement['title'])) . " Announcement";
+		$title = "Edit " . stripslashes(htmlentities($announcement['title']));
 	} else {
-		$title =  "Create a New Announcement";
+		$title =  "New Announcement";
 	}
 	
 	title($title); 
 ?>
-<?php headers(); ?>
-<?php tinyMCEAdvanced(); ?>
-<?php validate(); ?>
-<script src="../../javascripts/common/datePicker.js" type="text/javascript"></script>
-<script src="../../javascripts/common/popupConfirm.js" type="text/javascript"></script>
-<script src="../../javascripts/common/goToURL.js" type="text/javascript"></script>
-<script src="../../javascripts/common/enableDisable.js" type="text/javascript"></script>
-<link rel="stylesheet" type="text/css" href="../../styles/common/datePicker.css" />
-</head>
-<body<?php bodyClass(); ?>>
-<?php toolTip(); ?>
-<?php topPage(); ?>
-    <h2>
-      <?php if (isset ($announcement)) {echo "Edit the &quot;" . stripslashes($announcement['title']) . "&quot; Announcement";} else {echo "Create a New Announcement";} ?>
-    </h2>
-<p>Use this page to <?php if (isset ($announcement)) {echo "edit the content of \"<strong>" . stripslashes(htmlentities($announcement['title'])) . "</strong>\"";} else {echo "create a new announcement";} ?>.</p>
+<?php topPage("admin", $title, "collaboration", array("collaboration", 2), "<script src=\"../../tiny_mce/tiny_mce.js\"></script>
+<script src=\"../../javascripts/common/tiny_mce_advanced.php\"></script>"); ?>
 <?php
 //Display error messages
 	if (isset($_GET['message']) && $_GET['message'] == "inferior") {
@@ -193,23 +176,20 @@
 			echo "?id=" . $announcement['id'];
 		}
 	?>" method="post" name="manageAnnouncement" id="validate" onsubmit="return errorsOnSubmit(this);">
-      <div class="catDivider one">Settings</div>
-      <div class="stepContent">
-      <blockquote>
-        <p>Title<span class="require">*</span>: </p>
-        <blockquote>
-          <p>
-            <input name="title" type="text" id="title" size="50" autocomplete="off" class="validate[required]"<?php
+<table>
+<tbody>
+<tr>
+<td class="label">Title</td>
+<td><input name="title" type="text" id="title" size="50" autocomplete="off" class="validate[required]"<?php
             	if (isset ($announcement)) {
 					echo " value=\"" . stripslashes(htmlentities($announcement['title'])) . "\"";
 				}
-			?> />
-          </p>
-        </blockquote>
-<p>Availability:</p>
-        <blockquote>
-          <p>
-            <input name="from" type="text" id="from" readonly="readonly"<?php
+			?> /></td>
+</tr>
+
+<tr>
+<td class="label">Availability</td>
+<td><input name="from" type="text" id="from" readonly="readonly"<?php
             	if (isset ($announcement)) {
 					echo " value=\"" . stripslashes(htmlentities($announcement['fromDate'])) . "\"";
 				}
@@ -332,42 +312,36 @@
             <option value="23:00"<?php if (isset ($announcement) && $announcement['toTime'] == "23:00") {echo " selected=\"selected\"";} ?>>11:00 pm</option>
             <option value="23:30"<?php if (isset ($announcement) && $announcement['toTime'] == "23:30") {echo " selected=\"selected\"";} ?>>11:30 pm</option>
           </select>
-          <label><input type="checkbox" name="toggleAvailability" id="toggleAvailability" onclick="flvFTFO1('manageAnnouncement','from,t','fromTime,t','to,t','toTime,t')"<?php
+          <label><input type="checkbox" name="toggleAvailability" id="toggleAvailability"<?php
             	if (isset ($announcement) && $announcement['toDate'] != "") {
 					echo " checked=\"checked\"";
 				}
 			?> />Enable</label>
-          </p>
-        </blockquote>
-      </blockquote>
-      </div>
-      <div class="catDivider two">Content</div>
-       <div class="stepContent">
-        <blockquote>
-        <p>Content<span class="require">*</span>: </p>
-        <blockquote>
-        <p>
-            <textarea name="content" id="content1" cols="45" rows="5" style="width:640px; height:320px;" class="validate[required]" /><?php 
+</td>
+</tr>
+
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+
+<tr>
+<td class="textarea">Content</td>
+<td><textarea name="content" id="content1" cols="45" rows="5" class="validate[required]" /><?php 
 				if (isset ($announcement)) {
 					echo stripslashes($announcement['content']);
 				}
 			?></textarea>
-          </p>
-        </blockquote>
-        </blockquote>
-      </div>
-      <div class="catDivider three">Finish</div>
-      <div class="stepContent">
-	  <blockquote>
-      	<p>
-          <?php submit("submit", "Submit"); ?>
-			<input name="reset" type="reset" id="reset" onclick="GP_popupConfirmMsg('Are you sure you wish to clear the content in this form? \rPress \&quot;cancel\&quot; to keep current content.');return document.MM_returnValue" value="Reset" />
-            <input name="cancel" type="button" id="cancel" onclick="MM_goToURL('parent','index.php');return document.MM_returnValue" value="Cancel" />
-        </p>
-          <?php formErrors(); ?>
-      </blockquote>
-      </div>
+</td>
+</tr>
+</tbody>
+</table>
+
+<p>&nbsp;</p>
+
+<div class="toolbar">
+<input class="button blue" type="submit" value="Submit" name="submit" onClick="tinyMCE.triggerSave();" />
+<input class="button reset" type="reset" value="Reset" />
+<input class="button cancel" type="button" value="Cancel" data-url="index.php" />
+</div>
     </form>
 <?php footer(); ?>
-</body>
-</html>

@@ -194,37 +194,24 @@
 			}
 			
 			mysql_query($editAgendaQuery, $connDBA);
+			
 			header ($redirect);
 			exit;
 		}
 	} 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
 <?php 
 	if (isset ($agenda)) {
-		$title = "Edit the " . stripslashes(htmlentities($agenda['title'])) . " Agenda";
+		$title = "Edit " . stripslashes(htmlentities($agenda['title']));
 	} else {
-		$title =  "Create a New Agenda";
+		$title =  "New Agenda";
 	}
 	
 	title($title); 
 ?>
-<?php headers(); ?>
-<?php tinyMCESimple(); ?>
-<?php validate(); ?>
-<script src="../../javascripts/jQuery/agendaAssist.jquery.php" type="text/javascript"></script>
-<script src="../../javascripts/common/enableDisable.js" type="text/javascript"></script>
-<script src="../../javascripts/common/newObject.js" type="text/javascript"></script>
-</head>
-<body<?php bodyClass(); ?>>
-<?php toolTip(); ?>
-<?php topPage(); ?>
-    <h2>
-      <?php if (isset ($agenda)) {echo "Edit the &quot;" . stripslashes($agenda['title']) . "&quot; Agenda";} else {echo "Create a New Agenda";} ?>
-    </h2>
-<p>Use this page to <?php if (isset ($agenda)) {echo "edit the content of \"<strong>" . stripslashes(htmlentities($agenda['title'])) . "</strong>\"";} else {echo "create a new agenda";} ?>.</p>
+<?php topPage("admin", $title, "collaboration", array("collaboration", 3), "<script src=\"../../tiny_mce/tiny_mce.js\"></script>
+<script src=\"../../javascripts/common/tiny_mce_simple.php\"></script>
+<script src=\"../../javascripts/jQuery/agendaAssist.jquery.php\"></script>"); ?>
 <?php
 //Display error messages
 	if (isset($_GET['message']) && $_GET['message'] == "inferior") {
@@ -238,31 +225,20 @@
 			echo "?id=" . $agenda['id'];
 		}
 	?>" method="post" name="manageAgenda" id="validate" onsubmit="return errorsOnSubmit(this);">
-      <div class="catDivider one">Settings</div>
-      <div class="stepContent">
-      <blockquote>
-        <p>Title<span class="require">*</span>: </p>
-        <blockquote>
-          <p>
-            <input name="title" type="text" id="title" size="50" autocomplete="off" class="validate[required]"<?php
+<table width="100%">
+<tbody>
+<tr>
+<td class="label">Title</td>
+<td><input name="title" type="text" id="title" size="50" autocomplete="off" class="validate[required]"<?php
             	if (isset ($agenda)) {
 					echo " value=\"" . stripslashes(htmlentities($agenda['title'])) . "\"";
 				}
-			?> />
-          </p>
-       </blockquote>
-       <p>Comments: </p>
-       <blockquote>
-         <p><textarea name="content" id="content1" cols="45" rows="5" style="width:450px;" /><?php 
-				if (isset ($agenda)) {
-					echo stripslashes($agenda['content']);
-				}
-			?></textarea></p>
-       </blockquote>
-<p>Availability:</p>
-        <blockquote>
-          <p>
-            <input name="from" type="text" id="from" readonly="readonly"<?php
+			?> /></td>
+</tr>
+<tr>
+<td class="label">Availability</td>
+<td>
+<input name="from" type="text" id="from" readonly="readonly"<?php
             	if (isset ($agenda)) {
 					echo " value=\"" . stripslashes(htmlentities($agenda['fromDate'])) . "\"";
 				}
@@ -385,24 +361,34 @@
             <option value="23:00"<?php if (isset ($agenda) && $agenda['toTime'] == "23:00") {echo " selected=\"selected\"";} ?>>11:00 pm</option>
             <option value="23:30"<?php if (isset ($agenda) && $agenda['toTime'] == "23:30") {echo " selected=\"selected\"";} ?>>11:30 pm</option>
           </select>
-          <label><input type="checkbox" name="toggleAvailability" id="toggleAvailability" onclick="flvFTFO1('manageAgenda','from,t','fromTime,t','to,t','toTime,t')"<?php
+          <label><input type="checkbox" name="toggleAvailability" id="toggleAvailability"<?php
             	if (isset ($agenda) && $agenda['toDate'] != "") {
 					echo " checked=\"checked\"";
 				}
 			?> />Enable</label>
-          </p>
-        </blockquote>
-      </blockquote>
-      </div>
-      <div class="catDivider two">Content</div>
-       <div class="stepContent">
-        <blockquote>
-        <table class="dataTable" id="agenda">
+</td>
+</tr>
+<tr>
+<td class="textarea">Comments</td>
+<td><textarea name="content" id="content1" cols="45" rows="5" style="width:450px;" /><?php 
+				if (isset ($agenda)) {
+					echo stripslashes($agenda['content']);
+				}
+			?></textarea>
+</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>     
+</tr>
+<tr>
+<td class="label">Agenda Items</td>
+<td>
+ <table class="dataTable" id="agenda">
           <tr>
           		<th class="tableHeader" width="20"></th>
             	<th class="tableHeader">Task</th>
             	<th class="tableHeader" width="200">Assignees</th>
-                <th class="tableHeader" width="200">Due Date</th>
+                <th class="tableHeader" width="100">Due Date</th>
             	<th class="tableHeader" width="100">Priority</th>
                 <th class="tableHeader" width="50"></th>
           </tr>
@@ -410,12 +396,12 @@
 			//Display table rows according to what is going on			
 				if (!isset ($agenda)) {				
 					echo "<tr id=\"1\" align=\"center\">";
-						echo "<td width=\"20\"><input type=\"hidden\" name=\"description[]\" id=\"description1\" /><a href=\"javascript:;\" class=\"action noDescription loadDescription\" onmouseover=\"Tip('Add description');\" onmouseout=\"UnTip();\"></a></td>";
-						echo "<td><input type=\"text\" name=\"task[]\" id=\"task1\" class=\"validate[required]\" autocomplete=\"off\" size=\"40\"></td>";
-						echo "<td width=\"200\"><input type=\"text\" name=\"assignee[]\" id=\"assignee1\" autocomplete=\"off\" size=\"40\" class=\"assignee validate[required]\"></td>";
-						echo "<td width=\"200\"><input type=\"text\" name=\"dueDate[]\" id=\"dueDate1\" class=\"dueDate\" readonly=\"readonly\" /></td>";
+						echo "<td width=\"20\"><input type=\"hidden\" name=\"description[]\" id=\"description1\" /><span class=\"tip noComment loadComment\" title=\"Add comment\"></a></td>";
+						echo "<td><input type=\"text\" name=\"task[]\" id=\"task1\" class=\"validate[required]\" autocomplete=\"off\" style=\"width: 100%;\"></td>";
+						echo "<td width=\"200\"><input type=\"text\" name=\"assignee[]\" id=\"assignee1\" autocomplete=\"off\" style=\"width: 100%;\" class=\"assignee validate[required]\"></td>";
+						echo "<td width=\"100\"><input type=\"text\" name=\"dueDate[]\" id=\"dueDate1\" class=\"dueDate\" readonly=\"readonly\" /></td>";
 						echo "<td width=\"100\"><select name=\"priority[]\" id=\"priority1\"><option value=\"1\">Low</option><option value=\"2\" selected=\"selected\">Normal</option><option value=\"3\">High</option></select></td>";
-						echo "<td width=\"50\"><span class=\"action smallDelete\" onclick=\"deleteObject('agenda', '1')\"></span>";
+						echo "<td width=\"50\"><span class=\"tip smallDelete\" title=\"Delete task\" onclick=\"deleteObject('agenda', '1')\"></span>";
 					echo "</tr>";
 				} else {
 					$values = sizeof(unserialize($agenda['priority']));
@@ -429,22 +415,22 @@
 						$rowID = $count + 1;
 						
 						if (empty($description[$count])) {
-							$class = "noDescription";
+							$class = "noComment";
 							$value = "";
-							$tip = "Add description";
+							$tip = "Add comment";
 						} else {
-							$class = "description";
+							$class = "comment";
 							$value = htmlentities(stripslashes($description[$count]));
-							$tip = "Edit description";
+							$tip = "Edit comment";
 						}
 						
 						echo "<tr id=\"" . $rowID . "\" align=\"center\">";
-							echo "<td width=\"20\"><input type=\"hidden\" name=\"description[]\" id=\"description1\" value=\"" . $value . "\" /><a href=\"javascript:;\" class=\"action " . $class . " loadDescription\" onmouseover=\"Tip('" . $tip . "');\" onmouseout=\"UnTip();\"></a></td>";
-							echo "<td><input type=\"text\" name=\"task[]\" id=\"task" . $rowID . "\" class=\"validate[required]\" autocomplete=\"off\" size=\"40\" value=\"" . htmlentities(stripslashes($tasks[$count])) . "\"></td>";
-							echo "<td width=\"200\"><input type=\"text\" name=\"assignee[]\" id=\"assignee1\" class=\"assignee validate[required]\" autocomplete=\"off\" size=\"40\" value=\"" . htmlentities(stripslashes($assignees[$count])) . ", \"></td>";
-							echo "<td width=\"200\"><input type=\"text\" name=\"dueDate[]\" id=\"dueDate" . $rowID . "\" class=\"dueDate\" value=\"" . htmlentities(stripslashes($dueDates[$count])) . "\" readonly=\"readonly\" /></td>";
+							echo "<td width=\"20\"><input type=\"hidden\" name=\"description[]\" id=\"description1\" value=\"" . $value . "\" /><span class=\"tip " . $class . " loadComment\" title=\"" . $tip . "\"></a></td>";
+							echo "<td><input type=\"text\" name=\"task[]\" id=\"task" . $rowID . "\" class=\"validate[required]\" autocomplete=\"off\" style=\"width: 100%;\" value=\"" . htmlentities(stripslashes($tasks[$count])) . "\"></td>";
+							echo "<td width=\"200\"><input type=\"text\" name=\"assignee[]\" id=\"assignee1\" class=\"assignee validate[required]\" autocomplete=\"off\" style=\"width: 100%;\" value=\"" . htmlentities(stripslashes($assignees[$count])) . ", \"></td>";
+							echo "<td width=\"100\"><input type=\"text\" name=\"dueDate[]\" id=\"dueDate" . $rowID . "\" class=\"dueDate\" value=\"" . htmlentities(stripslashes($dueDates[$count])) . "\" readonly=\"readonly\" /></td>";
 							echo "<td width=\"100\"><select name=\"priority[]\" id=\"priority" . $rowID . "\"><option value=\"1\""; if ($priorities[$count] == "1") {echo " selected=\"selected\"";} echo ">Low</option><option value=\"2\""; if ($priorities[$count] == "2") {echo " selected=\"selected\"";} echo ">Normal</option><option value=\"3\""; if ($priorities[$count] == "3") {echo " selected=\"selected\"";} echo ">High</option></select></td>";
-							echo "<td width=\"50\"><span class=\"action smallDelete\" onclick=\"deleteObject('agenda', '" . $rowID . "', '" . $count . "');\"></span>";
+							echo "<td width=\"50\"><span class=\"tip smallDelete\" title=\"Delete task\" onclick=\"deleteObject('agenda', '" . $rowID . "', '" . $count . "');\"></span>";
 						echo "</tr>";
 					}
 					
@@ -452,21 +438,17 @@
 				}
 			?>
         </table>
-        <p><span class="smallAdd" onclick="addAgenda('agenda', '<input type=\'hidden\' name=\'description[]\' id=\'description', '\' /><a href=\'javascript:;\' class=\'action noDescription loadDescription\' onmouseout=\'UnTip();\'></a>', '<input type=\'text\' name=\'task[]\' id=\'task', '\' class=\'validate[required]\' autocomplete=\'off\' size=\'40\'>', '<input type=\'text\' name=\'assignee[]\' id=\'assignee', '\' class=\'assignee validate[required]\' autocomplete=\'off\' size=\'40\'>', '<input type=\'text\' name=\'dueDate[]\' id=\'dueDate', '\' class=\'dueDate\' readonly=\'readonly\' />', '<select name=\'priority[]\' id=\'priority', '\'><option value=\'1\'>Low</option><option value=\'2\' selected=\'selected\'>Normal</option><option value=\'3\'>High</option></select>'); checkAuto(); checkCalendar();">Add Another Task</span></p>
-        </blockquote>
-      </div>
-      <div class="catDivider three">Finish</div>
-      <div class="stepContent">
-	  <blockquote>
-      	<p>
-          <?php submit("submit", "Submit"); ?>
-			<input name="reset" type="reset" id="reset" onclick="GP_popupConfirmMsg('Are you sure you wish to clear the content in this form? \rPress \&quot;cancel\&quot; to keep current content.');return document.MM_returnValue" value="Reset" />
-            <input name="cancel" type="button" id="cancel" onclick="MM_goToURL('parent','index.php');return document.MM_returnValue" value="Cancel" />
-        </p>
-          <?php formErrors(); ?>
-      </blockquote>
-      </div>
+        <p><span class="smallAdd" onclick="addAgenda('agenda','<input type=\'hidden\' name=\'description[]\' id=\'description', '\' /><span class=\'tip noComment loadComment\' title=\'Add comment\'></a>', '<input type=\'text\' name=\'task[]\' id=\'task', '\' class=\'validate[required]\' autocomplete=\'off\' style=\'width: 100%;\'>', '<input type=\'text\' name=\'assignee[]\' id=\'assignee', '\' class=\'assignee validate[required]\' autocomplete=\'off\' style=\'width: 100%;\'>', '<input type=\'text\' name=\'dueDate[]\' id=\'dueDate', '\' class=\'dueDate\' readonly=\'readonly\' />', '<select name=\'priority[]\' id=\'priority', '\'><option value=\'1\'>Low</option><option value=\'2\' selected=\'selected\'>Normal</option><option value=\'3\'>High</option></select>'); checkAuto(); checkCalendar();">Add Another Task</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+
+<div class="toolbar">
+<input class="button blue" type="submit" value="Submit" name="submit" onClick="tinyMCE.triggerSave();" />
+<input class="button reset" type="reset" value="Reset" />
+<input class="button cancel" type="button" value="Cancel" data-url="index.php" />
+</div>
     </form>
-<?php footer(); ?>
-</body>
-</html>
+<?php footer("admin"); ?>

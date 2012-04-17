@@ -2,11 +2,10 @@
 <?php loggedIn() ? true : redirect($root  . "login.php?accesscheck=" . urlencode($_SERVER['REQUEST_URI'])); ?>
 <?php
 //Process the agenda
-	if (isset($_POST['action']) && $_POST['action'] == "setAvaliability" && !empty($_POST['id'])) {
+	if (isset($_POST['action']) && $_POST['action'] == "setCompletion" && !empty($_POST['id']) && (!empty($_POST['oldValue']) || $_POST['oldValue'] == "0")) {
 		$id = $_POST['id'];
 		$option = $_POST['option'];
-		$oldValuePrep = explode("_", $id);
-		$oldValue = $oldValuePrep['1'];
+		$oldValue = $_POST['oldValue'];
 		
 		$oldDataGrabber = mysql_query("SELECT * FROM `collaboration` WHERE `id` = '{$id}'", $connDBA);
 		$oldData = mysql_fetch_array($oldDataGrabber);
@@ -49,6 +48,8 @@
 		}
 		
 		mysql_query("UPDATE `collaboration` SET `completed` = '{$status}' WHERE `id` = '{$id}'", $connDBA);
+		
+		header("Location: index.php");
 		exit;
 	}
 	
@@ -217,7 +218,6 @@
 	}
 ?>
 <?php topPage("admin", "Dashboard", "home", array("dashboard", 1)); ?>
-<div style="width:100%; border-bottom: 1px solid #999999; border-top: 1px solid #999999; margin: 0px 0px 0px -15px; padding: 10px 15px 10px 15px; box-shadow: 0 0 7px 2px #CCCCCC; "><button class="button blue">Edit</button><button class="button red">Delete</button><button class="button green">Settings</button></div>
 <?php
 //Display announcements, file share, agenda, forum and polling modules
 	$itemsCheck = mysql_query("SELECT * FROM `collaboration` WHERE `visible` = 'on'", $connDBA);
@@ -250,6 +250,12 @@
 					$priority = unserialize($item['priority']);
 					$completed = unserialize($item['completed']);
 					
+					for($count = 0; $count <= sizeof($task) - 1; $count++) {
+						if (is_array($completed) && !empty($completed[$count])) {
+							$totalComplete++;
+						}
+					}
+					
 					echo "
 
 <!-- Agenda: " . stripslashes($item['title']) . " -->
@@ -257,9 +263,12 @@
 <h2>" . stripslashes($item['title']) . "</h2>
 
 " . stripslashes($item['content']) . "
-<div class=\"progressBar\" style=\"width:200px; height:20px;\"></div>
-<span class=\"percentage\"></span>
+
 <br />
+<span>Overall progress:</span>
+<div class=\"ui-progressbar ui-widget ui-widget-content ui-corner-all\" style=\"height: 20px; width: 200px;\">
+<div style=\"width: " . ($totalComplete / sizeof($task)) * 100 . "%;\" class=\"ui-progressbar-value ui-widget-header ui-corner-left\"></div>
+</div>
 <br />
 					
 <table class=\"dataTable\">
@@ -269,23 +278,29 @@
 <th class=\"tableHeader\" width=\"200\">Assignees</th>
 <th class=\"tableHeader\" width=\"200\">Due Date</th>
 <th class=\"tableHeader\" width=\"100\">Priority</th>
-<th class=\"tableHeader\" width=\"100\">Completion</th>
+<th class=\"tableHeader\" width=\"50\">Comments</th>
 </tr>
 
 ";
 					
 					for($count = 0; $count <= sizeof($task) - 1; $count++) {
 						echo "<!-- Agenda Task: " . stripslashes($task[$count]) . " -->
-<tr";
+<tr align=\"center\"";
 						if ($count & 1) {echo " class=\"even\">\n";} else {echo " class=\"odd\">\n";}
-							if (empty($description[$count])) {
-								echo "<td class=\"description\">&nbsp;</td>\n";
+							echo "<td>
+<div align=\"center\">
+<span class=\"tip updateTask ";
+							
+							if (is_array($completed) && !empty($completed[$count])) {
+								echo "checked\" id=\"" . $item['id'] . "\" data-value=\"" . $count . "\" title=\"Click to mark as incomplete\">";
 							} else {
-								echo "<td class=\"description\">
-<a href=\"javascript:;\" class=\"action description\" onmouseover=\"Tip('View comments for this task');\" onmouseout=\"UnTip('');\"></a>
-<div class=\"contentHide\">" . stripslashes($description[$count]) . "</div>
-</td>\n";
+								echo "unchecked\" id=\"" . $item['id'] . "\" data-value=\"" . $count . "\" title=\"Click to mark as completed\">";
 							}
+							
+							echo "</span>
+</div>
+</td>
+";
 							
 							echo "<td class=\"taskName\">" . stripslashes($task[$count]) . "</td>\n";
 							echo "<td class=\"assignees\">" . $assignee[$count] . "</td>\n";
@@ -307,27 +322,23 @@
 							}
 							
 							echo "</td>\n";
-							echo "<td>
-<div align=\"center\">
-<a href=\"javascript:;\" class=\"checkbox ";
 							
-							if (is_array($completed) && !empty($completed[$count])) {
-								$totalComplete++;
-								
-								echo "checked";
+							
+							if (empty($description[$count])) {
+								echo "<td class=\"description\"><span class=\"tip noComment\" style=\"cursor: default;\" title=\"There are no comments for this task\"></span></td>\n";
 							} else {
-								echo "unchecked";
+								echo "<td class=\"description\">
+<span class=\"tip comment openComment\" title=\"Click to view comments\"></span>
+<div class=\"hidden\">" . stripslashes(nl2br($description[$count])) . "</div>
+</td>\n";
 							}
 							
-							echo "\" id=\"" . $item['id'] . "_" . $count . "\"></a>
-</div>
-</td>
-</tr>
+							echo "</tr>
 ";
 					}
 					
 					echo "</table>
-<input type=\"hidden\" class=\"totalItems\" value=\"" . (sizeof($task) - 1) . "\" />
+<input type=\"hidden\" class=\"totalItems\" value=\"" . sizeof($task) . "\" />
 <input type=\"hidden\" class=\"totalComplete\" value=\"" . $totalComplete . "\" />
 </section>\n";
 					break;	
@@ -649,4 +660,4 @@
 		}
 	}
 ?>
-<?php footer(); ?>
+<?php footer("admin"); ?>
