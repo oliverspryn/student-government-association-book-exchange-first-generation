@@ -103,7 +103,7 @@
 
 <li>
 <ul class="<?php echo $main == "external" ? "active" : "inactive"; ?>">
-<li class="title"><a class="icon external" href="#">External Pages</a><span class="arrow"></span></li>
+<li class="title"><a class="icon external" href="<?php echo $root; ?>admin/cms/external/index.php">External Pages</a><span class="arrow"></span></li>
 
 <li>
 <ul>
@@ -116,7 +116,7 @@
 
 <li>
 <ul class="<?php echo $main == "settings" ? "active" : "inactive"; ?>">
-<li class="title"><a class="icon settings" href="#">Site Settings</a><span class="arrow"></span></li>
+<li class="title"><a class="icon settings" href="<?php echo $root; ?>admin/cms/site_settings.php">Site Settings</a><span class="arrow"></span></li>
 
 <li>
 <ul>
@@ -134,7 +134,7 @@
 
 <li>
 <ul class="<?php echo $main == "question" ? "active" : "inactive"; ?>">
-<li class="title"><a class="icon question" href="#">Weekly Question</a><span class="arrow"></span></li>
+<li class="title"><a class="icon question" href="<?php echo $root; ?>admin/question-of-the-week/index.php">Weekly Question</a><span class="arrow"></span></li>
 
 <li>
 <ul>
@@ -148,7 +148,7 @@
 
 <li>
 <ul class="<?php echo $main == "exchange" ? "active" : "inactive"; ?>">
-<li class="title"><a class="icon exchange" href="#">Book Exchange</a><span class="arrow"></span></li>
+<li class="title"><a class="icon exchange" href="<?php echo $root; ?>admin/book-exchange/index.php">Book Exchange</a><span class="arrow"></span></li>
 
 <li>
 <ul>
