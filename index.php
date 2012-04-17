@@ -113,6 +113,9 @@
 		exit;
 	}
 	
+//Process a login
+	login();
+
 //Process the comments
 	if (isset($_POST['submit']) && !empty($_POST['id']) && !empty($_POST['comment'])) {
 		$secure = "false";
@@ -264,9 +267,12 @@
 	}
 ?>
 <?php
-	topPage("public", true);
+	topPage("public", $title);
 ?>
 <?php
+//Display the title
+	echo "<header>\n<h1 class=\"title\">" . $title . "</h1>\n</header>\n\n";
+
 //Use the layout control if the page is displaying a sidebar
 	$sideBarLocationGrabber = mysql_query("SELECT * FROM siteprofiles WHERE id = '1'", $connDBA);
 	$sideBarLocation = mysql_fetch_array($sideBarLocationGrabber);
@@ -302,50 +308,19 @@
 	}
 	
 	if ($sideBarResult || hasChildren() || hasParents() && $pageInfoPrep !== 0 && $pagesExist == 1) {
-		echo "<div class=\"layoutControl\"><div class=\"";
-		
 		if ($sideBarLocation['sideBar'] == "Left") {
-			echo "contentRight";
+			$sideBarLoc = "left";
+			$bodyLoc = " right";
 		} else {
-			echo "contentLeft";
+			$sideBarLoc = "right";
+			$bodyLoc = " left";
 		}
-		echo "\">";
-	}
-	
-//Display content based on login status
-	if (isset($_SESSION['MM_Username']) && isset($pageCheck) && $pageCheck !== 0) {
-	//The admin toolbox div
-		echo "<form name=\"pages\" method=\"post\" action=\"admin/cms/index.php\"><div class=\"toolBar noPadding\"><div align=\"center\">";
-		
-		if (privileges("editPage") == "true") {
-			echo "<a href=\"admin/cms/manage_page.php?id=" . $pageInfoPrep['id'] . "\">Edit This Page</a>  | Visible: <input type=\"hidden\" name=\"action\" value=\"setAvaliability\" /><input type=\"hidden\" name=\"id\" value=\"" .  $pageInfoPrep['id'] . "\" /><input type=\"hidden\" name=\"redirect\" value=\"true\" /><select name=\"option\" onchange=\"this.form.submit();\"><option value=\"on\""; 
-			if ($pageInfoPrep['visible'] == "on") {echo " selected=\"selected\"";} 
-			echo ">Yes</option><option value=\"\""; 
-			if ($pageInfoPrep['visible'] == "") {echo " selected=\"selected\"";} 
-			echo ">No</option></select> | ";
-		}
-			
-		echo "<a href=\"admin/index.php\">Back to Staff Home Page</a> | <a href=\"admin/cms/index.php\">Back to Pages</a> | <a href=\"admin/cms/sidebar/index.php\">Back to Sidebar</a></div></div></form>";
-	}
-	
-	if (isset($_SESSION['MM_Username']) && $pageInfoPrep == 0 && $pagesExist == 0) {
-	//The admin toolbox div
-		echo "<div class=\"toolBar noPadding\"><div align=\"center\"><a href=\"admin/index.php\">Back to Staff Home Page</a> | <a href=\"admin/cms/index.php\">Back to Pages</a> | <a href=\"admin/cms/sidebar.php\">Back to Sidebar</a></div></div>";
-	}
-	
-//Display message updates
-	if (isset($_GET['message'])) {
-		if ($_GET['message'] == "added") {
-			 successMessage("Your comment was added");
-		} elseif ($_GET['message'] == "deleted") {
-			successMessage("The comment was deleted");
-		} elseif ($_GET['message'] == "deletedAll") {
-			successMessage("All comments were deleted");
-		}
+	} else {
+		$bodyLoc = "";
 	}
 	
 //Display the page content	
-	echo "<h2>" . stripslashes($title) . "</h2>" . stripslashes($content);
+	echo "<section class=\"body" . $bodyLoc . "\">\n" . stripslashes($content);
 	
 //Display the comments
 	if (isset($commentsDisplay) && $commentsDisplay == "1") {
@@ -461,33 +436,34 @@
 		}
 	}
 	
+	echo "\n</section>\n";
+	
 //Display the sidebar	
 	if ($sideBarResult || hasChildren() || hasParents() && $pageInfoPrep !== 0 && $pagesExist == 1) {
 		$sideBarCheck = mysql_query("SELECT * FROM sidebar WHERE visible = 'on' AND published != '0' ORDER BY `position` ASC", $connDBA);
 		
-		echo "</div><div class=\"";
+		echo "\n<aside class=\"sidebar ";
 		
 		if ($sideBarLocation['sideBar'] == "Left") {
-			echo "dataLeft";
+			echo "left";
 		} else {
-			echo "dataRight";
+			echo "right";
 		}
 		
-		echo "\">";
+		echo "\">\n";
 		
 		if (hasChildren() || hasParents() && $pageInfoPrep !== 0 && $pagesExist == 1) {			
-			echo "<div class=\"block_course_list sideblock\"><div class=\"header\"><div class=\"title\"><h2>Navigation</h2></div></div><div class=\"content\">";
+			echo "<section class=\"menu\">\n<ul>\n";
 			
 			$pagesGrabber = query("SELECT * FROM `pages` WHERE `id` = '{$id}'");
 			$topLevel = query("SELECT * FROM `pages` WHERE `id` = '{$pagesGrabber['parentPage']}'");
 			$parentLevel = query("SELECT * FROM `pages` WHERE `parentPage` = '{$pagesGrabber['parentPage']}'");
 			$childPagesGrabber = query("SELECT * FROM `pages` WHERE `parentPage` = '{$pagesGrabber['id']}' AND `visible` = 'on' AND `published` != '0' ORDER BY `subPosition` ASC", "raw");
-			echo "<ul id=\"nav\">";
 			
 			if ($pagesGrabber['parentPage'] !== "0") {
 				$topTitle = unserialize($topLevel['content' . $topLevel['display']]);
 				
-				echo "<li><a href=\"index.php?page=" . $pagesGrabber['parentPage'] . "\"><< Back to &quot;" . prepare($topTitle['title']) . "&quot;</a></li>";
+				echo "<li class=\"up\"><a href=\"index.php?page=" . $pagesGrabber['parentPage'] . "\">Back up to &quot;" . prepare($topTitle['title']) . "&quot;</a></li>\n";
 			}
 			
 			if (query("SELECT * FROM `pages` WHERE `parentPage` = '{$pagesGrabber['id']}' AND `visible` = 'on' AND `published` != '0'")) {
@@ -495,16 +471,14 @@
 					$childTitle = unserialize($childPages['content' . $childPages['display']]);
 					
 					if ($id == $childPages['id']) {
-						echo "<li><strong><a href=\"index.php?page=" . $childPages['id'] . "\">" . prepare($childTitle['title']) . "</a></strong></li>";
+						echo "<li><strong><a href=\"index.php?page=" . $childPages['id'] . "\">" . prepare($childTitle['title']) . "</a></strong></li>\n";
 					} else {
-						echo "<li><a href=\"index.php?page=" . $childPages['id'] . "\">" . prepare($childTitle['title']) . "</a></li>";
+						echo "<li><a href=\"index.php?page=" . $childPages['id'] . "\">" . prepare($childTitle['title']) . "</a></li>\n";
 					}
 				}
 			}
 			
-			echo "</ul>";
-			
-			echo "</div></div>";
+			echo "</ul>\n</section>\n";
 		}
 		
 		while ($sideBarPrep = mysql_fetch_array($sideBarCheck)) {
@@ -513,29 +487,25 @@
 			switch ($sideBarPrep['type']) {
 			//If this is a custom content box
 				case "Custom Content" : 				
-					if (!isset($_SESSION['MM_Username'])) {
-						echo "<div class=\"block_course_list sideblock\"><div class=\"header\"><div class=\"title\"><h2>" . stripslashes($sideBar['title']) . "</h2></div></div><div class=\"content\">" . stripslashes($sideBar['content']) . "</div></div>";
-					} elseif (isset($_SESSION['MM_Username']) && privileges("editSideBar") != "true") {
-						echo "<div class=\"block_course_list sideblock\"><div class=\"header\"><div class=\"title\"><h2>" . stripslashes($sideBar['title']) . "</h2></div></div><div class=\"content\">" . stripslashes($sideBar['content']) . "</div></div>";
-					} elseif (isset($_SESSION['MM_Username']) && privileges("editSideBar") == "true") {
-						echo "<div class=\"block_course_list sideblock\"><div class=\"header\"><div class=\"title\"><h2>" . stripslashes($sideBar['title']) . "&nbsp;<a class=\"smallEdit\" href=\"admin/cms/sidebar/manage_sidebar.php?id=" . $sideBarPrep['id'] . "\"></a></h2></div></div><div class=\"content\">" . stripslashes($sideBar['content']) . "</div></div>";
+					if (!isset($_SESSION['MM_Username']) || (isset($_SESSION['MM_Username']) && privileges("editSideBar") != "true")) {
+						echo "\n<section>\n<h2>" . stripslashes($sideBar['title']) . "</h2>\n" . stripslashes($sideBar['content']) . "\n</section>\n";
+					} else {
+						echo "\n<section>\n<h2>" . stripslashes($sideBar['title']) . "&nbsp;<a class=\"smallEdit\" href=\"admin/cms/sidebar/manage_sidebar.php?id=" . $sideBarPrep['id'] . "\"></a></h2>\n" . stripslashes($sideBar['content']) . "\n</section>\n";
 					} break;
 			//If this is a login box	
 				case "Login" : 
 					if (!isset($_SESSION['MM_Username'])) {
-						echo "<div class=\"block_course_list sideblock\"><div class=\"header\"><div class=\"title\"><h2>" . stripslashes($sideBar['title']) . "</h2></div></div><div class=\"content\">" . stripslashes($sideBar['content']) . "<form id=\"login\" name=\"login\" method=\"post\" action=\"index.php\"><div align=\"center\"><div style=\"width:75%;\"><p>User name: <input type=\"text\" name=\"username\" id=\"username\" autocomplete=\"off\" /><br />Password: <input type=\"password\" name=\"password\" id=\"password\" autocomplete=\"off\" /></p><p><input type=\"submit\" name=\"submit\" id=\"submit\" value=\"Login\" /></p></div></div></form></div></div>";
+						echo "\n<section>\n<h2>" . stripslashes($sideBar['title']) . "</h2>\n" . stripslashes($sideBar['content']) . "\n\n<form id=\"login\" name=\"login\" method=\"post\" action=\"index.php\">\n<p>User name: <input type=\"text\" name=\"username\" id=\"username\" autocomplete=\"off\" />\n<br />\nPassword: <input type=\"password\" name=\"password\" id=\"password\" autocomplete=\"off\" /></p>\n<p><input type=\"submit\" name=\"submit\" id=\"submit\" value=\"Login\" /></p>\n</form>\n</section>\n";
 					} elseif (isset($_SESSION['MM_Username']) && privileges("editSideBar") == "true") {
-						echo "<div class=\"block_course_list sideblock\"><div class=\"header\"><div class=\"title\"><h2>" . stripslashes($sideBar['title']) . "&nbsp;<a class=\"smallEdit\" href=\"admin/cms/sidebar/manage_sidebar.php?id=" . $sideBarPrep['id'] . "\"></a></h2></div></div><div class=\"content\">" . stripslashes($sideBar['content']) . "<p><strong>You are already logged in.</strong></p></div></div>";
+						echo "\n<section>\n<h2>" . stripslashes($sideBar['title']) . "&nbsp;<a class=\"smallEdit\" href=\"admin/cms/sidebar/manage_sidebar.php?id=" . $sideBarPrep['id'] . "\"></a></h2>\n" . stripslashes($sideBar['content']) . "\n\n<form id=\"login\" name=\"login\" method=\"post\" action=\"index.php\">\n<p>User name: <input type=\"text\" name=\"username\" id=\"username\" autocomplete=\"off\" />\n<br />\nPassword: <input type=\"password\" name=\"password\" id=\"password\" autocomplete=\"off\" /></p>\n<p><input type=\"submit\" name=\"submit\" id=\"submit\" value=\"Login\" /></p>\n</form>\n</section>\n";
 					} break;
 			  }
 		}
 		
-		echo "</div></div>";
+		echo "</aside>";
 	}
 ?>
 <?php
 	stats("true");
 	footer("public");
 ?>
-</body>
-</html>
