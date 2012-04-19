@@ -1,0 +1,8 @@
+<Files ~ "\.(css)$">
+	order allow,deny
+	allow from all
+</Files>
+<Files ~ "\.(png)$">
+	order allow,deny
+	allow from all
+</Files>

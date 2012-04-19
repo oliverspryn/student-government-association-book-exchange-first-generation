@@ -1,0 +1,245 @@
+/**
+ * Question headers
+ * ------------------------------------
+*/
+
+h2.past {
+	background: #C74B46 url(../images/ribbon_corner.png) no-repeat left;
+	border-right: 6px solid #AA2E29;
+	color: #FFFFFF;
+	display: block;
+	padding: 0px 5px 0px 15px;
+	text-align: right;
+	width: 250px;
+}
+
+h2.current {
+	background: #B2CB39 url(../images/ribbon_corner.png) no-repeat left;
+	border-right: 6px solid #95AE1C;
+	color: #FFFFFF;
+	display: block;
+	padding: 0px 5px 0px 15px;
+	text-align: right;
+	width: 250px;
+}
+
+h2.future {
+	background: #3F9FE0 url(../images/ribbon_corner.png) no-repeat left;
+	border-right: 6px solid #2282C3;
+	color: #FFFFFF;
+	display: block;
+	padding: 0px 5px 0px 15px;
+	text-align: right;
+	width: 250px;
+}
+
+/**
+ * Question section styles
+ * ------------------------------------
+*/
+
+section.question {
+	overflow: auto;
+	position: relative;
+	width: 100%;
+}
+
+section.question h2 {
+	font-size: 14px;
+	margin: 0px 0px 7px 0px;
+}
+
+section.question div.tools {
+	border-right: 3px solid #CCCCCC;
+	display: block;
+	float: left;
+	max-width: 125px;
+	padding-right: 7px;
+	width: 125px;
+}
+
+section.question div.content {
+	border-left: 3px solid #CCCCCC;
+	margin-left: -3px;
+	padding-left: 7px;
+	float: left;
+}
+
+section.past h2 {
+	color: #C74B46;
+}
+
+section.current h2 {
+	color: #B2CB39;
+}
+
+section.future h2 {
+	color: #3F9FE0;
+}
+
+a.data, span.data {
+	color: #666666;
+	display: block;
+	font-size: 11px;
+	text-align: center;
+	width: 100%;
+}
+
+a.time, span.time {
+	background: url(../images/tools.png) no-repeat;
+	background-position: 30px 0px;
+	padding: 60px 0px 10px 0px;
+}
+
+a.responses, span.responses {
+	background: url(../images/tools.png) no-repeat;
+	background-position: 30px -105px;
+	padding: 60px 0px 10px 0px;
+}
+
+a.responses:hover {
+	background-position: -70px -105px;
+}
+
+a.statistics, span.statistics {
+	background: url(../images/tools.png) no-repeat;
+	background-position: 30px -208px;
+	padding-top: 62px;
+}
+
+a.statistics:hover {
+	background-position: -70px -208px;
+}
+
+/**
+ * Question details page styles
+ * ------------------------------------
+*/
+
+section.stats {
+	background-color: #CCCCCC;
+	background: -moz-linear-gradient(0% 90% 90deg, #EEEEEE, #FFFFFF);
+	background: -ms-linear-gradient(#FFFFFF, #EEEEEE);
+	background: -o-linear-gradient(#FFFFFF, #EEEEEE);
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FFFFFF), to(#EEEEEE));
+	border-bottom: 1px solid #999;
+	border-top: 1px solid #999;
+	box-shadow: 0 0 7px 2px #999999;
+	height: 400px;
+	margin: 0px 0px 15px -15px;
+	min-height: 400px;
+	overflow: hidden;
+	padding: 10px 15px 10px 15px;
+	position: relative;
+	width: 100%;
+}
+
+section.stats div.overview {
+	display: block;
+	float: left;
+	max-width: 225px;
+	padding-right: 7px;
+	width: 225px;
+}
+
+section.stats div.overview span.comments {
+	color: #999999;
+	display: block;
+	font-size: 90px;
+	text-align: center;
+}
+
+section.stats div.overview span.date {
+	color: #999999;
+	display: block;
+	font-size: 30px;
+	padding-top: 35px;
+	text-align: center;
+}
+
+section.stats div.overview span.subText {
+	color: #999999;
+	display: block;
+	font-size: 11px;
+	text-align: center;
+}
+
+section.stats div.chart {
+	left: 235px;
+	position: absolute;
+	right: 35px;
+	text-align: center;
+}
+
+section.stats div.chart div.highcharts-container {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+article.question {
+	background-color: #F8F8F8;
+	border: 1px solid #D5D5D5;
+	margin-top: -16px;
+	padding: 5px 10px 10px 10px;
+	z-index: -1;
+}
+
+article.question div.tools {
+	background-color: #E9EBEF;
+	border: 1px solid #D5D5D5;
+	margin: 10px -11px -11px -11px; /* Adding an additional 1px to cover the border of the parent container */
+	overflow: auto;
+	padding: 10px;
+}
+
+article.question div.tools h2 {
+	color: #456;
+	float: left;
+	font-size: 18px;
+	margin: 0px;
+	padding-top: 4px;
+	width: 64%;
+}
+
+article.question div.tools div.buttons {
+	float: right;
+	text-align: right;
+	width: 35%;
+}
+
+article.comments div.comment {
+	background-color: #F8F8F8;
+	border: 1px solid #D5D5D5;
+	margin: 20px 1.5% 0px 1.5%;
+	padding: 10px 10px 0px 10px;
+	position: relative;
+}
+
+article.comments div.comment span.arrow {
+	background: url(../images/comment_arrow.png) no-repeat;
+	padding: 0px 14px 0px 14px;
+	position: relative;
+	top: -24px;
+}
+
+article.comments div.comment div.content {
+	padding: 0px;
+	position: relative;
+	top: -15px;
+}
+
+article.comments div.comment div.info {
+	background-color: #E9EBEF;
+	margin: 0px -10px 0px -10px;
+	overflow: auto;
+	padding: 10px;
+}
+
+article.comments div.comment div.info span.user {
+	font-weight: bolder;
+}
+
+article.comments div.comment div.info span.date {
+	font-size: 11px;
+	float: right;
+}
