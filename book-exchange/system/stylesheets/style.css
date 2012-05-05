@@ -1,0 +1,295 @@
+body {
+	
+}
+
+/**
+ * Book exchange main page header
+ * ------------------------------------
+*/
+
+section.header div.tools {
+	background: #3D3D3D;
+	padding: 25px 25px 20px 25px;
+	width: 200px;
+}
+
+section.header div.tools button {
+	display: inline-block;
+	float: right;
+	font-size: 14px;
+	width: 140px;
+}
+
+div.tools h2.search {
+	color: #FFFFFF;
+	font-size: 16px;
+	margin: 50px 0px 5px 0px;
+}
+
+section.header div.tools input {
+	width: 100%;
+}
+
+section.header div.tools div.controls {
+	clear: both;
+	overflow: auto;
+	width: 100%;
+}
+
+section.header div.tools div.controls button {
+	margin-top: 6px;
+}
+
+section.header div.linkbar {
+	background-color: #EEEEEE;
+	border-bottom: 1px solid #CCCCCC;
+	border-left: 1px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+	border-top: 5px solid #3D3D3D;
+}
+
+/**
+ * Book exchange category flyout
+ * ------------------------------------
+*/
+
+div.categoryFlyWrapper {
+	display: inline-block;
+	float: left;
+	height: 42px; /* Extra 2 px to compensate for the 1 px border around the unordered list */
+	margin: 0px;
+	overflow: hidden;
+	padding: 0px;
+	width: 50px;
+}
+
+ul.categoryFly {
+	background: #FFFFFF;
+	border: 1px solid #000000;
+	cursor: pointer;
+	display: inline-block;
+	height: 40px;
+	margin: 0px;
+	list-style: none;
+	overflow: hidden;
+	padding: 0px;
+	width: 50px;
+}
+
+ul.categoryFly li.selected {
+	display: list-item;
+}
+
+ul.categoryFly li:hover {
+	background: #EEEEEE;
+}
+
+ul.categoryFly li span.band {
+	border-left-style: solid;
+	border-left-width: 50px;
+	display: block;
+	height: 40px;
+	width: 150px;
+}
+
+ul.categoryFly li span.band span.icon {
+	background-repeat: no-repeat;
+	background-position: 11px 6px;
+	display: block;
+	height: 40px;
+	margin-left: -50px;
+	padding: 10px 0px 0px 55px;
+	width: 150px;
+}
+
+/**
+ * Category menu listing
+ * ------------------------------------
+*/
+
+aside.categories {
+	border-right: 4px double #EDEDED;
+	width: 246px;
+}
+
+aside.categories h2 {
+	font-size: 21px;
+	font-weight: lighter;
+	margin-bottom: 5px;
+}
+
+aside.categories ul {
+	list-style: none;
+	padding: 0px;
+	margin-top: 10px;
+}
+
+aside.categories ul li {
+	font-weight: bold;
+	padding: 13px 0px 13px 0px;
+	border-bottom: 1px solid #EDEDED;
+	vertical-align: top;
+}
+
+aside.categories ul li a.name {
+	display: block;
+	vertical-align: top;
+}
+
+
+aside.categories ul li a.name span.icon {
+	display: inline-block;
+	height: 34px;
+	margin: 0px 7px 0px -50px;
+	padding: 6px 5px 0px 0px;
+	text-align: right;
+	width: 85px;
+}
+
+aside.categories ul li a.name span.text {
+	display: inline-block;
+	padding-top: 10px;
+	vertical-align: top;
+}
+
+/*
+ Google UI Buttons
+ 
+ Example usage:
+ <div class="button">Button</div>
+ <div class="button blue">Button</div>
+ <div class="button red">Button</div>
+ <div class="button green">Button</div>
+ <button class="button">Button</button>
+ <button class="button blue">Button</button>
+ <button class="button red">Button</button>
+ <button class="button green">Button</button>
+*/
+
+div.button {
+	background-color: #F5F5F5;
+	background-image: -moz-linear-gradient(center top, #F5F5F5, #F1F1F1);
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 2px 2px 2px 2px;
+	color: #444444;
+	cursor: default;
+	display: inline-block;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+	height: 27px;
+	line-height: 27px;
+	margin-right: 16px;
+	min-width: 54px;
+	outline: 0 none;
+	padding: 0 8px;
+	position: relative;
+	text-align: center;
+}
+
+div.button:hover {
+	background-color: #F8F8F8;
+	background-image: -moz-linear-gradient(center top, #F8F8F8, #F1F1F1);
+	border: 1px solid #C6C6C6;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: #333333;
+}
+
+div.button:active {
+	/* No definitions for button base */
+}
+
+button.button, input[type=submit].button, input[type=reset].button, input[type=button].button {
+	-moz-user-select: none;
+	background-color: #F5F5F5;
+	background-image: -moz-linear-gradient(center top, #F5F5F5, #F1F1F1);
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 2px 2px 2px 2px;
+	color: #444444;
+	cursor: default;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+	height: 29px;
+	min-width: 54px;
+	padding: 0 8px;
+}
+
+button.button:hover, input[type=submit].button:hover, input[type=reset].button:hover, input[type=button].button:hover {
+	background-color: #F8F8F8;
+	background-image: -moz-linear-gradient(center top, #F8F8F8, #F1F1F1);
+	border: 1px solid #C6C6C6;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+button.button:active, input[type=submit].button:active, input[type=reset].button:active, input[type=button].button:active {
+	/* No definitions for button base */
+}
+
+div.button.blue, button.button.blue, input[type=submit].button.blue, input[type=reset].button.blue, input[type=button].button.blue {
+	background-color: #4D90FE;
+	background-image: -moz-linear-gradient(center top, #4D90FE, #4787ED);
+	border: 1px solid #3079ED;
+	color: #FFFFFF;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
+}
+
+div.button.blue:hover, button.button.blue:hover, input[type=submit].button.blue:hover, input[type=reset].button.blue:hover, input[type=button].button.blue:hover {
+	background-color: #357AE8;
+	background-image: -moz-linear-gradient(center top, #4D90FE, #357AE8);
+	border: 1px solid #2F5BB7;
+}
+
+div.button.blue:active, button.button.blue:active, input[type=submit].button:active, input[type=reset].button:active, input[type=button].button:active {
+	box-shadow: 0 0 0 1px #FFFFFF inset;
+	outline: medium none;
+}
+
+div.button.red, button.button.red, input[type=submit].button.red, input[type=reset].button.red, input[type=button].button.red {
+	background-color: #D14836;
+	background-image: -moz-linear-gradient(center top, #DD4B39, #D14836);
+	border: 1px solid transparent;
+	color: #FFFFFF;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
+}
+
+div.button.red:hover, button.button.red:hover, input[type=submit].button.red:hover, input[type=reset].button.red:hover, input[type=button].button.red:hover {
+	-moz-border-bottom-colors: none;
+	-moz-border-image: none;
+	-moz-border-left-colors: none;
+	-moz-border-right-colors: none;
+	-moz-border-top-colors: none;
+	background-color: #C53727;
+	background-image: -moz-linear-gradient(center top, #DD4B39, #C53727);
+	border-color: #B0281A #B0281A #AF301F;
+	border-style: solid;
+	border-width: 1px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+div.button.red:active, button.button.red:active, input[type=submit].button.red:active, input[type=reset].button.red:active, input[type=button].button.red:active {
+	border: 1px solid transparent;
+	box-shadow: none;
+	outline:0 none transparent;
+}
+
+div.button.green, button.button.green, input[type=submit].button.green, input[type=reset].button.green, input[type=button].button.green {
+	background-color: #3D9400;
+	background-image: -moz-linear-gradient(center top, #3D9400, #3D9400);
+	border: 1px solid #29691D;
+	color: #FFFFFF;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
+}
+
+div.button.green:hover, button.button.green:hover, input[type=submit].button.green:hover, input[type=reset].button.green:hover, input[type=button].button.gree:hovern {
+	background-color: #368200;
+	background-image: -moz-linear-gradient(center top, #3D9400, #368200);
+	border: 1px solid #2D6200;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+}
+
+div.button.green:active, button.button.green:active, input[type=submit].button.green:active, input[type=reset].button.green:active, input[type=button].button.green:active {
+	border: 1px solid transparent;
+	box-shadow: none;
+	outline: 0 none transparent;
+}
