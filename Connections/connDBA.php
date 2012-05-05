@@ -75,7 +75,7 @@ ob_start();
 	function headers() {}
 	
 	//Include all top-page items
-	function topPage($type, $title, $headerClass, $highlight, $HTML = "") {
+	function topPage($type, $title, $headerClass = "", $highlight = "", $HTML = "") {
 		global $dirRoot, $root, $connDBA, $userData;
 		
 	//Some system scripts to always include
@@ -99,9 +99,15 @@ ob_start();
 			//The link will be highlighted if:
 			// - the "page" URL parameter matches the URL of the page
 			// - the "page" URL parameter isn't set or is empty and we are on the home page (i.e.: within "index.php")
-				if (($_GET['page'] && $_GET['page'] == $page['id']) || ((!$_GET['page'] || $_GET['page'] == "") && $page['position'] == "1" && $page['parentPage'] == "0" && end(explode("/", $_SERVER['PHP_SELF'])) == "index.php")) {
-					$navigation .= "<li><a class=\"highlight\" href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
-			//... otherwise just show a regular link
+				$URL = explode("/", $_SERVER['PHP_SELF']);
+				
+				if (end($URL) == "index.php" && strtolower($URL[sizeof($URL) - 2]) != "book-exchange") {
+					if (($_GET['page'] && $_GET['page'] == $page['id']) || ((!$_GET['page'] || $_GET['page'] == "") && $page['position'] == "1" && $page['parentPage'] == "0")) {
+						$navigation .= "<li><a class=\"highlight\" href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
+				//... otherwise just show a regular link
+					} else {
+						$navigation .= "<li><a href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
+					}
 				} else {
 					$navigation .= "<li><a href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
 				}
