@@ -4,83 +4,108 @@ $(document).ready(function() {
  * ------------------------------------
 */
 
-	var close = false;
+	var events = $('ul.categoryFly');
+	var hovered = false;
+	
+	events.bind('menuActive', function() {
+		hovered = true;
+		events.addClass('open');
+	});
+	
+	events.bind('menuInactive', function() {
+		hovered = false;
+		events.removeClass('open');
+	});
 
-	$('.categoryFly').hover(function() {
-		var menu = $(this);
+	$('ul.categoryFly').click(function() {
+		if (!hovered) {
+			var menu = $(this);
+			
+		//Calculate the required height by seeing how many rows are in the first column and multiplying by the height of each one
+			var items = menu.children('li:first').children('ul').children('li').length;
+			var height = 40 * items;
 		
-	//Calculate the required height by seeing how many list items exist within this tag and multiplying by the height
-		var height = 40;
-		var counter = 0;
-		
-		menu.children('li').each(function() {
-			counter ++;
-		});
-		
-	//Slide the unselected menu items into view
-		menu.find('li:not(.selected)').slideDown();
-		
-	//Calculate the offeset height from the top and left so that this can be floated overtop of the other elements and not push elements as it opens
-		var top = menu.offset().top;
-		var left = menu.offset().left;
-		
-		menu.css({
-			'top' : top + 'px',
-			'left' : left + 'px',
-			'position' : 'absolute',
-			'z-index' : '5'
-		}).animate({
-			'height' : (counter * height) + 'px',
-			'width' : '200px'
-		}, function() {
-			close = false;
-		});
-	}, function() {
-		var menu = $(this);
-		
-		setTimeout(function() {
-			if (!close) {
-			//Slide the unselected menu items out of the way
-				menu.find('li:not(.selected)').slideUp();
+		//Calculate the required width by seeing how many columns exist and multiplying by the width of each one
+			var items = menu.children('li').length;
+			var width = 250 * items;
+			
+		//Calculate the offeset height from the top and left so that this can be floated overtop of the other elements and not push elements as it opens
+			var top = menu.offset().top;
+			var left = menu.offset().left;
+			
+		//Slide the unselected menu items into view
+			menu.css({
+				'top' : top + 'px',
+				'left' : left + 'px',
+				'position' : 'absolute',
+				'z-index' : '5'
+			}).animate({
+				'height' : height + 'px',
+				'width' : width + 'px'
+			}, function() {
+			//Let the application know that the menu is being hovered over
+				events.trigger('menuActive');
+			}).find('li ul li:not(.selected)').css({
+				'display' : 'list-item',
+				'height' : '0px',
+				'width' : '0px'
+			}).animate({
+				'height' : '40px',
+				'width' : '250px'
+			});
+		}
+	});
+	
+	$(document).click(function(e) {
+		if (!$(e.target).is('ul.categoryFly') && !$(e.target).parents().is('ul.categoryFly')) {
+			var menu = $('ul.categoryFly');
+			
+		//Slide the unselected menu items out of the way
+			menu.animate({
+				'height' : '40px',
+				'width' : '198px'
+			}, function() {
+			//Remove the styles which were added by the mouseover handler
+				menu.removeAttr('style').find('li ul li:not(.selected)').removeAttr('style'); 
 				
-			//Slide up the menu
-				menu.animate({
-					'height' : '40px',
-					'width' : '50px'
-				}, function() {					
-				//Remove the styles which were added by the mouseover function
-					menu.removeAttr('style');
-					
-					close = true;
-				});
-			}
-		}, 250);
+			//Let the application know that the menu has been hovered out
+				events.trigger('menuInactive');
+			}).find('li ul li:not(.selected)').animate({
+				'height' : '0px',
+				'width' : '0px'
+			});
+		}
 	});
 	
 //Slide the menu out of view on-click
-	$('ul.categoryFly li').click(function() {
-		var item = $(this);
-		var menu = item.parent();
-		
-	//Remove the selected class from the previously selected item, we'll add it later
-		menu.children('li').each(function() {
-			$(this).removeAttr('class');
-		});
-		
-		item.addClass('selected');
-		
-	//Slide the unselected menu items out of the way
-		menu.find('li:not(.selected)').slideUp();
-		
-	//Slide up the menu
-		menu.animate({
-			'height' : '40px',
-			'width' : '50px'
-		}, function() {					
-		//Remove the styles which were added by the mouseover function
-			menu.removeAttr('style');
+	$('ul.categoryFly li ul li').click(function() {
+		if (hovered) {
+			var item = $(this);
+			var menu = item.parent().parent().parent();
 			
-			close = true;
-		});
+		//Remove the selected class from the previously selected item and add the selected class to the clicked one
+			menu.find('li ul li.selected').removeClass('selected').css({
+				'display' : 'list-item',
+				'height' : '40px',
+				'width' : '250px'
+			});
+			
+			item.addClass('selected');
+			
+		//Slide the unselected menu items out of the way
+			menu.animate({
+				'height' : '40px',
+				'width' : '198px'
+			}, function() {
+			//Remove the styles which were added by the mouseover handler
+				menu.removeAttr('style').find('li ul li:not(.selected)').removeAttr('style'); 
+				
+			//Let the application know that the menu has been hovered out
+				events.trigger('menuInactive');
+			}).find('li ul li:not(.selected)').animate({
+				'height' : '0px',
+				'width' : '0px'
+			});
+		}
 	});
 });

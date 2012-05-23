@@ -1,5 +1,14 @@
-body {
-	
+/**
+ * Global module styles
+ * ------------------------------------
+*/
+
+.center {
+	text-align: center;
+}
+
+.hidden {
+	display: none;
 }
 
 /**
@@ -27,7 +36,7 @@ div.tools h2.search {
 }
 
 section.header div.tools input {
-	width: 100%;
+	width: 196px;
 }
 
 section.header div.tools div.controls {
@@ -53,53 +62,80 @@ section.header div.linkbar {
  * ------------------------------------
 */
 
-div.categoryFlyWrapper {
+div.menuWrapper {
 	display: inline-block;
 	float: left;
 	height: 42px; /* Extra 2 px to compensate for the 1 px border around the unordered list */
 	margin: 0px;
 	overflow: hidden;
 	padding: 0px;
-	width: 50px;
+	width: 200px; /* Extra 2 px to compensate for the 1 px border around the unordered list */
 }
 
 ul.categoryFly {
 	background: #FFFFFF;
 	border: 1px solid #000000;
-	cursor: pointer;
 	display: inline-block;
+	font-size: 13px;
+	font-weight: normal;
 	height: 40px;
 	margin: 0px;
 	list-style: none;
 	overflow: hidden;
 	padding: 0px;
-	width: 50px;
+	width: 198px;
 }
 
-ul.categoryFly li.selected {
+ul.categoryFly li {
+	display: table-cell;
+	vertical-align: top;
+}
+
+ul.categoryFly li ul {
+	display: inline-block;
+	margin: 0px;
+	list-style: none;
+	padding: 0px;
+}
+
+ul.categoryFly li ul li {
+	cursor: pointer;
+	display: none;
+}
+
+ul.categoryFly li ul li.selected {
 	display: list-item;
 }
 
-ul.categoryFly li:hover {
-	background: #EEEEEE;
-}
-
-ul.categoryFly li span.band {
+ul.categoryFly li ul li span.band {
 	border-left-style: solid;
 	border-left-width: 50px;
 	display: block;
 	height: 40px;
-	width: 150px;
+	width: 200px;
 }
 
-ul.categoryFly li span.band span.icon {
+ul.categoryFly li ul li span.band span.icon {
 	background-repeat: no-repeat;
-	background-position: 11px 6px;
+	background-position: 9px 6px;
 	display: block;
 	height: 40px;
 	margin-left: -50px;
-	padding: 10px 0px 0px 55px;
-	width: 150px;
+	padding: 11px 0px 0px 55px;
+	width: 200px;
+}
+
+ul.categoryFly li ul li.all span.band span.icon {
+	background-position: 9px 4px;
+}
+
+ul.categoryFly.open li ul li.selected {
+	background: #BADFF5;
+	display: list-item;
+}
+
+ul.categoryFly.open li ul li:hover {
+	background: #EEEEEE;
 }
 
 /**
@@ -116,6 +152,11 @@ aside.categories h2 {
 	font-size: 21px;
 	font-weight: lighter;
 	margin-bottom: 5px;
+}
+
+aside.categories button {
+	font-size: 14px;
+	width: 190px;
 }
 
 aside.categories ul {
@@ -135,7 +176,6 @@ aside.categories ul li a.name {
 	display: block;
 	vertical-align: top;
 }
-
 
 aside.categories ul li a.name span.icon {
 	display: inline-block;
