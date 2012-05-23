@@ -108,4 +108,50 @@ $(document).ready(function() {
 			});
 		}
 	});
+	
+/**
+ * Load a Wikipedia article for each
+ * category listing
+ * ------------------------------------
+*/
+
+	if (parseInt($('article.description').length) > 0) {
+		var container = $('article.description');
+		
+		$.ajax({
+			url : 'http://en.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&exintro=1&redirects&callback=?',
+			dataType: 'json',
+			data : {
+				titles : container.parent().parent().children('header.styled').children('h1').text() //Fetched from the page <header> element
+			},
+			success : function(data) {	
+			// At some point in the JSON structure, we will need the article ID, which is different for every article, to access the 
+			// the body of the article. Since this is an unknown, the we will need to walk through the strcuture and find the ID of
+			// the article
+				var keys = new Array();
+				
+				for (var key in data.query.pages) {
+					if (data.query.pages.hasOwnProperty(key)){
+						keys.push(key);
+					}
+				}
+				
+			//If the key is -1, then Wikipedia couldn't find and article on the subject
+				if (keys[0] != '-1') {
+				//Put the article from Wikipieda in the appropriate container, and remove the loading class
+					var article = data.query.pages[keys[0]].extract;
+					container.children('section.article').removeClass('loading').html(article);
+					
+				//Update the "Read More" button to link to the article and show the button
+					var link = data.query.pages[keys[0]].title;
+					container.children('a.buttonLink').attr('href', 'http://en.wikipedia.org/wiki/' + link).attr('target', '_blank').removeAttr('style');
+					
+				//Show the disclaimer
+					container.children('section.disclaimer').removeClass('hidden');
+				} else {
+					container.hide();
+				}
+			}
+		});
+	}
 });

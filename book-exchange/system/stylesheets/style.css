@@ -314,6 +314,112 @@ header.styled h2 {
 	top: 0px;
 }
 
+/**
+ * Category information sidebar
+ * ------------------------------------
+*/
+
+aside.info {
+	border-right: 4px double #EDEDED;
+	float: left;
+	margin-right: 10px;
+	position: relative;
+	width: 290px;
+}
+
+aside.info img.icon {
+	background: #3D3D3D;
+	margin: -45px 0px 0px 12px;
+	padding: 10px 7px 0px 7px;
+	z-index: 500;
+}
+
+aside.info h2 {
+	font-weight: lighter;
+}
+
+aside.info ul {
+	list-style: none;
+	padding: 0px 0px 30px 2px;
+}
+
+aside.info ul li {
+	clear: both;
+	display: block;
+	padding-bottom: 20px;
+	overflow: auto;
+}
+
+aside.info ul li img {
+	display: inline;
+	float: left;
+	max-width: 90px;
+	padding-right: 5px;
+}
+
+aside.info ul li a.title {
+	display: block;
+	font-size: 13px;
+	font-weight: bold;
+}
+
+aside.info ul li span.author {
+	display: block;
+	font-size: 10px;
+	padding-top: 5px;
+}
+
+/**
+ * Main cateogry listing content
+ * ------------------------------------
+*/
+
+section.listing {
+	margin-left: 10px;
+	width: auto;
+}
+
+section.listing article.description {
+	border-bottom: 4px double #EDEDED;
+	margin-left: 284px;
+	padding-bottom: 7px;
+}
+
+section.listing article.description section.article {
+	max-height: 350px;
+	overflow: hidden;
+	position: relative;
+}
+
+section.listing article.description section.article.loading {
+	background: url(../images/icons/loading.gif) no-repeat center;
+	height: 50px;
+}
+
+section.listing article.description section.article::after {
+    background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0), white);
+    background-image: -moz-linear-gradient(rgba(255, 255, 255, 0), white);
+    background-image: -ms-linear-gradient(rgba(255, 255, 255, 0), white);
+    background-image: -o-linear-gradient(rgba(255, 255, 255, 0), white);
+    background-image: linear-gradient(rgba(255, 255, 255, 0), white);
+    bottom: 0;
+    content: '';
+	height: 30px;
+    left: 0;
+    position: absolute;
+    right: 0;
+}
+
+section.listing article.description a.buttonLink {
+	float: right;
+	margin-top: 5px;
+}
+
+section.listing article.description section.disclaimer {
+	font-size: 10px;
+	padding-top: 35px;
+}
+
 /*
  Google UI Buttons
  
