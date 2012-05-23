@@ -11,6 +11,39 @@
 	display: none;
 }
 
+a.buttonLink, span.buttonLink {
+	background-color: #999999;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 11px;
+	margin-top: 17px;
+	max-width: 187px;
+	padding: 3px 1px 3px 1px;
+	vertical-align: top;
+	width: auto;
+}
+
+a.buttonLink:active {
+	color: #FFFFFF;
+}
+
+a.buttonLink:hover {
+	color: #FFFFFF;
+}
+
+a.buttonLink:visited {
+	color: #FFFFFF;
+}
+
+a.buttonLink span, span.buttonLink span {
+	border: 1px solid #FFFFFF;
+	padding: 1px 3px 1px 3px;
+}
+
+a.buttonLink span:hover {
+	background: #33CCFF;
+}
+
 /**
  * Book exchange main page header
  * ------------------------------------
@@ -190,6 +223,95 @@ aside.categories ul li a.name span.text {
 	display: inline-block;
 	padding-top: 10px;
 	vertical-align: top;
+}
+
+/**
+ * Unordered list of book categories
+ * ------------------------------------
+*/
+
+ul.listing {
+	list-style: none;
+	padding: 0px;
+}
+
+ul.listing li {
+	display:inline-block;
+	padding-bottom: 15px;
+	width: 320px;
+}
+
+ul.listing li img {
+	display:inline;
+	float: left;
+}
+
+ul.listing li a.title {
+	color: #3D3D3D;
+	display: inline-block;
+	font-weight: bold;
+	padding: 7px 0px 0px 5px;
+	vertical-align: top;
+}
+
+ul.listing li span.description {
+	display: inline-block;
+	float: right;
+	font-size: 11px;
+	padding-top: 7px;
+	vertical-align: top;
+	width: 187px;
+}
+
+ul.listing li a.buttonLink, ul.listing li span.buttonLink {
+	float: left;
+	margin-left: 4px;
+}
+
+/**
+ * Category header setup
+ * ------------------------------------
+*/
+
+header.styled {
+	border-top-style: solid;
+	border-top-width: 5px;
+	margin-top: -10px;
+	position: relative;
+}
+
+header.styled h1 {
+	border-style: solid;
+	border-width: 5px;
+	color: #3D3D3D;
+	font-weight: bold;
+	margin: 0px;
+	padding: 10px 10px 10px 300px;
+}
+
+header.styled.all {
+	border-top-color: #000000;
+}
+
+header.styled.all h1 {
+	background: url(../images/icons/book.png) no-repeat #5C5C5C;
+	background-position: 7px 6px;
+	border-color: #3D3D3D;
+	color: #FFFFFF;
+	padding-left: 70px;
+}
+
+header.styled.all h2 {
+	color: #FFFFFF;
+}
+
+header.styled h2 {
+	color: #3D3D3D;
+	font-weight: lighter;
+	margin: 17px 0px 15px 0px;
+	position: absolute;
+	right: 15px;
+	top: 0px;
 }
 
 /*

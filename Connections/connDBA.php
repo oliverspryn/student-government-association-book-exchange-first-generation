@@ -101,7 +101,7 @@ ob_start();
 			// - the "page" URL parameter isn't set or is empty and we are on the home page (i.e.: within "index.php")
 				$URL = explode("/", $_SERVER['PHP_SELF']);
 				
-				if (end($URL) == "index.php" && strtolower($URL[sizeof($URL) - 2]) != "book-exchange") {
+				if (end($URL) == "index.php" && !strstr($_SERVER['PHP_SELF'], "book-exchange")) {
 					if (($_GET['page'] && $_GET['page'] == $page['id']) || ((!$_GET['page'] || $_GET['page'] == "") && $page['position'] == "1" && $page['parentPage'] == "0")) {
 						$navigation .= "<li><a class=\"highlight\" href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
 				//... otherwise just show a regular link
@@ -1080,13 +1080,14 @@ ob_start();
 			$additionalCheck = "";
 		}
 		
-		$itemCheckGrabber = mysql_query("SELECT * FROM {$table}{$additionalCheck}", $connDBA);
+		$itemCheckGrabber = mysql_query("SELECT * FROM `{$table}`{$additionalCheck}", $connDBA);
 		
 		if ($itemCheckGrabber) {
 			$itemCheck = mysql_num_rows($itemCheckGrabber);
 			
 			if ($itemCheck >= 1) {
-				$itemGrabber = mysql_query("SELECT * FROM {$table}{$additionalCheck}", $connDBA);
+				$itemGrabber = mysql_query("SELECT * FROM `{$table}`{$additionalCheck}", $connDBA);
+				
 				$item = mysql_fetch_array($itemGrabber);
 				
 				return $item;
