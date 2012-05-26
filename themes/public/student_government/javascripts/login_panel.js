@@ -4,8 +4,8 @@ $(document).ready(function() {
 		$('section.login').slideToggle();
 	});
 	
-//Slide down the login and sign-up panel when a locked link is clicked
-	$('a.locked').click(function(event) {
+//Slide down the login and sign-up panel when a locked link or button is clicked
+	$('.locked').click(function(event) {
 	//Don't follow the page!
 		event.preventDefault();
 		

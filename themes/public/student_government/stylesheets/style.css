@@ -75,46 +75,60 @@ h2.green {
  */
 
 section.login {
-	background: #000000;
+	background: url(../images/step_1.png) no-repeat bottom left #000000;
 	clear: both;
 	display: none;
 	font-size: 12px;
-	height: 275px;
-	padding: 10px 10% 10px 10%;
+	height: 305px;
 }
 
-section.login div.left {
-	background: #000000;
-	float: left;
-	width: 33%;
-}
-
-section.login div.center {
-	background: #000000;
-	float: left;
-	height: 275px;
-	padding-left: 3%;
-	width: 30%;
-}
-
-section.login div.center h2 {
-	color: #AAD450;
-	font-size: 14px;
+section.login div.design {
+	background: url(../images/step_2.png) no-repeat bottom right;
+	height: 100%;
+	padding: 10px 10% 0px 10%;
 	text-align: center;
 }
 
-section.login div.right {
-	background: #000000;
-	float: left;
-	height: 275px;
-	padding-left: 3%;
-	width: 30%;
+section.login div.design div.login {
+	display: inline-block;
+	height: 285px;
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+	text-align: left;
+	vertical-align: top;
+	width: 250px;
 }
 
-section.login div.right h2 {
+section.login div.design div.login h2 {
 	color: #F49AC1;
 	font-size: 14px;
-	text-align: center;
+	padding-left: 93px;
+}
+
+section.login div.design span.toggle {
+	background: url(../images/login_register.png) no-repeat center;
+	background-position: -120px 0px;
+	display: inline-block;
+	height: 240px;
+	margin-right: 30px;
+	width: 65px;
+}
+
+section.login div.design div.register {
+	display: inline-block;
+	height: 285px;
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+	text-align: left;
+	width: 250px;
+}
+
+section.login div.design div.register h2 {
+	color: #AAD450;
+	font-size: 14px;
+	padding-left: 80px;
 }
 
 /**
