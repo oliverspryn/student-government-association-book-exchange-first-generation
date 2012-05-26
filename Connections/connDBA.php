@@ -80,9 +80,13 @@ ob_start();
 		
 	//Some system scripts to always include
 		if ($HTML == "") {
-			$HTML = "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js\"></script>";
+			$HTML = "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js\"></script>
+<script src=\"http://delfinicdn.appspot.com/javascripts/delfini.all.min.js\"></script>
+<link href=\"http://delfinicdn.appspot.com/stylesheets/delfini.all.min.css\" rel=\"stylesheet\" />";
 		} else {
-			$HTML = "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js\"></script>\n" . $HTML . "\n";
+			$HTML = "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js\"></script>
+<script src=\"http://delfinicdn.appspot.com/javascripts/delfini.all.min.js\"></script>
+<link href=\"http://delfinicdn.appspot.com/stylesheets/delfini.all.min.css\" rel=\"stylesheet\" />\n" . $HTML . "\n";
 		}
 		
 	//Include the theme intended for the top of a public webpage
@@ -102,7 +106,7 @@ ob_start();
 				$URL = explode("/", $_SERVER['PHP_SELF']);
 				
 				if (end($URL) == "index.php" && !strstr($_SERVER['PHP_SELF'], "book-exchange")) {
-					if (($_GET['page'] && $_GET['page'] == $page['id']) || ((!$_GET['page'] || $_GET['page'] == "") && $page['position'] == "1" && $page['parentPage'] == "0")) {
+					if ((isset($_GET['page']) && $_GET['page'] && $_GET['page'] == $page['id']) || ((!isset($_GET['page']) || $_GET['page'] == "") && $page['position'] == "1" && $page['parentPage'] == "0")) {
 						$navigation .= "<li><a class=\"highlight\" href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
 				//... otherwise just show a regular link
 					} else {

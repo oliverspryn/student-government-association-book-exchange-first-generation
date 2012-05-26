@@ -14,25 +14,29 @@
 	if (!loggedIn()) {
 ?>
 <section class="login">
-<div class="left">
-<p>Log into your account or register today to gain access to special member-only features, such as our newly redesigned student book exchange!</p>
-</div>
-
-<div class="center">
-<h2>Sign Up</h2>
-<p>First and last name:</p><input type="text"/>
-<p>Email address:</p><input type="email"/>
-<p>Password:</p><input type="password"/>
-<br /><br />
-<input type="submit" value="Sign Up" />
-</div>
-
-<div class="right">
+<div class="design">
+<div class="login">
+<form action="#" method="post">
 <h2>Login</h2>
-<p>Email address:</p><input type="email"/>
-<p>Password:</p><input type="password"/>
+<p>Email address:</p><input name="username" type="email" />
+<p>Password:</p><input name="password" type="password"/>
 <br /><br />
-<input type="submit" value="Login" />
+<input class="red" type="submit" value="Login" />
+</form>
+</div>
+
+<span class="toggle"></span>
+
+<div class="register">
+<form action="#" method="post">
+<h2>Register</h2>
+<p>First and last name:</p><input name="name" type="text" />
+<p>Email address:</p><input name="email" type="email" />
+<p>Password:</p><input name="username" type="password" />
+<br /><br />
+<input class="green" type="submit" value="Register" />
+</form>
+</div>
 </div>
 </section>
 
