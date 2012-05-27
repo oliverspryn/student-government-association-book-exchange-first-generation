@@ -44,6 +44,26 @@ a.buttonLink span:hover {
 	background: #33CCFF;
 }
 
+span.title {
+	display: block;
+	font-size: 13px;
+	font-weight: bold;
+	max-width: 130px;
+	overflow: hidden;
+	padding-top: 10px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+span.details {
+	font-size: 10px;
+	max-width: 170px;
+	overflow: hidden;
+	padding-top: 5px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 /**
  * Book exchange main page header
  * ------------------------------------
@@ -56,20 +76,17 @@ section.header div.tools {
 }
 
 section.header div.tools button {
-	display: inline-block;
-	float: right;
-	font-size: 14px;
-	width: 140px;
+	width: 100%;
 }
 
 div.tools h2.search {
 	color: #FFFFFF;
 	font-size: 16px;
-	margin: 50px 0px 5px 0px;
+	margin: 20px 0px 5px 0px;
 }
 
 section.header div.tools input {
-	width: 196px;
+	width: 168px;
 }
 
 section.header div.tools div.controls {
@@ -226,6 +243,30 @@ aside.categories ul li a.name span.text {
 }
 
 /**
+ * Sell books page styles
+ * ------------------------------------
+*/
+
+header.styled.sell {
+	border-top-color: #009972;
+}
+
+header.styled.sell h1 {
+	background: #66C2AA;
+	border-color: #33AD8E;
+	color: #FFFFFF;
+	padding-left: 300px;
+}
+
+section.bookPreview {
+	background: #3D3D3D;
+	margin: -30px 0px 0px 10px;
+	padding: 15px;
+	position: relative;
+	width: 260px;
+}
+
+/**
  * Unordered list of book categories
  * ------------------------------------
 */
@@ -357,24 +398,8 @@ aside.info ul li img {
 	padding-right: 5px;
 }
 
-aside.info ul li a.title {
-	display: block;
-	font-size: 13px;
-	font-weight: bold;
-	max-width: 170px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
 aside.info ul li span.details {
 	display: block;
-	font-size: 10px;
-	max-width: 170px;
-	padding-top: 5px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
 }
 
 aside.info ul.moreListings {
@@ -485,24 +510,8 @@ section.listing section.books section.courses ul li img {
 	max-width: 100px;
 }
 
-section.listing section.books section.courses ul li span.title {
-	display: block;
-	font-size: 13px;
-	font-weight: bold;
-	max-width: 130px;
-	overflow: hidden;
-	padding-top: 10px;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
 section.listing section.books section.courses ul li span.details {
-	font-size: 10px;
 	max-width: 130px;
-	overflow: hidden;
-	padding-top: 5px;
-	text-overflow: ellipsis;
-	white-space: nowrap;
 }
 
 section.listing section.books section.empty {

@@ -1,5 +1,32 @@
 $(document).ready(function() {
 /**
+ * If the user has not logged, expand
+ * the login <section> when the 
+ * "Sell Books" button is clicked
+ * ------------------------------------
+*/
+
+	$('button.openLogin').click(function() {
+	//The login panel will exist if the user is not logged
+		var panel = $('section.login');
+		
+		if (panel.length) {
+		//Open the login panel
+			panel.slideDown();
+			
+		//Slide it into view
+			$('html, body').animate({
+				'scrollTop' : '0px'
+			}, 'slow');
+			
+		//Fill the redirect form element
+			$("#redirect").val($(this).attr('data-redirect'))
+		} else {
+			document.location = 'sell-books/';
+		}
+	});
+	
+/**
  * Book exchange category flyout menu
  * ------------------------------------
 */
@@ -7,16 +34,19 @@ $(document).ready(function() {
 	var events = $('ul.categoryFly');
 	var hovered = false;
 	
+//Let the application know that the menu is being hovered over
 	events.bind('menuActive', function() {
 		hovered = true;
 		events.addClass('open');
 	});
 	
+//Let the application know that the menu is being hovered out
 	events.bind('menuInactive', function() {
 		hovered = false;
 		events.removeClass('open');
 	});
 
+//Expand the menu when it is clicked on
 	$('ul.categoryFly').click(function() {
 		if (!hovered) {
 			var menu = $(this);
@@ -56,6 +86,7 @@ $(document).ready(function() {
 		}
 	});
 	
+//If something outside of the menu is clicked on, collapse the menu
 	$(document).click(function(e) {
 		if (!$(e.target).is('ul.categoryFly') && !$(e.target).parents().is('ul.categoryFly')) {
 			var menu = $('ul.categoryFly');

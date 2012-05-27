@@ -20,6 +20,7 @@
 <h2>Login</h2>
 <p>Email address:</p><input name="username" type="email" />
 <p>Password:</p><input name="password" type="password"/>
+<input id="redirect" name="redirect" type="hidden" />
 <br /><br />
 <input class="red" type="submit" value="Login" />
 </form>
