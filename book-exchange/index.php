@@ -9,9 +9,9 @@
 ";
 
 //Grab the categories from the database
-	if (exist("book-categories")) {
+	if (exist("bookcategories")) {
 		$categories = array();
-		$categoryGrabber = mysql_query("SELECT * FROM `book-categories` ORDER BY name ASC", $connDBA);
+		$categoryGrabber = mysql_query("SELECT * FROM `bookcategories` ORDER BY name ASC", $connDBA);
 		
 		while($category = mysql_fetch_array($categoryGrabber)) {
 			array_push($categories, $category);

@@ -3,10 +3,10 @@
 	require_once("../../Connections/connDBA.php");
 	
 //Grab the categories from the database and count the total number of books for sale
-	if (exist("book-categories")) {
+	if (exist("bookcategories")) {
 		$categories = array();
 		$total = 0;
-		$categoryGrabber = mysql_query("SELECT * FROM `book-categories` ORDER BY name ASC", $connDBA);
+		$categoryGrabber = mysql_query("SELECT * FROM `bookcategories` ORDER BY name ASC", $connDBA);
 		
 		while($category = mysql_fetch_array($categoryGrabber)) {
 			array_push($categories, $category);
@@ -38,7 +38,7 @@
 	}
 	
 //Display the categories
-	if (exist("book-categories")) {
+	if (exist("bookcategories")) {
 		echo "<ul class=\"listing\">";
 		
 		foreach($categories as $category) {

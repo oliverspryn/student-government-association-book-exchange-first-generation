@@ -3,8 +3,8 @@
 	require_once("../../Connections/connDBA.php");
 	
 //Grab the information about a certain book category
-	if (exist("book-categories", "id", $_GET['id'])) {
-		$categoryGrabber = mysql_query("SELECT * FROM `book-categories` WHERE `id` = '{$_GET['id']}'", $connDBA);
+	if (exist("bookcategories", "id", $_GET['id'])) {
+		$categoryGrabber = mysql_query("SELECT * FROM `bookcategories` WHERE `id` = '{$_GET['id']}'", $connDBA);
 		$category = mysql_fetch_array($categoryGrabber);
 	} else {
 		redirect("index.php");
@@ -98,7 +98,7 @@
 	}
 	
 //Display a list of other categories that the user can browse
-	$allCatGrabber = mysql_query("SELECT * FROM `book-categories` ORDER BY name ASC", $connDBA);
+	$allCatGrabber = mysql_query("SELECT * FROM `bookcategories` ORDER BY name ASC", $connDBA);
 	
 	echo "
 	
