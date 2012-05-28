@@ -51,8 +51,21 @@
 <?php echo $navigation; ?>
 </ul>
 
+<?php
+//The login flag will change depending on login status
+	if (!loggedIn()) {
+?>
 <section class="flag">
 <img class="tag" src="<?php echo $root; ?>themes/public/student_government/images/login.png" />
 </section>
+<?php
+	} else {
+?>
+<section class="flag">
+<a href="<?php echo $root; ?>logout.php"><img class="tag" src="<?php echo $root; ?>themes/public/student_government/images/logout.png" /></a>
+</section>
+<?php
+	}
+?>
 </nav>
 

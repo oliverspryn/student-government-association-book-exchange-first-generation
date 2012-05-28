@@ -243,7 +243,62 @@ aside.categories ul li a.name span.text {
 }
 
 /**
- * Sell books page styles
+ * Sell books dialog suggestion
+ * ------------------------------------
+*/
+
+section.dialog div.content div {
+	display: inline-block;
+	padding-right: 15px;
+	vertical-align: top;
+}
+
+section.dialog div.content div h2 {
+	margin-top: 0px;
+}
+
+section.dialog div.content div span {
+	display: block;
+	font-size: 12px;
+	padding-bottom: 7px;
+}
+
+section.dialog div.content div.imagePreview img {
+	max-width: 130px;
+}
+
+section.dialog div.content div.classInfo span.class {
+	background: #FFFFFF;
+	border: 1px solid #000000;
+	color: #7B8084;
+	font-size: 13px;
+	font-weight: normal;
+	height: 40px;
+	margin: 0px;
+	padding: 0px;
+	width: 248px;
+}
+
+section.dialog div.content div.classInfo span.class span.band {
+	border-left-style: solid;
+	border-left-width: 50px;
+	display: block;
+	height: 33px;
+	width: 250px;
+}
+
+section.dialog div.content div.classInfo span.class span.band span.icon {
+	background-repeat: no-repeat;
+	background-position: 9px 6px;
+	display: block;
+	height: 40px;
+	margin-left: -50px;
+	padding: 11px 0px 0px 55px;
+	width: 250px;
+}
+
+/**
+ * Sell books header
  * ------------------------------------
 */
 
@@ -255,15 +310,99 @@ header.styled.sell h1 {
 	background: #66C2AA;
 	border-color: #33AD8E;
 	color: #FFFFFF;
-	padding-left: 300px;
+	padding-left: 260px;
 }
 
-section.bookPreview {
-	background: #3D3D3D;
-	margin: -30px 0px 0px 10px;
-	padding: 15px;
+/**
+ * Sell books preview sidebar
+ * ------------------------------------
+*/
+
+aside.preview {
+	border-right: 4px double #EDEDED;
+	height: 100%;
+	float: left;
 	position: relative;
 	width: 260px;
+}
+
+aside.preview section.bookPreview {
+	background: #3D3D3D;
+	color: #FFFFFF;
+	float: left;
+	margin: -45px 0px 0px 10px;
+	padding: 15px;
+	position: relative;
+	width: 200px;
+}
+
+aside.preview section.bookPreview div.imageContainer {
+	background: #CCCCCC;
+	padding: 5px;
+	min-height: 125px;
+	margin: 0px auto 15px auto;
+	max-width: 130px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+aside.preview section.bookPreview div.imageContainer p {
+	display: block;
+	font-size: 14px;
+	margin: 0px;
+	padding: 45px 0px 45px 0px;
+}
+
+aside.preview section.bookPreview div.imageContainer img {
+	max-width: 130px;
+}
+
+aside.preview section.bookPreview div.imageBrowser {
+	text-align: center;
+}
+
+aside.preview section.bookPreview div.imageBrowser span.back {
+	background: url(../images/icons/view_covers.png) no-repeat;
+	cursor: pointer;
+	display: inline-block;
+	height: 25px;
+	width: 25px;
+}
+
+aside.preview section.bookPreview div.imageBrowser span.back.disabled {
+	background-position: -39px 0px;
+	cursor: default;
+}
+
+aside.preview section.bookPreview div.imageBrowser span.forward {
+	background: url(../images/icons/view_covers.png) no-repeat;
+	background-position: 0px -39px;
+	cursor: pointer;
+	display: inline-block;
+	height: 25px;
+	width: 25px;
+}
+
+aside.preview section.bookPreview div.imageBrowser span.forward.disabled  {
+	background-position: -39px -39px;
+	cursor: default;
+}
+
+aside.preview section.bookPreview span.titlePreview {
+	display: block;
+	font-size: 15px;
+	font-weight: bold;
+}
+
+aside.preview section.bookPreview span.details {
+	display: block;
+}
+
+section.sell {
+	border-left: 4px double #EDEDED;
+	margin-left: 260px;
+	padding-left: 15px;
+	width: auto;
 }
 
 /**
@@ -412,7 +551,7 @@ aside.info ul.moreListings li a {
 }
 
 aside.info ul.moreListings li a span.arrow {
-	font: "Helvetica Narrow", "Arial Narrow", Tahoma, Arial ,Helvetica, sans-serif;
+	font: "Helvetica Narrow", "Arial Narrow", Tahoma, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	padding-left: 3px;
 }
