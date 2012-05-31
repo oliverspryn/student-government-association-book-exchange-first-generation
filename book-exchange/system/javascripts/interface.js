@@ -47,7 +47,7 @@ $(document).ready(function() {
 	});
 
 //Expand the menu when it is clicked on
-	$('ul.categoryFly').click(function() {
+	$('body').delegate('ul.categoryFly', 'click', function() {
 		if (!hovered) {
 			var menu = $(this);
 			
@@ -62,6 +62,12 @@ $(document).ready(function() {
 		//Calculate the offeset height from the top and left so that this can be floated overtop of the other elements and not push elements as it opens
 			var top = menu.offset().top;
 			var left = menu.offset().left;
+			var newLeft = left;
+			
+		//Will the menu fly off the side of the screen? If so, just align the whole menu to the vertical center
+			if (left + width > document.width) {
+				newLeft = (document.width - width) / 2;
+			}
 			
 		//Slide the unselected menu items into view
 			menu.css({
@@ -70,6 +76,7 @@ $(document).ready(function() {
 				'position' : 'absolute',
 				'z-index' : '5'
 			}).animate({
+				'left' : newLeft + 'px',
 				'height' : height + 'px',
 				'width' : width + 'px'
 			}, function() {
@@ -90,9 +97,11 @@ $(document).ready(function() {
 	$(document).click(function(e) {
 		if (!$(e.target).is('ul.categoryFly') && !$(e.target).parents().is('ul.categoryFly')) {
 			var menu = $('ul.categoryFly');
+			var left = menu.parent().offset().left;
 			
 		//Slide the unselected menu items out of the way
 			menu.animate({
+				'left' : left + 'px',
 				'height' : '40px',
 				'width' : '198px'
 			}, function() {
@@ -109,10 +118,11 @@ $(document).ready(function() {
 	});
 	
 //Slide the menu out of view on-click
-	$('ul.categoryFly li ul li').click(function() {
+	$('body').delegate('ul.categoryFly li ul li', 'click', function() {
 		if (hovered) {
 			var item = $(this);
 			var menu = item.parent().parent().parent();
+			var left = menu.parent().offset().left;
 			
 		//Remove the selected class from the previously selected item and add the selected class to the clicked one
 			menu.find('li ul li.selected').removeClass('selected').css({
@@ -125,6 +135,7 @@ $(document).ready(function() {
 			
 		//Slide the unselected menu items out of the way
 			menu.animate({
+				'left' : left + 'px',
 				'height' : '40px',
 				'width' : '198px'
 			}, function() {

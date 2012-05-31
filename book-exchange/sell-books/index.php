@@ -41,11 +41,15 @@
 ";
 
 //Include directions on how to sell a book
-	echo "<p>Enter the ISBN number of the book which you like to sell. If a record of your book is already in the database, we will attempt automatically fill in the book cover, title, author, edition, and its associated course.</p>
-<p>If these fields don't automatically populate for you, then either this is a new book in our database or the ISBN was entered incorrectly. Please note that if this book does not exist in our database, be sure to check that the suggested book cover is correct. You can use the arrows underneith the image to browse through a selection of avaliable images. Please choose a product image that looks best.</p>";
+	echo "<p>Enter the ISBN number of the book which you would like to sell. If a record of your book is already in our database, we will attempt automatically fill in the book cover, title, author, edition, and its associated courses.</p>
+<p>If these fields don't automatically populate for you, then either this is a new book in our database or the ISBN was entered incorrectly.</p>
+
+";
 
 //Include the book's information section
-	echo "<table>
+	echo "<div class=\"bookInformationSection\">
+<h2>Book Information</h2>
+<table>
 <tbody>
 <tr>
 <td>ISBN:</td>
@@ -67,7 +71,81 @@
 <td><input class=\"editionInput\"  name=\"edition\" type=\"text\" /></td>
 </tr>
 </tbody>
-</table>";
+</table>
+</div>
+
+";
+
+//Generate the course information section
+	echo "<div class=\"courseInformationSection\">
+<h2>Which classes did you use this book?</h2>";
+
+//Grab the categories from the database
+	if (exist("bookcategories")) {
+		$categories = array();
+		$categoryGrabber = mysql_query("SELECT * FROM `bookcategories` ORDER BY name ASC", $connDBA);
+		
+		while($category = mysql_fetch_array($categoryGrabber)) {
+			array_push($categories, $category);
+		}
+	} else {
+		$categories = false;
+	}
+	
+	$courseFlyout = "<div class=\"menuWrapper\">
+<ul class=\"categoryFly\">";
+
+//Generate the category dropdown menu
+	$counter = 1;
+
+	foreach($categories as $category) {
+	//Break up this "dropdown" list into columns every 10 items
+		if ($counter % 10 == 1) {
+		//Include an "all" menu item if this is the first item
+			if ($counter == 1) {
+				$courseFlyout .= "
+<li>
+<ul>
+<li class=\"all selected\"><span class=\"band\" style=\"border-left-color: #FFFFFF;\"><span class=\"icon\" style=\"background-image: url('../system/images/icons/all.png');\">Select a Discipline</span></span></li>";
+
+			//Since we inserted a "free" item, add one to the counter
+				$counter++;
+			} else {
+				$courseFlyout .= "
+<li>
+<ul>";
+			}
+		}
+		
+		$courseFlyout .= "
+<li><span class=\"band\" style=\"border-left-color: " . $category['color1'] . ";\"><span class=\"icon\" style=\"background-image: url('../../data/book-exchange/icons/" . $category['id'] . "/icon_032.png');\">" . $category['name'] . "</span></span></li>";
+
+		if ($counter % 10 == 0) {
+			$courseFlyout .= "
+</ul>
+</li>
+";
+		}
+
+		$counter++;
+	}
+	
+	$courseFlyout .= "</ul>
+</li>
+</ul>
+</div>";
+
+//Finally display the rest of the portion of the class information step
+	echo "<div>
+" . $courseFlyout . "
+<input name=\"classNum[]\" type=\"text\" />
+<ul class=\"dropdown\" data-name=\"classSec[]\">
+<li class=\"selected\">A</li>
+<li>B</li>
+<li>C</li>
+<li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li><li>D is the last poor guy</li>
+</ul>
+</div>";
 
 //Include the footer from the administration template
 	echo "

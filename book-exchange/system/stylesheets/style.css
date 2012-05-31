@@ -247,14 +247,22 @@ aside.categories ul li a.name span.text {
  * ------------------------------------
 */
 
-section.dialog div.content div {
-	display: inline-block;
-	padding-right: 15px;
-	vertical-align: top;
-}
-
 section.dialog div.content div h2 {
 	margin-top: 0px;
+}
+
+section.dialog div.content div p {
+	font-size: 16px;
+	font-weight: bold;
+	margin: 0px 0px 25px 0px;
+	padding-top: 10px;
+}
+
+section.dialog div.content div {
+	display: inline-block;
+	max-width: 23%;
+	padding-right: 15px;
+	vertical-align: top;
 }
 
 section.dialog div.content div span {
@@ -263,20 +271,55 @@ section.dialog div.content div span {
 	padding-bottom: 7px;
 }
 
+section.dialog div.content div.imagePreview {
+	background: url(../images/icons/sub_steps.png) no-repeat;
+	background-position: -79px 7px;
+	padding-left: 50px;
+}
+
 section.dialog div.content div.imagePreview img {
 	max-width: 130px;
+}
+
+section.dialog div.content div.bookInfo {
+	background: url(../images/icons/sub_steps.png) no-repeat;
+	background-position: -39px -48px;
+	padding-left: 50px;
+}
+
+section.dialog div.content div.classInfo {
+	background: url(../images/icons/sub_steps.png) no-repeat;
+	background-position: 0px -102px;
+	max-height: 282px;
+	max-width: none;
+	overflow: hidden;
+	padding-left: 55px;
+	width: 260px;
+}
+
+section.dialog div.content div.classInfo:hover {
+	overflow-y: auto;
 }
 
 section.dialog div.content div.classInfo span.class {
 	background: #FFFFFF;
 	border: 1px solid #000000;
 	color: #7B8084;
+	cursor: pointer;
 	font-size: 13px;
 	font-weight: normal;
 	height: 40px;
 	margin: 0px;
 	padding: 0px;
 	width: 248px;
+}
+
+section.dialog div.content div.classInfo span.class:hover {
+	background: #EEEEEE;
+}
+
+section.dialog div.content div.classInfo span.class.selected {
+	background: #B8FEBA url(../images/icons/selected_course.png) no-repeat top right;
 }
 
 section.dialog div.content div.classInfo span.class span.band {
@@ -398,11 +441,40 @@ aside.preview section.bookPreview span.details {
 	display: block;
 }
 
+/**
+ * Sell books main content
+ * ------------------------------------
+*/
+
 section.sell {
 	border-left: 4px double #EDEDED;
 	margin-left: 260px;
 	padding-left: 15px;
 	width: auto;
+}
+
+/* Using the direct child operator, so that no <div> with the targeted <div> is styled */
+section.sell > div {
+	background: url(../images/icons/steps.png) no-repeat;
+	padding-left: 60px;
+}
+
+section.sell div h2 {
+	font-size: 18px;
+	padding-top: 18px;
+}
+
+section.sell div.bookInformationSection {
+	background-position: -109px 0px;
+}
+
+section.sell div.courseInformationSection {
+	background-position: -55px -55px;
+}
+
+section.sell div.courseInformationSection > div {
+	height: 42px;
+	vertical-align: middle;
 }
 
 /**
