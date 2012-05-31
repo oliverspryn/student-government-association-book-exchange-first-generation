@@ -81,12 +81,12 @@ ob_start();
 	//Some system scripts to always include
 		if ($HTML == "") {
 			$HTML = "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js\"></script>
-<script src=\"http://delfinicdn.appspot.com/javascripts/delfini.all.min.js\"></script>
-<link href=\"http://delfinicdn.appspot.com/stylesheets/delfini.all.min.css\" rel=\"stylesheet\" />";
+<script src=\"http://delfinicdn.ffstatic.com/javascripts/delfini.all.min.js\"></script>
+<link href=\"http://delfinicdn.ffstatic.com/stylesheets/delfini.all.min.css\" rel=\"stylesheet\" />";
 		} else {
 			$HTML = "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js\"></script>
-<script src=\"http://delfinicdn.appspot.com/javascripts/delfini.all.min.js\"></script>
-<link href=\"http://delfinicdn.appspot.com/stylesheets/delfini.all.min.css\" rel=\"stylesheet\" />\n" . $HTML . "\n";
+<script src=\"http://delfinicdn.ffstatic.com/javascripts/delfini.all.min.js\"></script>
+<link href=\"http://delfinicdn.ffstatic.com/stylesheets/delfini.all.min.css\" rel=\"stylesheet\" />\n" . $HTML . "\n";
 		}
 		
 	//Include the theme intended for the top of a public webpage

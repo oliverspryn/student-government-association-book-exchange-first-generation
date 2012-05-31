@@ -6,6 +6,7 @@
 <?php echo $HTML; ?>
 <link href="<?php echo $root; ?>themes/public/student_government/stylesheets/style.min.css" rel="stylesheet" />
 <script src="<?php echo $root; ?>themes/public/student_government/javascripts/login_panel.min.js"></script>
+<script src="https://widget.uservoice.com/JkKcZfC4qw8m0wz3PeMf5Q.js"></script>
 </head>
 
 <body>
