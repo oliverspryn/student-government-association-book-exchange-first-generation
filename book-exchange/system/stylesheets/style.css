@@ -256,51 +256,51 @@ aside.categories ul li a.name span.text {
  * ------------------------------------
 */
 
-section.dialog div.content {
+section.dialog.suggestions div.content {
 	overflow: hidden;
 }
 
-section.dialog div.content div h2 {
+section.dialog.suggestions div.content div h2 {
 	margin-top: 0px;
 }
 
-section.dialog div.content div p {
+section.dialog.suggestions div.content div p {
 	font-size: 16px;
 	font-weight: bold;
 	margin: 0px 0px 25px 0px;
 	padding-top: 10px;
 }
 
-section.dialog div.content div {
+section.dialog.suggestions div.content div {
 	display: inline-block;
 	max-width: 23%;
 	padding-right: 15px;
 	vertical-align: top;
 }
 
-section.dialog div.content div span {
+section.dialog.suggestions div.content div span {
 	display: block;
 	font-size: 12px;
 	padding-bottom: 7px;
 }
 
-section.dialog div.content div.imagePreview {
+section.dialog.suggestions div.content div.imagePreview {
 	background: url(../images/icons/sub_steps.png) no-repeat;
 	background-position: -79px 7px;
 	padding-left: 50px;
 }
 
-section.dialog div.content div.imagePreview img {
+section.dialog.suggestions div.content div.imagePreview img {
 	max-width: 130px;
 }
 
-section.dialog div.content div.bookInfo {
+section.dialog.suggestions div.content div.bookInfo {
 	background: url(../images/icons/sub_steps.png) no-repeat;
 	background-position: -39px -48px;
 	padding-left: 50px;
 }
 
-section.dialog div.content div.classInfo {
+section.dialog.suggestions div.content div.classInfo {
 	background: url(../images/icons/sub_steps.png) no-repeat;
 	background-position: 0px -102px;
 	max-height: 282px;
@@ -310,11 +310,11 @@ section.dialog div.content div.classInfo {
 	width: 260px;
 }
 
-section.dialog div.content div.classInfo:hover {
+section.dialog.suggestions div.content div.classInfo:hover {
 	overflow-y: auto;
 }
 
-section.dialog div.content div.classInfo span.class {
+section.dialog.suggestions div.content div.classInfo span.class {
 	background: #FFFFFF;
 	border: 1px solid #000000;
 	color: #7B8084;
@@ -327,15 +327,15 @@ section.dialog div.content div.classInfo span.class {
 	width: 248px;
 }
 
-section.dialog div.content div.classInfo span.class:hover {
+section.dialog.suggestions div.content div.classInfo span.class:hover {
 	background: #EEEEEE;
 }
 
-section.dialog div.content div.classInfo span.class.selected {
+section.dialog.suggestions div.content div.classInfo span.class.selected {
 	background: #B8FEBA url(../images/icons/selected_course.png) no-repeat top right;
 }
 
-section.dialog div.content div.classInfo span.class span.band {
+section.dialog.suggestions div.content div.classInfo span.class span.band {
 	border-left-style: solid;
 	border-left-width: 50px;
 	display: block;
@@ -343,7 +343,7 @@ section.dialog div.content div.classInfo span.class span.band {
 	width: 250px;
 }
 
-section.dialog div.content div.classInfo span.class span.band span.icon {
+section.dialog.suggestions div.content div.classInfo span.class span.band span.icon {
 	background-repeat: no-repeat;
 	background-position: 9px 6px;
 	display: block;
@@ -353,7 +353,7 @@ section.dialog div.content div.classInfo span.class span.band span.icon {
 	width: 250px;
 }
 
-section.dialog div.buttons button {
+section.dialog.suggestions div.buttons button {
 	margin-left: 10px;
 	width: 215px;
 }

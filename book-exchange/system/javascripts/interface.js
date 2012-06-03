@@ -157,7 +157,11 @@ $(document).ready(function() {
 			item.addClass('selected');
 			
 		//Grab the value of the selected item and store it in the associated hidden element
-			menu.parent().find('div div input.collapse').attr('value', item.text());
+			if (item.text() == 'Select a Discipline' || item.text() == 'All Disciplines') { //These are default values
+				menu.parent().find('div div input.collapse').attr('value', '');
+			} else {
+				menu.parent().find('div div input.collapse').attr('value', item.text());
+			}
 			
 		//Slide the unselected menu items out of the way
 			menu.animate({
