@@ -3,14 +3,6 @@
  * ------------------------------------
 */
 
-.center {
-	text-align: center;
-}
-
-.hidden {
-	display: none;
-}
-
 a.buttonLink, span.buttonLink {
 	background-color: #999999;
 	color: #FFFFFF;
@@ -62,6 +54,23 @@ span.details {
 	padding-top: 5px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+
+.tooltip {
+	-moz-box-shadow: 0 0 10px #000000;
+	-ms-box-shadow: 0 0 10px #000000;
+	-o-box-shadow: 0 0 10px #000000;
+	-webkit-box-shadow: 0 0 10px #000000;
+    background-color: #000000;
+    border: 1px solid #FFFFFF;
+	box-shadow: 0 0 10px #000000;
+	color: #FFFFFF;
+	display: none;
+	font-size: 12px;
+    padding: 10px 15px;
+    width: 200px;
+    text-align: left;
+	z-index: 10;
 }
 
 /**
@@ -247,6 +256,10 @@ aside.categories ul li a.name span.text {
  * ------------------------------------
 */
 
+section.dialog div.content {
+	overflow: hidden;
+}
+
 section.dialog div.content div h2 {
 	margin-top: 0px;
 }
@@ -340,6 +353,11 @@ section.dialog div.content div.classInfo span.class span.band span.icon {
 	width: 250px;
 }
 
+section.dialog div.buttons button {
+	margin-left: 10px;
+	width: 215px;
+}
+
 /**
  * Sell books header
  * ------------------------------------
@@ -381,6 +399,7 @@ aside.preview section.bookPreview {
 
 aside.preview section.bookPreview div.imageContainer {
 	background: #CCCCCC;
+	color: #000000;
 	padding: 5px;
 	min-height: 125px;
 	margin: 0px auto 15px auto;
@@ -401,34 +420,68 @@ aside.preview section.bookPreview div.imageContainer img {
 }
 
 aside.preview section.bookPreview div.imageBrowser {
+	padding-bottom: 10px;
 	text-align: center;
 }
 
 aside.preview section.bookPreview div.imageBrowser span.back {
-	background: url(../images/icons/view_covers.png) no-repeat;
+	background: url(../images/icons/navigation_buttons.png) no-repeat;
+	background-position: -23px -23px;
 	cursor: pointer;
 	display: inline-block;
-	height: 25px;
-	width: 25px;
+	height: 23px;
+	width: 23px;
+}
+
+aside.preview section.bookPreview div.imageBrowser span.back:hover {
+	background-position: -46px -23px;
+}
+
+aside.preview section.bookPreview div.imageBrowser span.back:active {
+	background-position: -69px -23px;
 }
 
 aside.preview section.bookPreview div.imageBrowser span.back.disabled {
-	background-position: -39px 0px;
+	background-position: 0px -23px;
 	cursor: default;
+}
+
+aside.preview section.bookPreview div.imageBrowser span.back.disabled:hover {
+	background-position: 0px -23px;
+}
+
+aside.preview section.bookPreview div.imageBrowser span.back.disabled:active {
+	background-position: 0px -23px;
 }
 
 aside.preview section.bookPreview div.imageBrowser span.forward {
-	background: url(../images/icons/view_covers.png) no-repeat;
-	background-position: 0px -39px;
+	background: url(../images/icons/navigation_buttons.png) no-repeat;
+	background-position: -23px 0px;
 	cursor: pointer;
 	display: inline-block;
-	height: 25px;
-	width: 25px;
+	height: 23px;
+	width: 23px;
 }
 
-aside.preview section.bookPreview div.imageBrowser span.forward.disabled  {
-	background-position: -39px -39px;
+aside.preview section.bookPreview div.imageBrowser span.forward:hover {
+	background-position: -46px 0px;
+}
+
+aside.preview section.bookPreview div.imageBrowser span.forward:active {
+	background-position: -69px 0px;
+}
+
+aside.preview section.bookPreview div.imageBrowser span.forward.disabled {
+	background-position: 0px 0px;
 	cursor: default;
+}
+
+aside.preview section.bookPreview div.imageBrowser span.forward.disabled:hover {
+	background-position: 0px 0px;
+}
+
+aside.preview section.bookPreview div.imageBrowser span.forward.disabled:active {
+	background-position: 0px 0px;
 }
 
 aside.preview section.bookPreview span.titlePreview {
@@ -472,9 +525,86 @@ section.sell div.courseInformationSection {
 	background-position: -55px -55px;
 }
 
-section.sell div.courseInformationSection > div {
+section.sell div.courseInformationSection div.classTableHeader {
+	font-weight: bold;
+	padding-top: 5px;
+}
+
+section.sell div.courseInformationSection div.classTableHeader span.className {
+	padding-left: 50px;
+}
+
+section.sell div.courseInformationSection div.classTableHeader span.classNum {
+	padding-left: 85px;
+}
+
+section.sell div.courseInformationSection div.classTableHeader span.classSec {
+	padding-left: 35px;
+}
+
+section.sell div.courseInformationSection div.classUsed {
+	border-top: 1px solid #CCCCCC;
 	height: 42px;
+	padding: 7px 0px 7px 0px;
 	vertical-align: middle;
+}
+
+section.sell div.courseInformationSection div.classUsed div.inputWrapper {
+	padding-left: 55px;
+	width: 27px;
+}
+
+section.sell div.courseInformationSection div.classUsed div.inputWrapper input {
+	margin: 10px 0px 0px 10px;
+	width: 27px;
+}
+
+section.sell div.courseInformationSection div.classUsed div.dropdownWrapper {
+	display: inline-block;
+	padding: 10px 0px 0px 100px;
+}
+
+section.sell div.courseInformationSection div.classUsed span.delete {
+	background: url(../images/icons/delete.png) no-repeat;
+	cursor: pointer;
+	display: inline-block;
+	float: right;
+	height: 19px;
+	margin: 12px 10px 0px 0px;
+	width: 19px;
+}
+
+section.sell div.courseInformationSection span.add {
+	background: url(../images/icons/add.png) no-repeat left bottom;
+	display: inline-block;
+	cursor: pointer;
+	padding: 5px 0px 0px 25px;
+}
+
+section.sell div.userInformationSection {
+	background-position: 0px -109px;
+}
+
+section.sell div.userInformationSection table tbody tr td.price span.align {
+	display: inline-block;
+	padding-top: 6px;
+}
+
+section.sell div.userInformationSection table tbody tr td.price input {
+	width: 47px;
+}
+
+section.sell div.userInformationSection table tbody tr td.containsMenu div {
+	display: block;
+}
+
+section.sell div.userInformationSection table tbody tr.editor td.description {
+	padding-top: 5px;
+	vertical-align: top;
+}
+
+section.sell div.userInformationSection table tbody tr.editor td textarea {
+	width: 450px;
 }
 
 /**
@@ -536,6 +666,7 @@ header.styled h1 {
 	border-style: solid;
 	border-width: 5px;
 	color: #3D3D3D;
+	font-size: 24px;
 	font-weight: bold;
 	margin: 0px;
 	padding: 10px 10px 10px 300px;
@@ -658,10 +789,10 @@ section.listing article.description section.article.loading {
 }
 
 section.listing article.description section.article::after {
-    background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0), white);
     background-image: -moz-linear-gradient(rgba(255, 255, 255, 0), white);
     background-image: -ms-linear-gradient(rgba(255, 255, 255, 0), white);
     background-image: -o-linear-gradient(rgba(255, 255, 255, 0), white);
+	background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0), white);
     background-image: linear-gradient(rgba(255, 255, 255, 0), white);
     bottom: 0;
     content: '';

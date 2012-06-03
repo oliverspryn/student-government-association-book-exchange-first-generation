@@ -23,7 +23,7 @@
 //Display the header which contains a "Sell Books" button, seach section, and scroller containing featured books and categories
 	echo "<section class=\"header\">
 <div class=\"tools\">
-<button class=\"blue large openLogin\" data-redirect=\"sell-books/\">Sell Books</button>
+<button class=\"blue large openLogin\" data-redirect=\"" . $root . "book-exchange/sell-books/\">Sell Books</button>
 
 <h2 class=\"search\">Search for Books:</h2>
 <input type=\"text\" class=\"search\" />

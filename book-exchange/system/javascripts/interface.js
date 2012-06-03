@@ -20,7 +20,7 @@ $(document).ready(function() {
 			}, 'slow');
 			
 		//Fill the redirect form element
-			$("#redirect").val($(this).attr('data-redirect'))
+			$('input.redirect').val($(this).attr('data-redirect'))
 		} else {
 			document.location = 'sell-books/';
 		}
@@ -37,19 +37,21 @@ $(document).ready(function() {
 //Let the application know that the menu is being hovered over
 	events.bind('menuActive', function() {
 		hovered = true;
-		events.addClass('open');
 	});
 	
 //Let the application know that the menu is being hovered out
 	events.bind('menuInactive', function() {
 		hovered = false;
-		events.removeClass('open');
 	});
 
 //Expand the menu when it is clicked on
 	$('body').delegate('ul.categoryFly', 'click', function() {
 		if (!hovered) {
+			var documentWidth = $(document).width();
+			var documentHeight = $(document).height();
 			var menu = $(this);
+			menu.addClass('open');
+			menu.children('li').css('display', 'table-cell');
 			
 		//Calculate the required height by seeing how many rows are in the first column and multiplying by the height of each one
 			var items = menu.children('li:first').children('ul').children('li').length;
@@ -62,22 +64,29 @@ $(document).ready(function() {
 		//Calculate the offeset height from the top and left so that this can be floated overtop of the other elements and not push elements as it opens
 			var top = menu.offset().top;
 			var left = menu.offset().left;
+			var newTop = top;
 			var newLeft = left;
 			
+		//Will the menu fly off the bottom of the screen? If so, adjust the position just enough so that the entire menu is visible
+			if (top + height > documentHeight) {
+				newTop = documentHeight - (documentHeight - top) + (documentHeight - (top + height)) - 20; //-20 is for aesthetics
+			}
+			
 		//Will the menu fly off the side of the screen? If so, just align the whole menu to the vertical center
-			if (left + width > document.width) {
-				newLeft = (document.width - width) / 2;
+			if (left + width > documentWidth) {
+				newLeft = (documentWidth - width) / 2;
 			}
 			
 		//Slide the unselected menu items into view
 			menu.css({
-				'top' : top + 'px',
 				'left' : left + 'px',
 				'position' : 'absolute',
+				'top' : top + 'px',
 				'z-index' : '5'
 			}).animate({
 				'left' : newLeft + 'px',
 				'height' : height + 'px',
+				'top' : newTop + 'px',
 				'width' : width + 'px'
 			}, function() {
 			//Let the application know that the menu is being hovered over
@@ -95,18 +104,30 @@ $(document).ready(function() {
 	
 //If something outside of the menu is clicked on, collapse the menu
 	$(document).click(function(e) {
-		if (!$(e.target).is('ul.categoryFly') && !$(e.target).parents().is('ul.categoryFly')) {
-			var menu = $('ul.categoryFly');
+		if (!$(e.target).is('ul.categoryFly.open') && !$(e.target).parents().is('ul.categoryFly.open') && $('ul.categoryFly.open').length) {
+			var menu = $('ul.categoryFly.open');
+			menu.removeClass('open');
 			var left = menu.parent().offset().left;
+			var top = menu.parent().offset().top;
 			
 		//Slide the unselected menu items out of the way
 			menu.animate({
 				'left' : left + 'px',
 				'height' : '40px',
+				'top' : top + 'px',
 				'width' : '198px'
 			}, function() {
 			//Remove the styles which were added by the mouseover handler
 				menu.removeAttr('style').find('li ul li:not(.selected)').removeAttr('style'); 
+				
+			//In order to fix an issue with Chrome, where the <li> columns only collapse to 1px wide, hide all of the unnecessary columns
+				menu.children('li').each(function() {
+					var currentColumn = $(this);
+					
+					if (!currentColumn.has('li.selected').length) {
+						currentColumn.css('display', 'none');
+					}
+				});
 				
 			//Let the application know that the menu has been hovered out
 				events.trigger('menuInactive');
@@ -122,7 +143,9 @@ $(document).ready(function() {
 		if (hovered) {
 			var item = $(this);
 			var menu = item.parent().parent().parent();
+			menu.removeClass('open');
 			var left = menu.parent().offset().left;
+			var top = menu.parent().offset().top;
 			
 		//Remove the selected class from the previously selected item and add the selected class to the clicked one
 			menu.find('li ul li.selected').removeClass('selected').css({
@@ -133,14 +156,27 @@ $(document).ready(function() {
 			
 			item.addClass('selected');
 			
+		//Grab the value of the selected item and store it in the associated hidden element
+			menu.parent().find('div div input.collapse').attr('value', item.text());
+			
 		//Slide the unselected menu items out of the way
 			menu.animate({
 				'left' : left + 'px',
 				'height' : '40px',
+				'top' : top + 'px',
 				'width' : '198px'
 			}, function() {
 			//Remove the styles which were added by the mouseover handler
 				menu.removeAttr('style').find('li ul li:not(.selected)').removeAttr('style'); 
+				
+			//In order to fix an issue with Chrome, where the <li> columns only collapse to 1px wide, hide all of the unnecessary columns
+				menu.children('li').each(function() {
+					var currentColumn = $(this);
+					
+					if (!currentColumn.has('li.selected').length) {
+						currentColumn.css('display', 'none');
+					}
+				});
 				
 			//Let the application know that the menu has been hovered out
 				events.trigger('menuInactive');

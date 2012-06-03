@@ -27,7 +27,7 @@ ob_start();
 	function userData() {
 		global $connDBA;
 		
-		$userInfoGrabber = mysql_query("SELECT * FROM `users` WHERE `userName` = '{$_SESSION['MM_Username']}'", $connDBA);
+		$userInfoGrabber = mysql_query("SELECT * FROM `users` WHERE `emailAddress1` = '{$_SESSION['MM_Username']}'", $connDBA);
 		$userInfo = mysql_fetch_array($userInfoGrabber);
 		return $userInfo;
 	}
@@ -252,11 +252,11 @@ ob_start();
 			}
 			
 			if (isset($_POST['username'])) {
-				$loginUsername=$_POST['username'];
-				$password=encrypt($_POST['password']);
+				$loginUsername=mysql_real_escape_string($_POST['username']);
+				$password=mysql_real_escape_string(encrypt($_POST['password']));
 				$MM_fldUserAuthorization = "role";
 				
-				$userRoleGrabber = mysql_query("SELECT * FROM `users` WHERE `userName` = '{$loginUsername}' AND `passWord` = '{$password}'");
+				$userRoleGrabber = mysql_query("SELECT * FROM `users` WHERE `emailAddress1` = '{$loginUsername}' AND `passWord` = '{$password}'");
 				
 				if ($userRole = mysql_fetch_array($userRoleGrabber)) {
 					$success = "";
@@ -264,8 +264,14 @@ ob_start();
 					
 					if (isset($_GET['accesscheck'])) {
 						$success .= "http://" . $_SERVER['HTTP_HOST'] . urldecode($_GET['accesscheck']);
+					} elseif (isset($_POST['redirect']) && !empty($_POST['redirect'])) {
+						$success .= $_POST['redirect'];
 					} else {
-						$success .= $root . "admin/index.php";
+						if ($userRole['role'] == 'Administrator') {
+							$success .= $root . "admin/index.php";
+						} else {
+							$success .= $root . "book-exchange";
+						}
 					}
 					
 					$IPAddress = $_SERVER['REMOTE_ADDR'];
@@ -328,7 +334,7 @@ ob_start();
 				$MM_redirectLoginFailed = $failure;
 				$MM_redirecttoReferrer = false;
 				  
-				$LoginRS__query=sprintf("SELECT userName, passWord, role FROM users WHERE userName=%s AND passWord=%s",
+				$LoginRS__query=sprintf("SELECT emailAddress1, passWord, role FROM users WHERE emailAddress1=%s AND passWord=%s",
 				GetSQLValueString($loginUsername, "text"), GetSQLValueString($password, "text")); 
 				 
 				$LoginRS = mysql_query($LoginRS__query, $connDBA) or die(mysql_error());
@@ -340,7 +346,7 @@ ob_start();
 					$_SESSION['MM_Username'] = $loginUsername;
 					$_SESSION['MM_UserGroup'] = $loginStrGroup;	
 					
-					$userIDGrabber = mysql_query("SELECT * FROM `users` WHERE `userName` = '{$loginUsername}' AND `passWord` = '{$password}' LIMIT 1");
+					$userIDGrabber = mysql_query("SELECT * FROM `users` WHERE `emailAddress1` = '{$loginUsername}' AND `passWord` = '{$password}' LIMIT 1");
 					$userID = mysql_fetch_array($userIDGrabber);
 					setcookie("userStatus", $userID['sysID'], time()+1000000000); 
 					
@@ -2313,7 +2319,7 @@ ob_start();
 	if (isset($_SESSION['MM_Username'])) {
 		$userName = $_SESSION['MM_Username'];
 		
-		$userDataGrabber = mysql_query("SELECT * FROM `users` WHERE `userName` = '{$userName}'", $connDBA);
+		$userDataGrabber = mysql_query("SELECT * FROM `users` WHERE `emailAddress1` = '{$userName}'", $connDBA);
 		$userData = mysql_fetch_array($userDataGrabber);
 		$URL = $_SERVER['REQUEST_URI'];
 		

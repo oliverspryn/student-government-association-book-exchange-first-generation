@@ -17,11 +17,11 @@
 <section class="login">
 <div class="design">
 <div class="login">
-<form action="#" method="post">
+<form action="<?php echo $root; ?>login.php" method="post">
 <h2>Login</h2>
-<p>Email address:</p><input name="username" type="email" />
-<p>Password:</p><input name="password" type="password"/>
-<input id="redirect" name="redirect" type="hidden" />
+<p>Email address:</p><input autocomplete="off" name="username" type="email" />
+<p>Password:</p><input autocomplete="off" name="password" type="password"/>
+<input class="redirect" name="redirect" type="hidden" />
 <br /><br />
 <input class="red" type="submit" value="Login" />
 </form>
@@ -32,9 +32,10 @@
 <div class="register">
 <form action="#" method="post">
 <h2>Register</h2>
-<p>First and last name:</p><input name="name" type="text" />
-<p>Email address:</p><input name="email" type="email" />
-<p>Password:</p><input name="username" type="password" />
+<p>First and last name:</p><input autocomplete="off" name="name" type="text" />
+<p>Email address:</p><input autocomplete="off" name="email" type="email" />
+<p>Password:</p><input autocomplete="off" name="username" type="password" />
+<input class="redirect" name="redirect" type="hidden" />
 <br /><br />
 <input class="green" type="submit" value="Register" />
 </form>
