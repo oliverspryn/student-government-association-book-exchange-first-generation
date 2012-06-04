@@ -7,6 +7,7 @@
 -- Server version: 5.5.20
 -- PHP Version: 5.3.10
 
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
 
@@ -25,18 +26,18 @@ SET time_zone = "+00:00";
 -- Table structure for table `bookcategories`
 --
 
-CREATE TABLE IF NOT EXISTS "bookcategories" (
-  "id" int(11) NOT NULL COMMENT 'Primary key of the table, and ID of the category',
-  "name" longtext NOT NULL COMMENT 'The title of the category',
-  "course" text NOT NULL COMMENT 'The short ID name of the course',
-  "description" longtext NOT NULL COMMENT 'An optional description for the category',
-  "total" int(11) NOT NULL COMMENT 'The total number of books in this category',
-  "color1" varchar(7) NOT NULL COMMENT 'The color scheme for the category and the color of the very top border for the category <header>',
-  "color2" varchar(7) NOT NULL COMMENT 'Color of the border around the <h1> tag in the category <header>',
-  "color3" varchar(7) NOT NULL COMMENT 'Color of the background of the <h1> tag in the category <header>',
-  "textColor" varchar(7) NOT NULL COMMENT 'Color of the text of the <h1> tag in the category <header>',
-  PRIMARY KEY ("id")
-) AUTO_INCREMENT=40 ;
+CREATE TABLE IF NOT EXISTS `bookcategories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Primary key of the table, and ID of the category',
+  `name` longtext NOT NULL COMMENT 'The title of the category',
+  `course` text NOT NULL COMMENT 'The short ID name of the course',
+  `description` longtext NOT NULL COMMENT 'An optional description for the category',
+  `total` int(11) NOT NULL COMMENT 'The total number of books in this category',
+  `color1` varchar(7) NOT NULL COMMENT 'The color scheme for the category and the color of the very top border for the category <header>',
+  `color2` varchar(7) NOT NULL COMMENT 'Color of the border around the <h1> tag in the category <header>',
+  `color3` varchar(7) NOT NULL COMMENT 'Color of the background of the <h1> tag in the category <header>',
+  `textColor` varchar(7) NOT NULL COMMENT 'Color of the text of the <h1> tag in the category <header>',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=40 ;
 
 --
 -- Dumping data for table `bookcategories`
@@ -89,25 +90,25 @@ INSERT INTO `bookcategories` (`id`, `name`, `course`, `description`, `total`, `c
 -- Table structure for table `books`
 --
 
-CREATE TABLE IF NOT EXISTS "books" (
-  "id" int(11) NOT NULL COMMENT 'Primary key of the table, and ID of the book',
-  "userID" int(11) NOT NULL COMMENT 'The ID of the current book''s owner',
-  "upload" int(10) NOT NULL COMMENT 'Time which this book was added',
-  "linkID" varchar(32) NOT NULL COMMENT 'A hashed identifier to link a single book, which was used for multiple and stored in the database once for each class, together by a common ID',
-  "ISBN" int(10) NOT NULL COMMENT 'The ISBN-10 number, without the dashes',
-  "title" longtext NOT NULL COMMENT 'Title of the book',
-  "author" varchar(200) NOT NULL COMMENT 'Author(s) of the book',
-  "edition" varchar(200) NOT NULL COMMENT 'The edition of the book',
-  "course" int(11) NOT NULL COMMENT 'The system ID for the course for which this book is intended',
-  "number" int(3) NOT NULL COMMENT 'The course number for which this book is intended',
-  "section" tinytext NOT NULL COMMENT 'The class section for which this book is intended',
-  "price" decimal(10,2) NOT NULL COMMENT 'Asking price of the book',
-  "condition" text NOT NULL COMMENT 'The books condition: excellent, very good, good, fair, or poor',
-  "written" tinytext NOT NULL COMMENT 'Whether or not this book was underlined, highlighted, or written in',
-  "comments" longtext NOT NULL COMMENT 'Any comments about the book from the seller',
-  "imageURL" longtext NOT NULL COMMENT 'The URL of the book''s cover image',
-  PRIMARY KEY ("id")
-) AUTO_INCREMENT=24 ;
+CREATE TABLE IF NOT EXISTS `books` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Primary key of the table, and ID of the book',
+  `userID` int(11) NOT NULL COMMENT 'The ID of the current book''s owner',
+  `upload` int(10) NOT NULL COMMENT 'Time which this book was added',
+  `linkID` varchar(32) NOT NULL COMMENT 'A hashed identifier to link a single book, which was used for multiple and stored in the database once for each class, together by a common ID',
+  `ISBN` int(10) NOT NULL COMMENT 'The ISBN-10 number, without the dashes',
+  `title` longtext NOT NULL COMMENT 'Title of the book',
+  `author` varchar(200) NOT NULL COMMENT 'Author(s) of the book',
+  `edition` varchar(200) NOT NULL COMMENT 'The edition of the book',
+  `course` int(11) NOT NULL COMMENT 'The system ID for the course for which this book is intended',
+  `number` int(3) NOT NULL COMMENT 'The course number for which this book is intended',
+  `section` tinytext NOT NULL COMMENT 'The class section for which this book is intended',
+  `price` decimal(10,2) NOT NULL COMMENT 'Asking price of the book',
+  `condition` text NOT NULL COMMENT 'The books condition: excellent, very good, good, fair, or poor',
+  `written` tinytext NOT NULL COMMENT 'Whether or not this book was underlined, highlighted, or written in',
+  `comments` longtext NOT NULL COMMENT 'Any comments about the book from the seller',
+  `imageURL` longtext NOT NULL COMMENT 'The URL of the book''s cover image',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=24 ;
 
 --
 -- Dumping data for table `books`
@@ -140,31 +141,31 @@ INSERT INTO `books` (`id`, `userID`, `upload`, `linkID`, `ISBN`, `title`, `autho
 -- Table structure for table `collaboration`
 --
 
-CREATE TABLE IF NOT EXISTS "collaboration" (
-  "id" int(11) NOT NULL,
-  "position" int(11) NOT NULL,
-  "visible" text NOT NULL,
-  "type" text NOT NULL,
-  "fromDate" longtext NOT NULL,
-  "fromTime" longtext NOT NULL,
-  "toDate" longtext NOT NULL,
-  "toTime" longtext NOT NULL,
-  "title" longtext NOT NULL,
-  "content" longtext NOT NULL,
-  "assignee" longtext NOT NULL,
-  "task" longtext NOT NULL,
-  "description" longtext NOT NULL,
-  "dueDate" longtext NOT NULL,
-  "priority" longtext NOT NULL,
-  "completed" longtext NOT NULL,
-  "directories" longtext NOT NULL,
-  "questions" longtext NOT NULL,
-  "responses" longtext NOT NULL,
-  "name" longtext NOT NULL,
-  "date" longtext NOT NULL,
-  "comment" longtext NOT NULL,
-  PRIMARY KEY ("id")
-) AUTO_INCREMENT=140 ;
+CREATE TABLE IF NOT EXISTS `collaboration` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `position` int(11) NOT NULL,
+  `visible` text NOT NULL,
+  `type` text NOT NULL,
+  `fromDate` longtext NOT NULL,
+  `fromTime` longtext NOT NULL,
+  `toDate` longtext NOT NULL,
+  `toTime` longtext NOT NULL,
+  `title` longtext NOT NULL,
+  `content` longtext NOT NULL,
+  `assignee` longtext NOT NULL,
+  `task` longtext NOT NULL,
+  `description` longtext NOT NULL,
+  `dueDate` longtext NOT NULL,
+  `priority` longtext NOT NULL,
+  `completed` longtext NOT NULL,
+  `directories` longtext NOT NULL,
+  `questions` longtext NOT NULL,
+  `responses` longtext NOT NULL,
+  `name` longtext NOT NULL,
+  `date` longtext NOT NULL,
+  `comment` longtext NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=140 ;
 
 --
 -- Dumping data for table `collaboration`
@@ -181,12 +182,12 @@ INSERT INTO `collaboration` (`id`, `position`, `visible`, `type`, `fromDate`, `f
 -- Table structure for table `dailyhits`
 --
 
-CREATE TABLE IF NOT EXISTS "dailyhits" (
-  "id" int(255) NOT NULL,
-  "date" varchar(255) NOT NULL,
-  "hits" int(255) NOT NULL,
-  PRIMARY KEY ("id")
-) AUTO_INCREMENT=590 ;
+CREATE TABLE IF NOT EXISTS `dailyhits` (
+  `id` int(255) NOT NULL AUTO_INCREMENT,
+  `date` varchar(255) NOT NULL,
+  `hits` int(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=590 ;
 
 --
 -- Dumping data for table `dailyhits`
@@ -226,26 +227,26 @@ INSERT INTO `dailyhits` (`id`, `date`, `hits`) VALUES
 -- Table structure for table `external`
 --
 
-CREATE TABLE IF NOT EXISTS "external" (
-  "id" int(255) NOT NULL,
-  "position" int(11) NOT NULL,
-  "visible" text NOT NULL,
-  "published" int(1) NOT NULL,
-  "display" int(1) NOT NULL,
-  "content1" longtext NOT NULL,
-  "content2" longtext NOT NULL,
-  "content3" longtext NOT NULL,
-  "content4" longtext NOT NULL,
-  "content5" longtext NOT NULL,
-  "content6" longtext NOT NULL,
-  "content7" longtext NOT NULL,
-  "content8" longtext NOT NULL,
-  "content9" longtext NOT NULL,
-  "content10" longtext NOT NULL,
-  "content11" longtext NOT NULL,
-  "content12" longtext NOT NULL,
-  PRIMARY KEY ("id")
-) AUTO_INCREMENT=30 ;
+CREATE TABLE IF NOT EXISTS `external` (
+  `id` int(255) NOT NULL AUTO_INCREMENT,
+  `position` int(11) NOT NULL,
+  `visible` text NOT NULL,
+  `published` int(1) NOT NULL,
+  `display` int(1) NOT NULL,
+  `content1` longtext NOT NULL,
+  `content2` longtext NOT NULL,
+  `content3` longtext NOT NULL,
+  `content4` longtext NOT NULL,
+  `content5` longtext NOT NULL,
+  `content6` longtext NOT NULL,
+  `content7` longtext NOT NULL,
+  `content8` longtext NOT NULL,
+  `content9` longtext NOT NULL,
+  `content10` longtext NOT NULL,
+  `content11` longtext NOT NULL,
+  `content12` longtext NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=30 ;
 
 -- --------------------------------------------------------
 
@@ -253,13 +254,13 @@ CREATE TABLE IF NOT EXISTS "external" (
 -- Table structure for table `failedlogins`
 --
 
-CREATE TABLE IF NOT EXISTS "failedlogins" (
-  "id" int(11) NOT NULL,
-  "timeStamp" longtext NOT NULL,
-  "IPAddress" longtext NOT NULL,
-  "userName" longtext NOT NULL,
-  PRIMARY KEY ("id")
-) AUTO_INCREMENT=364 ;
+CREATE TABLE IF NOT EXISTS `failedlogins` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `timeStamp` longtext NOT NULL,
+  `IPAddress` longtext NOT NULL,
+  `userName` longtext NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=364 ;
 
 --
 -- Dumping data for table `failedlogins`
@@ -278,12 +279,12 @@ INSERT INTO `failedlogins` (`id`, `timeStamp`, `IPAddress`, `userName`) VALUES
 -- Table structure for table `pagehits`
 --
 
-CREATE TABLE IF NOT EXISTS "pagehits" (
-  "id" int(1) NOT NULL,
-  "page" varchar(255) NOT NULL,
-  "hits" int(255) NOT NULL,
-  PRIMARY KEY ("id")
-) AUTO_INCREMENT=139 ;
+CREATE TABLE IF NOT EXISTS `pagehits` (
+  `id` int(1) NOT NULL AUTO_INCREMENT,
+  `page` varchar(255) NOT NULL,
+  `hits` int(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=139 ;
 
 --
 -- Dumping data for table `pagehits`
@@ -306,36 +307,36 @@ INSERT INTO `pagehits` (`id`, `page`, `hits`) VALUES
 -- Table structure for table `pages`
 --
 
-CREATE TABLE IF NOT EXISTS "pages" (
-  "id" int(255) NOT NULL,
-  "position" int(11) NOT NULL,
-  "parentPage" int(11) NOT NULL,
-  "subPosition" int(11) NOT NULL,
-  "visible" text NOT NULL,
-  "published" int(1) NOT NULL,
-  "display" longtext NOT NULL,
-  "content1" longtext NOT NULL,
-  "name" longtext NOT NULL,
-  "date" longtext NOT NULL,
-  "comment" longtext NOT NULL,
-  "content2" longtext NOT NULL,
-  "content3" longtext NOT NULL,
-  "content4" longtext NOT NULL,
-  "content5" longtext NOT NULL,
-  "content6" longtext NOT NULL,
-  "content7" longtext NOT NULL,
-  "content8" longtext NOT NULL,
-  "content9" longtext NOT NULL,
-  "content10" longtext NOT NULL,
-  "content11" longtext NOT NULL,
-  "content12" longtext NOT NULL,
-  "content13" longtext NOT NULL,
-  "content14" longtext NOT NULL,
-  "content15" longtext NOT NULL,
-  "content16" longtext NOT NULL,
-  "content17" longtext NOT NULL,
-  PRIMARY KEY ("id")
-) AUTO_INCREMENT=133 ;
+CREATE TABLE IF NOT EXISTS `pages` (
+  `id` int(255) NOT NULL AUTO_INCREMENT,
+  `position` int(11) NOT NULL,
+  `parentPage` int(11) NOT NULL,
+  `subPosition` int(11) NOT NULL,
+  `visible` text NOT NULL,
+  `published` int(1) NOT NULL,
+  `display` longtext NOT NULL,
+  `content1` longtext NOT NULL,
+  `name` longtext NOT NULL,
+  `date` longtext NOT NULL,
+  `comment` longtext NOT NULL,
+  `content2` longtext NOT NULL,
+  `content3` longtext NOT NULL,
+  `content4` longtext NOT NULL,
+  `content5` longtext NOT NULL,
+  `content6` longtext NOT NULL,
+  `content7` longtext NOT NULL,
+  `content8` longtext NOT NULL,
+  `content9` longtext NOT NULL,
+  `content10` longtext NOT NULL,
+  `content11` longtext NOT NULL,
+  `content12` longtext NOT NULL,
+  `content13` longtext NOT NULL,
+  `content14` longtext NOT NULL,
+  `content15` longtext NOT NULL,
+  `content16` longtext NOT NULL,
+  `content17` longtext NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=133 ;
 
 --
 -- Dumping data for table `pages`
@@ -359,37 +360,37 @@ INSERT INTO `pages` (`id`, `position`, `parentPage`, `subPosition`, `visible`, `
 -- Table structure for table `privileges`
 --
 
-CREATE TABLE IF NOT EXISTS "privileges" (
-  "id" int(1) NOT NULL,
-  "deleteFile" int(1) NOT NULL,
-  "uploadFile" int(1) NOT NULL,
-  "deleteForumComments" int(1) NOT NULL,
-  "sendEmail" int(1) NOT NULL,
-  "viewStaffPage" int(1) NOT NULL,
-  "createStaffPage" int(1) NOT NULL,
-  "editStaffPage" int(1) NOT NULL,
-  "deleteStaffPage" int(1) NOT NULL,
-  "publishStaffPage" int(1) NOT NULL,
-  "addStaffComments" int(1) NOT NULL,
-  "deleteStaffComments" int(1) NOT NULL,
-  "createPage" int(1) NOT NULL,
-  "editPage" int(1) NOT NULL,
-  "deletePage" int(1) NOT NULL,
-  "publishPage" int(1) NOT NULL,
-  "createSideBar" int(1) NOT NULL,
-  "editSideBar" int(1) NOT NULL,
-  "deleteSideBar" int(1) NOT NULL,
-  "publishSideBar" int(1) NOT NULL,
-  "siteSettings" int(1) NOT NULL,
-  "sideBarSettings" int(1) NOT NULL,
-  "deleteComments" int(1) NOT NULL,
-  "createExternal" int(1) NOT NULL,
-  "editExternal" int(1) NOT NULL,
-  "deleteExternal" int(1) NOT NULL,
-  "publishExternal" int(1) NOT NULL,
-  "viewStatistics" int(1) NOT NULL,
-  "autoEmail" int(1) NOT NULL
-);
+CREATE TABLE IF NOT EXISTS `privileges` (
+  `id` int(1) NOT NULL,
+  `deleteFile` int(1) NOT NULL,
+  `uploadFile` int(1) NOT NULL,
+  `deleteForumComments` int(1) NOT NULL,
+  `sendEmail` int(1) NOT NULL,
+  `viewStaffPage` int(1) NOT NULL,
+  `createStaffPage` int(1) NOT NULL,
+  `editStaffPage` int(1) NOT NULL,
+  `deleteStaffPage` int(1) NOT NULL,
+  `publishStaffPage` int(1) NOT NULL,
+  `addStaffComments` int(1) NOT NULL,
+  `deleteStaffComments` int(1) NOT NULL,
+  `createPage` int(1) NOT NULL,
+  `editPage` int(1) NOT NULL,
+  `deletePage` int(1) NOT NULL,
+  `publishPage` int(1) NOT NULL,
+  `createSideBar` int(1) NOT NULL,
+  `editSideBar` int(1) NOT NULL,
+  `deleteSideBar` int(1) NOT NULL,
+  `publishSideBar` int(1) NOT NULL,
+  `siteSettings` int(1) NOT NULL,
+  `sideBarSettings` int(1) NOT NULL,
+  `deleteComments` int(1) NOT NULL,
+  `createExternal` int(1) NOT NULL,
+  `editExternal` int(1) NOT NULL,
+  `deleteExternal` int(1) NOT NULL,
+  `publishExternal` int(1) NOT NULL,
+  `viewStatistics` int(1) NOT NULL,
+  `autoEmail` int(1) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -397,16 +398,16 @@ CREATE TABLE IF NOT EXISTS "privileges" (
 -- Table structure for table `question`
 --
 
-CREATE TABLE IF NOT EXISTS "question" (
-  "id" int(11) NOT NULL COMMENT 'Holds the primary key of a question',
-  "timeStart" int(10) NOT NULL COMMENT 'The start day of the question''s duration',
-  "timeEnd" int(10) NOT NULL COMMENT 'The end day of the question''s duration',
-  "title" longtext NOT NULL COMMENT 'A brief title for the question',
-  "question" longtext NOT NULL COMMENT 'The text of the question',
-  "responseValue" longtext NOT NULL COMMENT 'The total number of responses to a question',
-  "responses" longtext NOT NULL COMMENT 'The responses received for each question',
-  PRIMARY KEY ("id")
-) AUTO_INCREMENT=4 ;
+CREATE TABLE IF NOT EXISTS `question` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Holds the primary key of a question',
+  `timeStart` int(10) NOT NULL COMMENT 'The start day of the question''s duration',
+  `timeEnd` int(10) NOT NULL COMMENT 'The end day of the question''s duration',
+  `title` longtext NOT NULL COMMENT 'A brief title for the question',
+  `question` longtext NOT NULL COMMENT 'The text of the question',
+  `responseValue` longtext NOT NULL COMMENT 'The total number of responses to a question',
+  `responses` longtext NOT NULL COMMENT 'The responses received for each question',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 --
 -- Dumping data for table `question`
@@ -423,12 +424,12 @@ INSERT INTO `question` (`id`, `timeStart`, `timeEnd`, `title`, `question`, `resp
 -- Table structure for table `saptcha`
 --
 
-CREATE TABLE IF NOT EXISTS "saptcha" (
-  "id" int(11) NOT NULL,
-  "question" longtext NOT NULL,
-  "answer" longtext NOT NULL,
-  PRIMARY KEY ("id")
-) AUTO_INCREMENT=9 ;
+CREATE TABLE IF NOT EXISTS `saptcha` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `question` longtext NOT NULL,
+  `answer` longtext NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
 
 -- --------------------------------------------------------
 
@@ -436,17 +437,17 @@ CREATE TABLE IF NOT EXISTS "saptcha" (
 -- Table structure for table `sidebar`
 --
 
-CREATE TABLE IF NOT EXISTS "sidebar" (
-  "id" int(255) NOT NULL,
-  "position" int(11) NOT NULL,
-  "visible" text NOT NULL,
-  "published" int(1) NOT NULL,
-  "display" int(1) NOT NULL,
-  "type" text NOT NULL,
-  "content1" longtext NOT NULL,
-  "content2" longtext NOT NULL,
-  PRIMARY KEY ("id")
-) AUTO_INCREMENT=12 ;
+CREATE TABLE IF NOT EXISTS `sidebar` (
+  `id` int(255) NOT NULL AUTO_INCREMENT,
+  `position` int(11) NOT NULL,
+  `visible` text NOT NULL,
+  `published` int(1) NOT NULL,
+  `display` int(1) NOT NULL,
+  `type` text NOT NULL,
+  `content1` longtext NOT NULL,
+  `content2` longtext NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
 
 --
 -- Dumping data for table `sidebar`
@@ -462,34 +463,34 @@ INSERT INTO `sidebar` (`id`, `position`, `visible`, `published`, `display`, `typ
 -- Table structure for table `siteprofiles`
 --
 
-CREATE TABLE IF NOT EXISTS "siteprofiles" (
-  "id" int(11) NOT NULL,
-  "siteName" varchar(200) NOT NULL,
-  "paddingTop" tinyint(4) NOT NULL,
-  "paddingLeft" tinyint(4) NOT NULL,
-  "paddingRight" tinyint(4) NOT NULL,
-  "paddingBottom" tinyint(4) NOT NULL,
-  "width" int(3) NOT NULL,
-  "height" int(3) NOT NULL,
-  "sideBar" text NOT NULL,
-  "auto" text NOT NULL,
-  "siteFooter" text NOT NULL,
-  "author" varchar(200) NOT NULL,
-  "language" varchar(15) NOT NULL,
-  "copyright" varchar(200) NOT NULL,
-  "description" varchar(20000) NOT NULL,
-  "meta" text NOT NULL,
-  "timeZone" varchar(20) NOT NULL,
-  "welcome" text NOT NULL,
-  "style" varchar(200) NOT NULL,
-  "iconType" text NOT NULL,
-  "spellCheckerAPI" varchar(50) NOT NULL,
-  "saptcha" text NOT NULL,
-  "question" longtext NOT NULL,
-  "answer" longtext NOT NULL,
-  "failedLogins" int(2) NOT NULL,
-  PRIMARY KEY ("siteName")
-);
+CREATE TABLE IF NOT EXISTS `siteprofiles` (
+  `id` int(11) NOT NULL,
+  `siteName` varchar(200) NOT NULL,
+  `paddingTop` tinyint(4) NOT NULL,
+  `paddingLeft` tinyint(4) NOT NULL,
+  `paddingRight` tinyint(4) NOT NULL,
+  `paddingBottom` tinyint(4) NOT NULL,
+  `width` int(3) NOT NULL,
+  `height` int(3) NOT NULL,
+  `sideBar` text NOT NULL,
+  `auto` text NOT NULL,
+  `siteFooter` text NOT NULL,
+  `author` varchar(200) NOT NULL,
+  `language` varchar(15) NOT NULL,
+  `copyright` varchar(200) NOT NULL,
+  `description` varchar(20000) NOT NULL,
+  `meta` text NOT NULL,
+  `timeZone` varchar(20) NOT NULL,
+  `welcome` text NOT NULL,
+  `style` varchar(200) NOT NULL,
+  `iconType` text NOT NULL,
+  `spellCheckerAPI` varchar(50) NOT NULL,
+  `saptcha` text NOT NULL,
+  `question` longtext NOT NULL,
+  `answer` longtext NOT NULL,
+  `failedLogins` int(2) NOT NULL,
+  PRIMARY KEY (`siteName`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `siteprofiles`
@@ -504,37 +505,37 @@ INSERT INTO `siteprofiles` (`id`, `siteName`, `paddingTop`, `paddingLeft`, `padd
 -- Table structure for table `staffpages`
 --
 
-CREATE TABLE IF NOT EXISTS "staffpages" (
-  "id" int(255) NOT NULL,
-  "position" int(11) NOT NULL,
-  "published" int(1) NOT NULL,
-  "display" int(11) NOT NULL,
-  "content1" longtext NOT NULL,
-  "name" longtext NOT NULL,
-  "date" longtext NOT NULL,
-  "comment" longtext NOT NULL,
-  "content2" longtext NOT NULL,
-  "content3" longtext NOT NULL,
-  "content4" longtext NOT NULL,
-  "content5" longtext NOT NULL,
-  "content6" longtext NOT NULL,
-  "content7" longtext NOT NULL,
-  "content8" longtext NOT NULL,
-  "content9" longtext NOT NULL,
-  "content10" longtext NOT NULL,
-  "content11" longtext NOT NULL,
-  "content12" longtext NOT NULL,
-  "content13" longtext NOT NULL,
-  "content14" longtext NOT NULL,
-  "content15" longtext NOT NULL,
-  "content16" longtext NOT NULL,
-  "content17" longtext NOT NULL,
-  "content18" longtext NOT NULL,
-  "content19" longtext NOT NULL,
-  "content20" longtext NOT NULL,
-  "content21" longtext NOT NULL,
-  PRIMARY KEY ("id")
-) AUTO_INCREMENT=36 ;
+CREATE TABLE IF NOT EXISTS `staffpages` (
+  `id` int(255) NOT NULL AUTO_INCREMENT,
+  `position` int(11) NOT NULL,
+  `published` int(1) NOT NULL,
+  `display` int(11) NOT NULL,
+  `content1` longtext NOT NULL,
+  `name` longtext NOT NULL,
+  `date` longtext NOT NULL,
+  `comment` longtext NOT NULL,
+  `content2` longtext NOT NULL,
+  `content3` longtext NOT NULL,
+  `content4` longtext NOT NULL,
+  `content5` longtext NOT NULL,
+  `content6` longtext NOT NULL,
+  `content7` longtext NOT NULL,
+  `content8` longtext NOT NULL,
+  `content9` longtext NOT NULL,
+  `content10` longtext NOT NULL,
+  `content11` longtext NOT NULL,
+  `content12` longtext NOT NULL,
+  `content13` longtext NOT NULL,
+  `content14` longtext NOT NULL,
+  `content15` longtext NOT NULL,
+  `content16` longtext NOT NULL,
+  `content17` longtext NOT NULL,
+  `content18` longtext NOT NULL,
+  `content19` longtext NOT NULL,
+  `content20` longtext NOT NULL,
+  `content21` longtext NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=36 ;
 
 -- --------------------------------------------------------
 
@@ -542,20 +543,20 @@ CREATE TABLE IF NOT EXISTS "staffpages" (
 -- Table structure for table `users`
 --
 
-CREATE TABLE IF NOT EXISTS "users" (
-  "id" int(50) NOT NULL,
-  "active" varchar(20) NOT NULL,
-  "firstName" longtext NOT NULL,
-  "lastName" longtext NOT NULL,
-  "passWord" longtext NOT NULL,
-  "changePassword" text NOT NULL,
-  "emailAddress1" longtext NOT NULL,
-  "emailAddress2" longtext NOT NULL,
-  "emailAddress3" longtext NOT NULL,
-  "role" longtext NOT NULL,
-  PRIMARY KEY ("id"),
-  FULLTEXT KEY "firstName" ("firstName","lastName","emailAddress1","role")
-) AUTO_INCREMENT=279 ;
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(50) NOT NULL AUTO_INCREMENT,
+  `active` varchar(20) NOT NULL,
+  `firstName` longtext NOT NULL,
+  `lastName` longtext NOT NULL,
+  `passWord` longtext NOT NULL,
+  `changePassword` text NOT NULL,
+  `emailAddress1` longtext NOT NULL,
+  `emailAddress2` longtext NOT NULL,
+  `emailAddress3` longtext NOT NULL,
+  `role` longtext NOT NULL,
+  PRIMARY KEY (`id`),
+  FULLTEXT KEY `firstName` (`firstName`,`lastName`,`emailAddress1`,`role`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=279 ;
 
 --
 -- Dumping data for table `users`
