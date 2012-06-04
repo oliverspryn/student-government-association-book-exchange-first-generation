@@ -1,6 +1,76 @@
 <?php
 //Include the system's core
 	require_once("../../Connections/connDBA.php");
+	require_once("../system/server/Validate.php");
+	
+/**
+ * Process the form
+ *
+ * This information will likely need to be processed several times,
+ * in order to allow a given book to be searchable for each class
+ * that it belongs.
+ *
+ * There is a set of information which will remain constant for
+ * each of the processes (represented by the book image and steps
+ * one and three in the form) and there is a set which will change 
+ * for each process (represented by step two in the form).
+ *
+ * The data which will be processed several times will contain 
+ * information which will need to be discarded. The first piece of
+ * data from the class name and section is unneeded, as they only
+ * served as they were only templates of dynmaic datafor jQuery to 
+ * copy whenever a new row was added to the class table. They were
+ * never filled out by the user, and only served technical purposes.
+ *
+ * The first values for className and classSec will be discarded.
+*/
+	if (isset($_POST) && !empty($_POST) && is_array($_POST) && isset($_POST['ISBN'])) {
+	//Generate the server-side data needed to store a book
+		$userID = $userData['id'];
+		$upload = strtotime("now");
+		$linkID = md5($upload + "_" + $userID);
+		
+	//Validate the constant data provided by the user
+		$imageURL = mysql_real_escape_string(Validate::required($_POST['imageURL']));
+		$ISBN = preg_replace('/[^0-9]/', '', $_POST['ISBN']);
+		
+		if (strlen($ISBN) == 10 || strlen($ISBN) == 13) {
+			//Do nothing
+		} else {
+			redirect("index.php");
+		}
+		
+		$ISBN = mysql_real_escape_string($ISBN);
+		$title = mysql_real_escape_string(Validate::required($_POST['title']));
+		$author = mysql_real_escape_string(Validate::required($_POST['author']));
+		$edition = mysql_real_escape_string($_POST['edition']);
+		$price = mysql_real_escape_string(Validate::numeric($_POST['price'], 0, 999.99));
+		$condition = mysql_real_escape_string(Validate::required($_POST['condition'], array("Excellent", "Very Good", "Good", "Fair", "Poor")));
+		$written = mysql_real_escape_string(Validate::required($_POST['written'], array("Yes", "No")));
+		$comments = mysql_real_escape_string($_POST['comments']);
+		
+	//Process this data multiple times, see above description for more details
+		for ($i = 0; $i <= sizeof($_POST['classNum']) - 1; $i++) {
+		//Validate the dynamic data provided by the user
+			$className = mysql_real_escape_string(Validate::required($_POST['className'][$i + 1]));
+			$classNum = mysql_real_escape_string(Validate::numeric($_POST['classNum'][$i], 101, 499));
+			$classSec = mysql_real_escape_string(Validate::required($_POST['classSec'][$i + 1], false, false, false, 1));
+			
+		//Execute the data on the database
+			mysql_query("INSERT INTO books (
+					`id`, `userID`, `upload`, `linkID`, `ISBN`, `title`, `author`, `edition`, `course`, `number`, `section`, `price`, `condition`, `written`, `comments`, `imageURL`
+				 ) VALUES (
+					NULL, '{$userID}', '{$upload}', '{$linkID}', '{$ISBN}', '{$title}', '{$author}', '{$edition}', '{$className}', '{$classNum}', '{$classSec}', '{$price}', '{$condition}', '{$written}', '{$comments}', '{$imageURL}'
+				 )", $connDBA);
+		}
+		
+	//Determine where to redirect the user
+		if ($_POST['redirect'] == "1") {
+			redirect("index.php?message=added");
+		} else {
+			redirect("../account");
+		}
+	}
 
 //Include the top of the page from the administration template
 	topPage("public", "Sell Books", "" , "", "<link href=\"../system/stylesheets/style.css\" rel=\"stylesheet\" />
@@ -15,8 +85,15 @@
 	echo "<section class=\"body\">
 ";
 
+//Display any needed success messages
+	if (isset($_GET['message']) && $_GET['message'] == "added") {
+		echo "<div class=\"center\"><div class=\"success\">Your book is now up for sale</div></div>
+		
+";
+	}
+
 //Display the page header
-	echo "<form>
+	echo "<form action=\"index.php\" method=\"post\">
 <header class=\"styled sell\"><h1>Sell Your Books</h1></header>
 
 <aside class=\"preview\">
@@ -115,7 +192,7 @@
 				$courseFlyout .= "
 <li>
 <ul>
-<li class=\"all selected\"><span class=\"band\" style=\"border-left-color: #FFFFFF;\"><span class=\"icon\" style=\"background-image: url('../system/images/icons/all.png');\">Select a Discipline</span></span></li>";
+<li class=\"all selected\" data-value=\"0\"><span class=\"band\" style=\"border-left-color: #FFFFFF;\"><span class=\"icon\" style=\"background-image: url('../system/images/icons/all.png');\">Select a Discipline</span></span></li>";
 
 			//Since we inserted a "free" item, add one to the counter
 				$counter++;
@@ -127,7 +204,7 @@
 		}
 		
 		$courseFlyout .= "
-<li><span class=\"band\" style=\"border-left-color: " . $category['color1'] . ";\"><span class=\"icon\" style=\"background-image: url('../../data/book-exchange/icons/" . $category['id'] . "/icon_032.png');\">" . $category['name'] . "</span></span></li>";
+<li data-value=\"" . $category['id'] . "\"><span class=\"band\" style=\"border-left-color: " . $category['color1'] . ";\"><span class=\"icon\" style=\"background-image: url('../../data/book-exchange/icons/" . $category['id'] . "/icon_032.png');\">" . $category['name'] . "</span></span></li>";
 
 		if ($counter % 10 == 0) {
 			$courseFlyout .= "
@@ -228,7 +305,7 @@
 <tr>
 <td>Written in:</td>
 <td class=\"containsMenu\">
-<ul class=\"dropdown\" data-name=\"condition\">
+<ul class=\"dropdown\" data-name=\"written\">
 <li class=\"selected\">No</li>
 <li>Yes</li>
 </ul>
@@ -247,9 +324,10 @@
 
 ";
 
-//Include the submit button
-	echo "<input class=\"blue\" type=\"Submit\" value=\"Submit and Add Another Book\" />
-<input class=\"blue\" type=\"Submit\" value=\"Submit and Finish\" />
+//Include the submit and cancel buttons
+	echo "<input class=\"redirect\" name=\"redirect\" type=\"hidden\" value=\"0\" />
+<input class=\"again blue\" type=\"submit\" value=\"Submit and Add Another Book\" />
+<input class=\"blue finish\" type=\"submit\" value=\"Submit and Finish\" />
 <input class=\"cancel\" type=\"button\" value=\"Cancel\" />";
 
 //Include the footer from the administration template

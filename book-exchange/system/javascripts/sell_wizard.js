@@ -214,7 +214,7 @@
 						currentClass.addClass('selected');
 						
 					//Update the text field value
-						newClass.find('div.menuWrapper input').val(currentClass.text());
+						newClass.find('div.menuWrapper input').attr('value', currentClass.attr('data-value'));
 					}
 				});
 				
@@ -417,6 +417,15 @@
 	 * Misc
 	 * ------------------------------------
 	*/
+	
+	//Update the hidden input on-click to either redirect to back to this page to add another book or back to account page
+		$('input.again').click(function() {
+			$('input.redirect').attr('value', '1');
+		});
+		
+		$('input.finish').click(function() {
+			$('input.redirect').attr('value', '0');
+		});
 	
 	//Listen for the cancel button and redirect the user to the main book exchange page
 		$('input.cancel').click(function() {

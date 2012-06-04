@@ -157,10 +157,10 @@ $(document).ready(function() {
 			item.addClass('selected');
 			
 		//Grab the value of the selected item and store it in the associated hidden element
-			if (item.text() == 'Select a Discipline' || item.text() == 'All Disciplines') { //These are default values
+			if (item.attr('data-value') == '0') { //This is an invalid value
 				menu.parent().find('div div input.collapse').attr('value', '');
 			} else {
-				menu.parent().find('div div input.collapse').attr('value', item.text());
+				menu.parent().find('div div input.collapse').attr('value', item.attr('data-value'));
 			}
 			
 		//Slide the unselected menu items out of the way
@@ -236,4 +236,12 @@ $(document).ready(function() {
 			}
 		});
 	}
+	
+/**
+ * Clear any alert bubbles
+ * ------------------------------------
+*/
+	setTimeout(function() {
+		$('.success').fadeOut();
+	}, 5000);
 });

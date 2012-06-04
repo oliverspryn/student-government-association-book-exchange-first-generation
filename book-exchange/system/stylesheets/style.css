@@ -73,6 +73,20 @@ span.details {
 	z-index: 10;
 }
 
+.success {
+	background: #00FF66;
+	border: 1px solid #003300;
+	border-radius: 5px;
+	color: #000000;
+	display: inline-block;
+	font-size: 13px;
+	font-weight: bolder;
+	margin: 0px auto 0px auto;
+	padding: 1px 5px 1px 5px;
+	position: fixed;
+	top: 45px;
+}
+
 /**
  * Book exchange main page header
  * ------------------------------------
