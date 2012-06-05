@@ -9,6 +9,13 @@
  *
  * Form validation engine allowing custom regex rules to be added.
  * Licensed under the MIT License
+ *
+ *
+ * Developer enhancements are denoted by a //DEVELOPER ENHANCEMENT
+ * comment, which, in this plugin, allows the developer to add a
+ * "data-prompt-position" attribute to an input field to define
+ * a specific direction for a prompt on a particular form input
+ * component
  */
  (function($) {
 	 
@@ -1453,6 +1460,11 @@
 					if(pos!=-1)
 						positionType=positionType.substring(0,pos);
 				}
+				
+				//DEVELOPER ENHANCEMENT
+				if (field.attr('data-prompt-position') && field.attr('data-prompt-position') != undefined && field.attr('data-prompt-position') != '') {
+					positionType = field.attr('data-prompt-position');
+				}
 
 				switch (positionType) {
 					case "bottomLeft":
@@ -1659,6 +1671,11 @@
 				};
 			};
 
+
+			//DEVELOPER ENHANCEMENT
+			if (field.attr('data-prompt-position') && field.attr('data-prompt-position') != undefined && field.attr('data-prompt-position') != '') {
+				positionType = field.attr('data-prompt-position');
+			}
 			
 			switch (positionType) {
 				default:

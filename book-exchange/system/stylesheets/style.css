@@ -82,8 +82,8 @@ span.details {
 	font-size: 13px;
 	font-weight: bolder;
 	margin: 0px auto 0px auto;
-	padding: 1px 5px 1px 5px;
-	position: fixed;
+	padding: 5px 25px 5px 25px;
+	position: absolute;
 	top: 45px;
 }
 
@@ -98,7 +98,7 @@ section.header div.tools {
 	width: 200px;
 }
 
-section.header div.tools button {
+section.header div.tools button.openLogin {
 	width: 100%;
 }
 
@@ -112,9 +112,41 @@ section.header div.tools input {
 	width: 168px;
 }
 
+section.header div.tools span.expand {
+	background: url(../images/icons/expand.png) no-repeat left;
+	background-position: 0px 3px;
+	color: #FFFFFF;
+	cursor: pointer;
+	display: block;
+	font-size: 12px;
+	margin: 2px 0px 2px 1px;
+	padding: 3px 0px 4px 20px;
+}
+
+section.header div.tools span.expand:hover {
+	background-position: 0px -19px;
+}
+
+section.header div.tools span.step {
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 14px;
+	padding-top: 13px;
+	vertical-align: top;
+}
+
+section.header div.tools div.dropdownWrapper {
+	padding-top: 10px;
+}
+
+section.header div.tools input.submit {
+	width: auto;
+}
+
 section.header div.tools div.controls {
 	clear: both;
-	overflow: auto;
+	margin: 10px 0px 10px 0px;
+	overflow: hidden;
 	width: 100%;
 }
 
@@ -326,6 +358,15 @@ section.dialog.suggestions div.content div.classInfo {
 
 section.dialog.suggestions div.content div.classInfo:hover {
 	overflow-y: auto;
+}
+
+section.dialog.suggestions div.content div.classInfo p span.highlight {
+	background-color: #FF9;
+	color: #000000;
+	display: inline;
+	font-size: 16px;
+	font-weight: bold;
+	padding: 0px;
 }
 
 section.dialog.suggestions div.content div.classInfo span.class {

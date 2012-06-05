@@ -2,7 +2,7 @@
 	$(document).ready(function() {
 		var images = new Array();
 		var currentImage = 0;
-		var dialog;
+		var dialog, confirmClassesDialog;
 		var container = $('div.imageContainer');
 		var imageURLContainer = $('input.imageURL');
 		var backButton = $('span.back');
@@ -50,7 +50,7 @@
 							}
 							
 						//Construct the alert dialog with the fetched information from the server
-							dialog = $('<section class="dialog suggestions"><h1>We Already Have this Book On Record</h1><div class="content"><div class="imagePreview"><p>Verify that the suggested book cover is correct:</p><img src="' + data.imageURL + '"></div><div class="bookInfo"><p>Check the title, author, and edition (if available):</p><span class="titleInfo"><strong>Title:</strong> ' + data.title + '</span><span class="authorInfo"><strong>Author:</strong> ' + data.author + '</span>' + edition + '</div><div class="classInfo"><p>Click on the class or classes where you used this book:</p>' + classes + '</div></div><div class="buttons"><button class="green accurate">This Information Is Accurate</button><button class="red inAccurate">This Information Is Not Accurate</button></div></section>').appendTo('body').delfini_dialog();
+							dialog = $('<section class="dialog suggestions"><h1>We Already Have this Book On Record</h1><div class="content"><div class="imagePreview"><p>Verify that the suggested book cover is correct:</p><img src="' + data.imageURL + '"></div><div class="bookInfo"><p>Check the title, author, and edition (if available):</p><span class="titleInfo"><strong>Title:</strong> ' + data.title + '</span><span class="authorInfo"><strong>Author:</strong> ' + data.author + '</span>' + edition + '</div><div class="classInfo"><p><span class="highlight">Click on the classes</span> where you used this book (you can add more later):</p>' + classes + '</div></div><div class="buttons"><button class="green accurate">This Information Is Accurate</button><button class="red inAccurate">This Information Is Not Accurate</button></div></section>').appendTo('body').delfini_dialog();
 							
 						//Hide the image browser controls
 							$('div.imageBrowser').addClass('hidden');
@@ -130,8 +130,19 @@
 		
 	//Listen for when the "This Information Is Accurate" button is clicked in the suggestion dialog
 		$('body').delegate('section.dialog div.buttons button.accurate', 'click', function() {
-		//Grab all of the needed text from the dialog
+		//Validate whether or not a user has selected a class
 			var dialog = $(this).parent().parent();
+			var classes = dialog.children('div.content').children('div.classInfo').children('span.class.selected');
+			
+			/* [Abandoned idea]
+			
+			if (!classes.length) {
+				confirmClassesDialog = $('<section class="dialog confirm" style="background: #CCCCCC; color: #000000; margin: 0px 30% 0px 30%; width: 40%;"><h1>No Classes Selected</h1><div class="content"><p style="font-size: 16px; margin-top: 5px;">We have suggested several classes which use this book. You can select them from the suggested list, or, if you haven\'t found your class in the list, add them in later.<br><br>Do you wish to continue without selecting courses from the list?</p></div><div class="buttons"><button class="blue continue">I\'ll Add Courses Later</button><button class="returnToDialog">Return and Select Courses</button></div></section>').appendTo('body').delfini_dialog();
+				
+				return false;
+			}*/
+			
+		//Grab all of the needed text from the dialog
 			var image = dialog.children('div.content').children('div.imagePreview').children('img').attr('src');
 			var title = dialog.children('div.content').children('div.bookInfo').children('span.titleInfo').text();
 			var author = dialog.children('div.content').children('div.bookInfo').children('span.authorInfo').text();
@@ -155,7 +166,7 @@
 			}
 			
 		//Fetch all of the selected classes and apply them to the step 2 in the form
-			var classes = dialog.children('div.content').children('div.classInfo').children('span.class.selected');
+			//var classes = dialog.children('div.content').children('div.classInfo').children('span.class.selected'); //Defined at top of function
 			var selectedClasses = new Array();
 			
 			classes.each(function() {
@@ -237,6 +248,11 @@
 		//Close the dialog
 			dialog.delfini_dialog('close');
 		});
+		
+	//Dismiss a "No Classes Suggested" dialog [abandoned idea]
+		/*$('body').delegate('section.confirm div.buttons button.returnToDialog', 'click', function() {
+			$(this).parent().parent().delfini_dialog('close');
+		});*/
 		
 	//Listen for when the "This Information Is Not Accurate" button is clicked in the suggestion dialog
 		$('body').delegate('section.dialog div.buttons button.inAccurate', 'click', function() {
@@ -354,9 +370,11 @@
 			var priceRegex = /^\d+(\.\d{2})?$/;
 			
 			if (input.val() != '' && price >= 0 && price <= 99999 && priceRegex.test(input.val())) {
-				$('span.pricePreview span').text('$' + input.val());
+				$('span.pricePreview span').text('$' + parseFloat(input.val()).toFixed(2));
+				input.attr('value', parseFloat(input.val()).toFixed(2));
 			} else {
 				$('span.pricePreview span').text('$0.00');
+				input.attr('value', '0.00');
 			}
 		});
 		
@@ -406,12 +424,15 @@
 		$(':text').tooltip({
 			position : 'center right',
 			offset : [-2, 10],
-			effect : 'fade',
-			opacity: 0.7
+			effect : 'fade'
 		});
 		
 	//Instantiate the validator
-		$('form').validationEngine();
+		$('form').validationEngine({
+			'validationEventTrigger' : 'submit',
+			'autoHidePrompt' : 'true',
+			'autoHideDelay' : 7000
+		});
 		
 	/**
 	 * Misc

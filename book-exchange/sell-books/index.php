@@ -82,6 +82,7 @@
 <script src=\"../../tiny_mce/jquery.tinymce.js\"></script>
 <script src=\"../../javascripts/common/tiny_mce_simple.php\"></script>
 <script src=\"../../javascripts/jQuery/jquery.validationEngine.min.js\"></script>");
+	
 	echo "<section class=\"body\">
 ";
 
@@ -134,7 +135,7 @@
 <tbody>
 <tr>
 <td>ISBN:</td>
-<td><input autocomplete=\"off\" class=\"ISBN noIcon validate[required,funcCall[checkISBN]]\" name=\"ISBN\" title=\"Enter the book's ISBN.<br><br>This is a 10 or 13 digit number, seperated by dashes, that can usually be found printed on the back of the book. This number is usually located by the barcode, but is <strong>NOT</strong> the barcode number itself.<br><br>If we have a record of this ISBN in our database, we will attempt automatically fill in the book cover, title, author, edition, and its associated courses.<br><br>If these fields don't automatically populate, then this is a new book in our database and we can only try to suggest an appropriate book cover.\" type=\"text\" /></td>
+<td><input autocomplete=\"off\" class=\"ISBN noIcon validate[required,funcCall[checkISBN]]\" name=\"ISBN\" title=\"This is a 10 or 13 digit number, usually printed on the back of the book by the barcode, but is <strong>NOT</strong> the barcode number itself.\" type=\"text\" /></td>
 </tr>
 
 <tr>
@@ -144,7 +145,7 @@
 
 <tr>
 <td>Author:</td>
-<td><input autocomplete=\"off\" class=\"noIcon authorInput validate[required]\" name=\"author\" title=\"last name, first name; last name, first name<br><br>Enter the last name, first name of author or authors of this book. If there are multiple authors seperate them with a semicolon and a space.<br><br>For example, if John Smith and Jane Smith were the authors of a particular book, then enter: Smith, John; Smith, Jane\" type=\"text\" /></td>
+<td><input autocomplete=\"off\" class=\"noIcon authorInput validate[required]\" name=\"author\" title=\"Seperate multiple authors by a comma and a space\" type=\"text\" /></td>
 </tr>
 
 <tr>
@@ -263,7 +264,7 @@
 <div class=\"classUsed\">
 " . $courseFlyout . "
 
-<input autocomplete=\"off\" class=\"noIcon validate[required,custom[integer],min[101],max[499]]\" name=\"classNum[]\" maxlength=\"3\" type=\"text\" />
+<input autocomplete=\"off\" class=\"noIcon validate[required,custom[integer],min[101],max[499]]\" data-prompt-position=\"bottomRight\" name=\"classNum[]\" maxlength=\"3\" type=\"text\" />
 
 " . $section . "
 

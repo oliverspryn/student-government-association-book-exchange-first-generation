@@ -238,10 +238,17 @@ $(document).ready(function() {
 	}
 	
 /**
- * Clear any alert bubbles
+ * Misc
  * ------------------------------------
 */
+
+//Clear any alert bubbles
 	setTimeout(function() {
 		$('.success').fadeOut();
-	}, 5000);
+	}, 10000);
+	
+//Expand the advanced search options
+	$('span.expand').click(function() {
+		$(this).hide().siblings('div.controls').show();
+	});
 });

@@ -27,9 +27,12 @@
 
 <h2 class=\"search\">Search for Books:</h2>
 <input type=\"text\" class=\"search\" />
+<span class=\"expand\">Advanced Search Options</span>
 
-<div class=\"controls\">
+<div class=\"controls hidden\">
 <div class=\"menuWrapper\">
+<div style=\"height: 0px;\"><div><input class=\"collapse noMod\" name=\"category\" type=\"text\" /></div></div>
+
 <ul class=\"categoryFly\">";
 
 //Generate the category dropdown menu
@@ -43,7 +46,7 @@
 				echo "
 <li>
 <ul>
-<li class=\"all selected\"><span class=\"band\" style=\"border-left-color: #FFFFFF;\"><span class=\"icon\" style=\"background-image: url('system/images/icons/all.png');\">All Disciplines</span></span></li>";
+<li class=\"all selected\" data-value=\"0\"><span class=\"band\" style=\"border-left-color: #FFFFFF;\"><span class=\"icon\" style=\"background-image: url('system/images/icons/all.png');\">All Disciplines</span></span></li>";
 
 			//Since we inserted a "free" item, add one to the counter
 				$counter++;
@@ -55,7 +58,7 @@
 		}
 		
 		echo "
-<li><span class=\"band\" style=\"border-left-color: " . $category['color1'] . ";\"><span class=\"icon\" style=\"background-image: url('../data/book-exchange/icons/" . $category['id'] . "/icon_032.png');\">" . $category['name'] . "</span></span></li>";
+<li data-value=\"" . $category['id'] . "\"><span class=\"band\" style=\"border-left-color: " . $category['color1'] . ";\"><span class=\"icon\" style=\"background-image: url('../data/book-exchange/icons/" . $category['id'] . "/icon_032.png');\">" . $category['name'] . "</span></span></li>";
 
 		if ($counter % 10 == 0) {
 			echo "
@@ -72,7 +75,15 @@
 </li>
 </ul>
 </div>
+
+<span class=\"step\">Search by:</span>
+<ul class=\"dropdown\" data-name=\"searchBy\">
+<li class=\"selected\">Title</li>
+<li>Author</li>
+<li>ISBN</li>
 </div>
+
+<input class=\"submit\" type=\"submit\" value=\"Search\" />
 </div>
 
 <div class=\"linkbar\">
