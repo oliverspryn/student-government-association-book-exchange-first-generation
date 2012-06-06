@@ -74,6 +74,7 @@
 
 //Include the top of the page from the administration template
 	topPage("public", "Sell Books", "" , "", "<link href=\"../system/stylesheets/style.css\" rel=\"stylesheet\" />
+<link href=\"../system/stylesheets/sell.css\" rel=\"stylesheet\" />
 <link href=\"../../styles/jQuery/validationEngine.jquery.min.css\" rel=\"stylesheet\" />
 <script src=\"../system/javascripts/interface.js\"></script>
 <script src=\"../system/javascripts/sell_wizard.min.js\"></script>
@@ -119,6 +120,31 @@
 <span class=\"editionPreview details\" style=\"display: none;\">Edition: </span>
 <br>
 <span class=\"buttonLink pricePreview\"><span>$0.00</span></span>
+</section>
+
+";
+
+//Include an instructions section for tips on selling and pricing a book
+	echo "<section class=\"systemHints hints\">
+<h2>Some Things to Consider</h2>
+
+<ul>
+<li>Newer books show up before older books in search results</li>
+<li>Popular books are heavily advertised on the home page and through out the site</li>
+<li>Your book will show on the store for 6 months. If it is not sold by then, it will be removed.</li>
+</ul>
+</section>
+
+<section class=\"pricing hints\">
+<h2>Pricing Your Book</h2>
+
+<ul>
+<li>How much are others selling your book for?</li>
+<li>Is this book the current edition?</li>
+<li>How good of condition is this book?</li>
+<li>Did you get it new or used?</li>
+<li>How much did you buy it for?</li>
+</ul>
 </section>";
 
 	echo "
@@ -135,12 +161,12 @@
 <tbody>
 <tr>
 <td>ISBN:</td>
-<td><input autocomplete=\"off\" class=\"ISBN noIcon validate[required,funcCall[checkISBN]]\" name=\"ISBN\" title=\"This is a 10 or 13 digit number, usually printed on the back of the book by the barcode, but is <strong>NOT</strong> the barcode number itself.\" type=\"text\" /></td>
+<td><input autocomplete=\"off\" class=\"ISBN noIcon validate[required,funcCall[checkISBN]]\" name=\"ISBN\" title=\"This is a 10 or 13 digit number, usually printed on the back of the book by the barcode, but is <strong>NOT</strong> the barcode number itself.<br><br>In some cases, an ISBN may include a letter.\" type=\"text\" /></td>
 </tr>
 
 <tr>
 <td>Title:</td>
-<td><input autocomplete=\"off\" class=\"noIcon titleInput validate[required]\" name=\"title\" title=\"Enter the full title of the book\" type=\"text\" /></td>
+<td><input autocomplete=\"off\" class=\"noIcon titleInput validate[required]\" name=\"title\" type=\"text\" /></td>
 </tr>
 
 <tr>
@@ -286,7 +312,7 @@
 <td>Price:</td>
 <td class=\"price\">
 <span class=\"align\">\$</span>
-<input autocomplete=\"off\" class=\"priceInput noIcon validate[required,funcCall[checkPrice]]\" maxlength=\"6\" name=\"price\" title=\"<strong>Tips for setting a price:</strong> <ul><li>How good of condition is this book?</li><li>Did you get it new or used?</li><li>How much did you buy it for?</li><li>Is this book the current edition?</li></ul><br>Valid prices range from \$0.00 to \$999.99.\" type=\"text\" />
+<input autocomplete=\"off\" class=\"priceInput noIcon validate[required,funcCall[checkPrice]]\" maxlength=\"6\" name=\"price\" title=\"Valid prices range from \$0.00 to \$999.99.\" type=\"text\" />
 </td>
 </tr>
 

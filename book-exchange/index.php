@@ -4,6 +4,7 @@
 
 //Include the top of the page from the administration template
 	topPage("public", "Book Exchange", "" , "", "<link href=\"system/stylesheets/style.css\" rel=\"stylesheet\" />
+<link href=\"system/stylesheets/main.css\" rel=\"stylesheet\" />
 <script src=\"system/javascripts/interface.js\"></script>");
 	echo "<section class=\"body\">
 ";
@@ -20,18 +21,19 @@
 		$categories = false;
 	}
 	
-//Display the header which contains a "Sell Books" button, seach section, and scroller containing featured books and categories
+//Display the header which contains a "Sell Books" button and a seach section
 	echo "<section class=\"header\">
 <div class=\"tools\">
 <button class=\"blue large openLogin\" data-redirect=\"" . $root . "book-exchange/sell-books/\">Sell Books</button>
 
+<form action=\"search\" method=\"get\">
 <h2 class=\"search\">Search for Books:</h2>
-<input type=\"text\" class=\"search\" />
+<input autocomplete=\"off\" class=\"search\" name=\"search\" type=\"text\" />
 <span class=\"expand\">Advanced Search Options</span>
 
 <div class=\"controls hidden\">
 <div class=\"menuWrapper\">
-<div style=\"height: 0px;\"><div><input class=\"collapse noMod\" name=\"category\" type=\"text\" /></div></div>
+<div style=\"height: 0px;\"><div><input class=\"collapse noMod\" name=\"category\" type=\"text\" value=\"0\" /></div></div>
 
 <ul class=\"categoryFly\">";
 
@@ -84,7 +86,13 @@
 </div>
 
 <input class=\"submit\" type=\"submit\" value=\"Search\" />
+</form>
 </div>
+
+";
+
+//Generate a scroller to advertise the most popular books and categories on the site
+	
 
 <div class=\"linkbar\">
 Hi

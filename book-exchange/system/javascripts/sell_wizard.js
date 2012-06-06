@@ -2,7 +2,7 @@
 	$(document).ready(function() {
 		var images = new Array();
 		var currentImage = 0;
-		var dialog, confirmClassesDialog;
+		var dialog, confirmClassesDialog, checkISBNDialog;
 		var container = $('div.imageContainer');
 		var imageURLContainer = $('input.imageURL');
 		var backButton = $('span.back');
@@ -24,7 +24,7 @@
 			var input = $(this);
 			
 		//Check and see if the input is in a valid ISBN format
-			var ISBN = input.val().replace(/[^0-9]/g, '');
+			var ISBN = input.val().replace(/[^0-9a-zA-Z]/g, '');
 			
 			if (ISBN.length == 10 || ISBN.length == 13) {
 			//Check with the local database and see if an entry for this book already exists
@@ -108,13 +108,27 @@
 										
 									//Show the image browser controls
 										$('div.imageBrowser').removeClass('hidden');
+										
+									//Build a prompt to point out the controls, after a delay so the image can load
+										setTimeout(function() {
+											$('div.imageBrowser span.forward').validationEngine('showPrompt', 'Click on these arrows to browse through the images and find the best looking cover!', 'load', 'topRight', true);
+										}, 2000);
 									}
 								}
 							});
 						}
 					}
 				});
+			} else {
+				if (ISBN != '') {
+					checkISBNDialog = $('<section class="dialog checkISBN" style="margin: 0px 30% 0px 30%; width: 40%;"><h1>Whoops!</h1><div class="content"><p style="font-size: 16px; margin-top: 5px;"><strong>' + input.val() + '</strong> doesn\'t look like an ISBN. Check it again to see if you entered it correctly.</p></div><div class="buttons"><button class="blue close">Ok, thanks</button></div></section>').appendTo('body').delfini_dialog();
+				}
 			}
+		});
+		
+	//Dismiss an Invalid ISBN dialog
+		$('body').delegate('section.checkISBN div.buttons button.close', 'click', function() {
+			$(this).parent().parent().delfini_dialog('close');
 		});
 		
 	//Show that a class is selected whenever it is clicked on from the list of avaliable classes in the suggestion dialog
@@ -430,6 +444,7 @@
 	//Instantiate the validator
 		$('form').validationEngine({
 			'validationEventTrigger' : 'submit',
+			'promptPosition' : 'topRight',
 			'autoHidePrompt' : 'true',
 			'autoHideDelay' : 7000
 		});
