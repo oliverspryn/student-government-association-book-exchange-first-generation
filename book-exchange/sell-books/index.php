@@ -125,17 +125,7 @@
 ";
 
 //Include an instructions section for tips on selling and pricing a book
-	echo "<section class=\"systemHints hints\">
-<h2>Some Things to Consider</h2>
-
-<ul>
-<li>Newer books show up before older books in search results</li>
-<li>Popular books are heavily advertised on the home page and through out the site</li>
-<li>Your book will show on the store for 6 months. If it is not sold by then, it will be removed.</li>
-</ul>
-</section>
-
-<section class=\"pricing hints\">
+	echo "<section class=\"pricing hints\">
 <h2>Pricing Your Book</h2>
 
 <ul>

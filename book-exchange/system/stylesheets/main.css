@@ -1,3 +1,12 @@
+section.header {
+	-moz-box-shadow: 0 0 5px 5px #888;
+	-webkit-box-shadow: 0 0 5px 2px #888;
+	background: url(../images/sand.png) #F4F4F4;
+	box-shadow: 0 0 5px 2px #888;
+	margin: -10px -12.6% 0px -12.5%;
+	padding: 0px 12.6% 0px 12.5%;
+}
+
 /**
  * Book exchange main page header
  * ------------------------------------
@@ -5,6 +14,8 @@
 
 section.header div.tools {
 	background: #3D3D3D;
+	float: left;
+	height: 315px;
 	padding: 25px 25px 20px 25px;
 	width: 200px;
 }
@@ -42,12 +53,12 @@ section.header div.tools span.step {
 	color: #FFFFFF;
 	display: inline-block;
 	font-size: 14px;
-	padding-top: 13px;
+	padding-top: 8px;
 	vertical-align: top;
 }
 
 section.header div.tools div.dropdownWrapper {
-	padding-top: 10px;
+	padding-top: 5px;
 }
 
 section.header div.tools input.submit {
@@ -56,7 +67,7 @@ section.header div.tools input.submit {
 
 section.header div.tools div.controls {
 	clear: both;
-	margin: 10px 0px 10px 0px;
+	margin-bottom: 15px;
 	overflow: hidden;
 	width: 100%;
 }
@@ -71,6 +82,82 @@ section.header div.linkbar {
 	border-left: 1px solid #CCCCCC;
 	border-right: 1px solid #CCCCCC;
 	border-top: 5px solid #3D3D3D;
+}
+
+/**
+ * Main page ad scroller container
+ * ------------------------------------
+*/
+
+section.header div.overFlowHide {
+	margin-left: 250px;
+	max-width: 760px;
+	overflow: hidden;
+}
+
+section.header div.overFlowHide ul.scrollerContainer li {
+	max-width: 760px;
+	width: 760px;
+}
+
+section.header div.overFlowHide ul.scrollerContainer li div.scroller {
+	cursor: pointer;
+	height: 300px;
+	padding: 30px;
+	position: relative;
+}
+
+section.header div.overFlowHide ul.scrollerContainer li div.scroller h2 {
+	border-bottom-style: solid;
+	border-bottom-width: 2px;
+	display: block;
+	font-size: 42px;
+	margin: 0px 0px 5px 270px;
+	overflow: hidden;
+	text-align: left;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+section.header div.overFlowHide ul.scrollerContainer li div.scroller span.browse {
+	display: inline-block;
+	margin: 0px 0px 5px 270px;
+	font-size: 18px;
+}
+
+section.header div.overFlowHide ul.scrollerContainer li div.scroller span.buttonLink {
+	display: block;
+	font-size: 20px;
+	left: 300px;
+	position: absolute;
+}
+
+section.header div.overFlowHide ul.scrollerContainer li div.scroller ul {
+	bottom: 30px;
+	font-size: 20px;
+	list-style: none;
+	margin: 0px;
+	position: absolute;
+	right: 30px;
+	vertical-align: top;
+}
+
+section.header div.overFlowHide ul.scrollerContainer li div.scroller ul li {
+	display: inline;
+	vertical-align: top;
+}
+
+section.header div.overFlowHide ul.scrollerContainer li div.scroller ul li span {
+	display: inline-block;
+	margin-top: 2px;
+	vertical-align: top;
+}
+
+section.header div.overFlowHide ul.scrollerContainer div.scroller img.cover {
+	position: absolute;
+	left: 30px;
+	max-height: 300px;
+	top: 30px;
 }
 
 /**

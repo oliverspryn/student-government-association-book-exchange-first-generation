@@ -1,0 +1,140 @@
+/**
+ * Welcome page section one
+ * ------------------------------------
+*/
+
+section.welcome {
+	background: url(../images/welcome/bookshelf.jpg) no-repeat center #EAEAEA;
+	border-bottom: 1px solid #9F5355;
+	display: block;
+	height: 500px;
+	margin: -10px -12.5% 0px -12.6%;
+	padding-bottom: 15px;
+	text-align: center;
+}
+
+section.welcome h1 {
+	background-color: #3D4F58;
+	background-color: rgba(24, 31, 35, 0.5);
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 55px;
+	margin: 10px 0px 15px 0px;
+	padding: 7px 0px 7px 0px;
+	text-align: center;
+	width: 100%;
+}
+
+section.welcome div.accounts button {
+	font-size: 30px;
+}
+
+section.welcome div.mask {
+	background-color: rgba(255, 255, 255, 0.6);
+	color: #000000;
+	margin: 50px 0px 50px 0px;
+	padding: 25px 0px 25px 0px;
+}
+
+section.welcome div.mask form {
+	display: block;
+	margin: 0px auto 0px auto;
+	text-align: left;
+	width: 205px;
+}
+
+section.welcome div.mask h2.search {
+	font-size: 16px;
+	margin: 20px 0px 5px 0px;
+	text-align: center;
+}
+
+section.welcome div.mask input.search {
+	margin-top: 5px;
+}
+
+section.welcome div.mask span.inputClear {
+	margin-top: 3px;
+}
+
+section.welcome div.mask span.expand {
+	background: url(../images/icons/expand.png) no-repeat left;
+	background-position: 0px 3px;
+	cursor: pointer;
+	display: block;
+	font-size: 12px;
+	margin: 2px 0px 2px 1px;
+	padding: 3px 0px 4px 20px;
+}
+
+section.welcome div.mask span.expand:hover {
+	background-position: 0px -19px;
+}
+
+section.welcome div.mask span.step {
+	display: inline-block;
+	font-size: 14px;
+	padding-top: 4px;
+	vertical-align: top;
+}
+
+/**
+ * Welcome page section two
+ * ------------------------------------
+*/
+
+section.questions {
+	background: url(../images/welcome/sand.png) #D6C7BA;
+	border-bottom: 1px solid #9F5355;
+	display: block;
+	margin: 0px -12.5% 0px -12.6%;
+	padding-bottom: 15px;
+	text-align: center;
+}
+
+section.questions div.design {
+	background: url(../images/welcome/open_book.png) no-repeat bottom center;
+	height: 100%;
+}
+
+section.questions div.design h2 {
+	color: #93764F;
+	font-size: 36px;
+	margin: 0px;
+	padding: 25px;
+}
+
+section.questions div.design ul {
+	list-style: none;
+	margin: 0px 10% 0px 10%;
+	padding: 0px;
+	width: 80%;
+}
+
+section.questions div.design ul li {
+	background-color: rgba(255, 255, 255, 0.5);
+	border: 1px solid #000000;
+	display: inline-block;
+	height: 500px;
+	padding-top: 15px;
+	position: relative;
+	width: 32%;
+}
+
+section.questions div.design ul li h3 {
+	color: #4A4FFF;
+}
+
+section.questions div.design ul li button {
+	bottom: 15px;
+	margin: 0px auto 0px auto;
+	left: 25%;
+	position: absolute;
+	text-align: center;
+	width: 50%;
+}
+
+/**
+ * Welcome page section three
+ * ------------------------------------
+*/

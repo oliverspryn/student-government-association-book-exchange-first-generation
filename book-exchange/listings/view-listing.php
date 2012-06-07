@@ -42,7 +42,7 @@
 	echo "
 	
 <h2 style=\"color:" . $category['color1'] . "\">Search this Listing</h2>
-<input type=\"search\" />
+<input type=\"text\" />
 <br />
 <button class=\"button\">Search</button>";
 	
@@ -73,7 +73,7 @@
 	
 //Display a listing of recent additions to this category
 	$recentList = "";
-	$recentGrabber = mysql_query("SELECT books.*, users.id AS userTableID, users.firstName, users.lastName, users.userName, users.emailAddress1 FROM books RIGHT JOIN (users) ON books.userID = users.id WHERE books.course = '" . $_GET['id'] . "' ORDER BY books.upload DESC LIMIT 7", $connDBA);
+	$recentGrabber = mysql_query("SELECT books.*, users.id AS userTableID, users.firstName, users.lastName, users.emailAddress1 FROM books RIGHT JOIN (users) ON books.userID = users.id WHERE books.course = '" . $_GET['id'] . "' ORDER BY books.upload DESC LIMIT 7", $connDBA);
 		
 	while ($recent = mysql_fetch_assoc($recentGrabber)) {
 		 $recentList .= "
@@ -135,7 +135,7 @@
 	$currentSection = "0";
 	$firstInSection = false;
 	$counter = 0;
-	$booksGrabber = mysql_query("SELECT books.*, users.id AS userTableID, users.firstName, users.lastName, users.userName, users.emailAddress1 FROM books RIGHT JOIN (users) ON books.userID = users.id WHERE books.course = '" . $_GET['id'] . "' ORDER BY books.number, books.section, books.title ASC");
+	$booksGrabber = mysql_query("SELECT books.*, users.id AS userTableID, users.firstName, users.lastName, users.emailAddress1 FROM books RIGHT JOIN (users) ON books.userID = users.id WHERE books.course = '" . $_GET['id'] . "' ORDER BY books.number, books.section, books.title ASC");
 	
 	echo "
 	
