@@ -5,7 +5,7 @@
 
 section.welcome {
 	background: url(../images/welcome/bookshelf.jpg) no-repeat center #EAEAEA;
-	border-bottom: 1px solid #9F5355;
+	border-bottom: 2px solid #623334;
 	display: block;
 	height: 500px;
 	margin: -10px -12.5% 0px -12.6%;
@@ -30,8 +30,10 @@ section.welcome div.accounts button {
 }
 
 section.welcome div.mask {
-	background-color: rgba(255, 255, 255, 0.6);
-	color: #000000;
+	background-color: rgba(24, 31, 35, 0.5);
+	border-bottom: 1px solid #000000;
+	border-top: 1px solid #000000;
+	color: #FFFFFF;
 	margin: 50px 0px 50px 0px;
 	padding: 25px 0px 25px 0px;
 }
@@ -83,8 +85,125 @@ section.welcome div.mask span.step {
  * ------------------------------------
 */
 
-section.questions {
+section.favorites {
 	background: url(../images/welcome/sand.png) #D6C7BA;
+	border-bottom: 1px solid #9F5355;
+	display: block;
+	margin: 0px -12.5% 0px -12.6%;
+	padding-bottom: 15px;
+	text-align: center;
+}
+
+section.favorites > h2 {
+	color: #93764F;
+	font-size: 36px;
+	margin: 0px;
+	padding: 25px;
+}
+
+section.favorites div.overFlowHide {
+	margin: 0px auto 0px auto;
+	max-width: 900px;
+	overflow: hidden;
+}
+
+section.favorites div.overFlowHide ul.scrollerContainer li {
+	max-width: 900px;
+	width: 900px;
+}
+
+section.favorites div.overFlowHide ul.scrollerContainer li div.scroller {
+	cursor: pointer;
+	height: 300px;
+	padding: 30px;
+	position: relative;
+}
+
+section.favorites div.overFlowHide ul.scrollerContainer li div.scroller h2 {
+	border-bottom: 2px solid #E04749;
+	color: #E04749;
+	display: block;
+	font-size: 42px;
+	margin: 0px 0px 5px 270px;
+	overflow: hidden;
+	text-align: left;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+section.favorites div.overFlowHide ul.scrollerContainer li div.scroller span.browse {
+	display: inline-block;
+	font-size: 18px;
+	left: 300px;
+	position: absolute;
+	top: 90px;
+}
+
+section.favorites div.overFlowHide ul.scrollerContainer li div.scroller span.buttonLink {
+	display: block;
+	font-size: 20px;
+	left: 300px;
+	position: absolute;
+	top: 120px;
+}
+
+section.favorites div.overFlowHide ul.scrollerContainer li div.scroller ul {
+	bottom: 30px;
+	font-size: 20px;
+	list-style: none;
+	margin: 0px;
+	position: absolute;
+	right: 30px;
+	vertical-align: top;
+}
+
+section.favorites div.overFlowHide ul.scrollerContainer li div.scroller ul li {
+	display: inline;
+	vertical-align: top;
+}
+
+section.favorites div.overFlowHide ul.scrollerContainer li div.scroller ul li span {
+	display: inline-block;
+	margin-top: 2px;
+	vertical-align: top;
+}
+
+section.favorites div.overFlowHide ul.scrollerContainer div.scroller img.cover {
+	position: absolute;
+	left: 30px;
+	max-height: 300px;
+	top: 30px;
+}
+
+/**
+ * Welcome page section three
+ * ------------------------------------
+*/
+
+section.categories {
+	background: #FFF6E9;
+	border-bottom: 1px solid #FFFFFF;
+	display: block;
+	margin: 0px -12.5% 0px -12.6%;
+	padding-bottom: 15px;
+	text-align: center;
+}
+
+section.categories h2 {
+	color: #93764F;
+	font-size: 36px;
+	margin: 0px;
+	padding: 25px;
+}
+
+
+/**
+ * Welcome page section four
+ * ------------------------------------
+*/
+
+section.questions {
+	background: #FFFFFF;
 	border-bottom: 1px solid #9F5355;
 	display: block;
 	margin: 0px -12.5% 0px -12.6%;
@@ -105,6 +224,8 @@ section.questions div.design h2 {
 }
 
 section.questions div.design ul {
+	color: #000000;
+	line-height: 150%;
 	list-style: none;
 	margin: 0px 10% 0px 10%;
 	padding: 0px;
@@ -114,15 +235,19 @@ section.questions div.design ul {
 section.questions div.design ul li {
 	background-color: rgba(255, 255, 255, 0.5);
 	border: 1px solid #000000;
-	display: inline-block;
+	display: inline-table;
 	height: 500px;
-	padding-top: 15px;
+	padding: 15px;
 	position: relative;
 	width: 32%;
 }
 
 section.questions div.design ul li h3 {
 	color: #4A4FFF;
+}
+
+section.questions div.design ul li p {
+	text-align: left;
 }
 
 section.questions div.design ul li button {
