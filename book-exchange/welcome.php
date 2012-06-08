@@ -76,7 +76,6 @@ jQuery(document).ready(function() {
 ";
 
 //Generate a scroller to advertise the most popular books and categories on the site
-	$featuredList = "";
 	$featuredGrabber = mysql_query("SELECT books.*, COUNT(books.id) AS repeats, bookcategories.name, bookcategories.course AS courseShortName, bookcategories.description, bookcategories.total, bookcategories.color1, bookcategories.color2, bookcategories.color3, bookcategories.textColor, MIN(books.price) AS minPrice, MAX(books.price) AS maxPrice, GROUP_CONCAT(DISTINCT books.course) AS listedInID, GROUP_CONCAT(DISTINCT bookcategories.name) AS listedIn FROM books RIGHT JOIN (bookcategories) ON books.course = bookcategories.id GROUP BY title HAVING repeats > 1 ORDER BY repeats DESC LIMIT 7", $connDBA);
 		
 	while ($featured = mysql_fetch_assoc($featuredGrabber)) {
@@ -137,6 +136,8 @@ echo "</ul>
 ";
 
 //Display part three of the welcome page
+	$categoriesGrabber = mysql_query("SELECT bookcategories.id, bookcategories.name, COUNT(bookcategories.id) AS repeats FROM books RIGHT JOIN (bookcategories) ON bookcategories.id = books.course WHERE books.id IS NOT NULL GROUP BY bookcategories.id ORDER BY repeats DESC, title ASC LIMIT 8", $connDBA);
+
 	echo "<section class=\"categories\">
 <h2>Popular categories</h2>
 </section>";
