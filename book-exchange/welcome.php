@@ -151,6 +151,32 @@ $(document).ready(function() {
 ";
 
 //Include section four
+	echo "<section class=\"tiles\">
+<div class=\"design\">
+<h2>Something New: Exchange Tiles</h2>
+<p>Life in college is hard enough, but exchanging your books shouldn't be. That's why we've introduced the exchange titles. They are a colorful feature of our cataloguing system which are designed to <strong>catch your eye</strong> and <strong>trigger your memory</strong> whenever you see one of them.</p>
+<p>These tiles show up all through out the site, from browsing and searching our database, to selling books of your own. Each discipline of study is assigned a <strong>unique color and pair of letters</strong> to help set them apart from others. You'll learn to <strong>quickly spot</strong> them on a page for your <strong>areas of interest</strong>.</p>
+<a class=\"explore highlight\" href=\"listings\">Start Exploring</a>
+</div>
+</section>
+
+";
+
+//Include section five
+	echo "<section class=\"features\">
+<div class=\"sell\">
+<h2>Sell Your Book in 17.5 Seconds</h2>
+<p>Yes, we actually counted. We've engineered this exchange to be as easy as possible. With lots of <strong>integrated tools</strong> that are desgined to <strong>enhance your speed and productivity</strong>, you'll be able to buy and sell books fast so you can get back to what is really important.</p>
+</div>
+
+<div class=\"search\">
+<h2>Get Answers As You Type</h2>
+<p>Yes, we actually counted. We've engineered this exchange to be as easy as possible. With lots of <strong>integrated tools</strong> that are desgined to <strong>enhance your speed and productivity</strong>, you'll be able to buy and sell books fast, so you can get back to what is really important.</p>
+</div>
+</section>
+
+";
+
 
 //Include the footer from the administration template
 	echo "

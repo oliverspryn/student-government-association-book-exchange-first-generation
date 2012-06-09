@@ -193,14 +193,13 @@ section.tiles {
 	display: block;
 	height: 441px;
 	margin-top: 35px;
-	padding: 75px 0px 15px 0px;
+	padding: 75px 0px 35px 0px;
 }
 
 section.tiles div.design {
-	background: url(../images/welcome/exchange_tiles.png) left center no-repeat;
-	background-position: 50px, 0px;
+	background: url(../images/welcome/exchange_tiles.png) right center no-repeat;
 	height: 100%;
-	padding-left: 550px;
+	padding-right: 550px;
 }
 
 section.tiles h2 {
