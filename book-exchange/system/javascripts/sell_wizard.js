@@ -479,7 +479,7 @@
 
 //Create a custom validation function for the ISBN
 	function checkISBN(field, rules, i, options) {
-		var ISBN = field.val().replace(/[^0-9]/g, ''); //Strip off any dashes from the ISBN
+		var ISBN = field.val().replace(/[^0-9a-zA-Z]/g, ''); //Strip off any dashes from the ISBN
 		
 		if (ISBN.length == 10 || ISBN.length == 13) {
 			//No problem!

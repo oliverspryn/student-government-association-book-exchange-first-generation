@@ -32,7 +32,7 @@
 		
 	//Validate the constant data provided by the user
 		$imageURL = mysql_real_escape_string(Validate::required($_POST['imageURL']));
-		$ISBN = preg_replace('/[^0-9]/', '', $_POST['ISBN']);
+		$ISBN = preg_replace('/[^0-9a-zA-Z]/', '', $_POST['ISBN']);
 		
 		if (strlen($ISBN) == 10 || strlen($ISBN) == 13) {
 			//Do nothing
