@@ -236,30 +236,26 @@ section.features h2 {
 }
 
 section.features p {
-	margin-top: 0px;
+	margin: 0px 0px 100px 0px;
 }
 
 section.features p strong {
 	color: #333333;
 }
 
-section.features div.sell {
-	padding-right: 575px;
+section.features div.description {
+	padding-left: 575px;
 }
 
 section.features img.sell {
 	position: absolute;
-	right: 100px;
+	left: 100px;
 	top: 75px;
-}
-
-section.features div.search {
-	padding: 80px 500px 0px 0px;
 }
 
 section.features img.search {
 	position: absolute;
-	right: 50px;
+	left: 50px;
 	top: 275px;
 }
 

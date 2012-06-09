@@ -164,15 +164,16 @@ $(document).ready(function() {
 
 //Include section five
 	echo "<section class=\"features\">
-<div class=\"sell\">
+<div class=\"description\">
 <h2>Sell Your Book in 17.5 Seconds</h2>
-<p>Yes, we actually counted. We've engineered this exchange to be as easy as possible. With lots of <strong>integrated tools</strong> that are desgined to <strong>enhance your speed and productivity</strong>, you'll be able to buy and sell books fast so you can get back to what is really important.</p>
+<p>Yes, we actually counted. We've engineered this exchange to be as easy as possible. With lots of <strong>integrated tools</strong> that are desgined to <strong>enhance your speed and productivity</strong>, you'll be able to buy and sell books fast, so you can get back to what is really important.</p>
+
+<h2>Real-time Results As You Type</h2>
+<p><strong>Get up to the second</strong> search results as you search for books in our database. Before you can even finish typing the title of your book, you are given a <strong>short, comprehensive overview</strong> of the book you are searching, with details such as the <strong>total number up for sale</strong> and it <strong>starting price</strong>.</p>
 </div>
 
-<div class=\"search\">
-<h2>Get Answers As You Type</h2>
-<p>Yes, we actually counted. We've engineered this exchange to be as easy as possible. With lots of <strong>integrated tools</strong> that are desgined to <strong>enhance your speed and productivity</strong>, you'll be able to buy and sell books fast, so you can get back to what is really important.</p>
-</div>
+<img class=\"sell\" src=\"system/images/welcome/view_sell_books_mini.png\" />
+<img class=\"search\" src=\"system/images/welcome/view_search_mini.png\" />
 </section>
 
 ";
