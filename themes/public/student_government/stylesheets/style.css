@@ -132,6 +132,18 @@ section.login div.design div.register h2 {
 }
 
 /**
+ * Search panel
+ * ------------------------------------------
+ */
+ 
+section.search {
+	position: absolute;
+	right: 10%;
+	top: 45px;
+	z-index: 2;
+}
+
+/**
  * Header bar
  * ------------------------------------------
  */
