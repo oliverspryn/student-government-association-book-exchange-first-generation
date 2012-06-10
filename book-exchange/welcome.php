@@ -25,7 +25,15 @@ $(document).ready(function() {
 	});
 	
 	$['ui']['autocomplete'].prototype['_renderItem'] = function(ul, item) {
-		return $('<li />').data('item.autocomplete', item).append($('<a title=\"' + item.label + '\"></a>').html('<img src=\"' + item.image + '\" /><span class=\"title\">' + item.label + '</span><span class=\"author details\">Author: ' + item.author + '</span><span class=\"details total\">Total: ' + item.total + '</span>')).appendTo(ul);
+		var details;
+		
+		if (item.total == 1) {
+			details = '1 book avaliable for \$' + item.price; 
+		} else {
+			details = item.total + ' books starting at \$' + item.price;
+		}
+		
+		return $('<li />').data('item.autocomplete', item).append($('<a title=\"' + item.label + '\"></a>').html('<img src=\"' + item.image + '\" /><span class=\"title\">' + item.label + '</span><span class=\"author details\">Author: ' + item.author + '</span><span class=\"details total\">' + details + '</span>')).appendTo(ul);
 	};
 
 });
@@ -167,9 +175,11 @@ $(document).ready(function() {
 <div class=\"description\">
 <h2>Sell Your Book in 17.5 Seconds</h2>
 <p>Yes, we actually counted. We've engineered this exchange to be as easy as possible. With lots of <strong>integrated tools</strong> that are desgined to <strong>enhance your speed and productivity</strong>, you'll be able to buy and sell books fast, so you can get back to what is really important.</p>
+<a class=\"explore highlight\" href=\"sell-books\">Sell Your Books</a>
 
-<h2>Real-time Results As You Type</h2>
+<h2>Real-time Results As You Search</h2>
 <p><strong>Get up to the second</strong> search results as you search for books in our database. Before you can even finish typing the title of your book, you are given a <strong>short, comprehensive overview</strong> of the book you are searching, with details such as the <strong>total number up for sale</strong> and it <strong>starting price</strong>.</p>
+<a class=\"explore highlight\" href=\"search\">Search for Books</a>
 </div>
 
 <img class=\"sell\" src=\"system/images/welcome/view_sell_books_mini.png\" />
@@ -178,6 +188,53 @@ $(document).ready(function() {
 
 ";
 
+//Include section six
+	$booksCounter = mysql_query("SELECT * FROM books", $connDBA);
+	$books = mysql_num_rows($booksCounter);
+	
+	if ($books >= 0 && $books <= 199) {
+		$totalBooks = "the growing database";
+	} elseif ($books >= 199 && $books <= 1999) {
+		$totalBooks = "hundreds";
+	} else {
+		$totalBooks = "thousands";
+	}
+
+	echo "<section class=\"closing\">
+<div class=\"design\">
+<ul>
+<li style=\"background-image: url(system/images/welcome/sell_books.png);\">
+<h3>Buy and Sell Books</h3>
+<p><strong>Set your own price</strong> and sell your books in three easy steps. You can often <strong>buy other books at discounted prices</strong>.</p>
+<a class=\"explore highlight\" href=\"sell-books\">Sell Your Books</a>
+</li>
+
+<li style=\"background-image: url(system/images/welcome/search.png);\">
+<h3>Search the Growing Database</h3>
+<p>Search <strong>" . $totalBooks . "</strong> of books by title, author, course, or ISBN, contributed by students like you!</p>
+<a class=\"explore highlight\" href=\"search\">Search for Books</a>
+</li>
+
+<li style=\"background-image: url(system/images/welcome/categories.png);\">
+<h3>Browse by Category</h3>
+<p>Each category has its own unique <strong>color exchange tile</strong>, designed to catch your eye when you come across a class you recognize.</p>
+<a class=\"explore highlight\" href=\"listings\">Browse for Books</a>
+</li>
+</ul>
+</div>
+</section>
+
+";
+
+//Include section seven
+	echo "<section class=\"finish\">
+<div class=\"books\">
+<h2>Convinced? Jump on board!</h2>
+<button class=\"green large\">Register</button>
+<span class=\"alternate\">or <a class=\"highlight\" href=\"../login\">login</a></span>
+<div class=\"pointer\"></div>
+</div>
+</section>";
 
 //Include the footer from the administration template
 	echo "

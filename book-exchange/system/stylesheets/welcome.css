@@ -16,7 +16,7 @@ a.explore {
 }
 
 a.explore::after {
-	content: " >>";
+	content: " »";
 }
 
 /**
@@ -236,7 +236,12 @@ section.features h2 {
 }
 
 section.features p {
-	margin: 0px 0px 100px 0px;
+	margin: 0px;
+}
+
+section.features a {
+	display: block;
+	margin: 15px 0px 80px 0px;
 }
 
 section.features p strong {
@@ -265,11 +270,16 @@ section.features img.search {
 */
 
 section.closing {
-	background: url(../images/welcome/down_arrows.png) no-repeat bottom right;
+	border-bottom: 1px solid #CCCCCC;
 	border-top: 1px solid #CCCCCC;
 	display: block;
 	margin-top: 35px;
-	padding: 75px 0px 15px 0px;
+	padding: 75px 0px 50px 0px;
+}
+
+section.closing div.design {
+	background: url(../images/welcome/down_arrows.png) no-repeat bottom right;
+	padding-bottom: 15px;
 }
 
 section.closing ul {
@@ -281,10 +291,11 @@ section.closing ul {
 }
 
 section.closing ul li {
-	background: no-repeat center left;
+	background: no-repeat center right;
 	min-height: 200px;
-	padding: 15px 15px 15px 250px;
+	padding: 15px 250px 15px 15px;
 	position: relative;
+	text-align: right;
 }
 
 section.closing ul li h3 {
@@ -292,8 +303,12 @@ section.closing ul li h3 {
 	font-size: 24px;
 }
 
-section.closing ul li p {
-	text-align: left;
+section.closing ul li a {
+	font-size: 20px;
+}
+
+section.closing ul li p strong {
+	color: #333333;
 }
 
 section.closing ul li button {
@@ -303,4 +318,55 @@ section.closing ul li button {
 	position: absolute;
 	text-align: center;
 	width: 50%;
+}
+
+/**
+ * Welcome page section seven
+ * ------------------------------------
+*/
+
+section.finish {
+	background: url(../images/welcome/money.png) no-repeat top right;
+	display: block;
+	height: 450px;
+	margin: 75px -12.6% -10px -12.5%;
+}
+
+section.finish div.books {
+	background: url(../images/welcome/book_stack.png) no-repeat bottom left;
+	height: 100%;
+	position: relative;
+	width: 100%;
+}
+
+section.finish div.books div.pointer {
+	background: url(../images/welcome/arrow.png) no-repeat bottom right;
+	bottom: 150px;
+	height: 82px;
+	left: 225px;
+	position: absolute;
+	right: 300px;
+}
+
+section.finish div.books {
+	text-align: center;
+}
+
+section.finish div.books h2 {
+	color: #333333;
+	font-size: 36px;
+	font-weight: lighter;
+	margin: 0px 0px 25px 0px;
+	text-align: center;
+}
+
+section.finish div.books button {
+	font-size: 32px;
+	padding: 15px 55px 15px 55px;
+}
+
+section.finish div.books span.alternate {
+	display: block;
+	font-size: 16px;
+	padding-top: 5px;
 }

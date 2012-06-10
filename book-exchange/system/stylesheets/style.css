@@ -93,6 +93,7 @@ span.details {
 
 ul.ui-autocomplete li a {
 	cursor: pointer;
+	height: 57px;
 	position: relative;
 }
 
@@ -117,7 +118,7 @@ ul.ui-autocomplete li a span.author {
 ul.ui-autocomplete li a span.total {
 	left: 50px;
 	position: absolute;
-	top: 34px;
+	top: 37px;
 }
 
 /**
