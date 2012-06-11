@@ -58,11 +58,7 @@
 <?php echo $navigation; ?>
 </ul>
 
-<ul class="breadcrumb">
-<li><a href="#">Home</a></li>
-<li><a href="#">Book Exchange</a></li>
-<li>View my Books</li>
-</ul>
+<ul class="breadcrumb"><?php echo $breadCrumb; ?></ul>
 
 <ul class="exchange">
 <li><a href="<?php echo $root; ?>book-exchange/sell-books">Sell Books</a></li>
@@ -73,12 +69,12 @@
 	if (loggedIn()) {
 		if ($userData['role'] == 'Administrator') {
 ?>
-<li class="myAccount"><a href="#">My Account</a></li>
+<li class="myAccount"><a href="<?php echo $root; ?>book-exchange/account">My Account</a></li>
 <?php
 //Finish the administrative tools condition
 		}
 ?>
-<li class="admin"><a href="#">Administration</a></li>
+<li class="admin"><a href="<?php echo $root; ?>admin/index.php">Administration</a></li>
 <?php
 //Finish the tools condition
 	}
@@ -86,7 +82,7 @@
 </ul>
 
 <section class="search">
-<form action="#" method="post">
+<form action="<?php echo $root; ?>book-exchange/search" method="get">
 <input autocomplete="off" class="noMod search template" name="search" type="text" />
 <input type="hidden" name="category" value="0" />
 <input type="hidden" name="searchBy" value="Title" />

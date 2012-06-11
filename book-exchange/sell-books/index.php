@@ -3,6 +3,13 @@
 	require_once("../../Connections/connDBA.php");
 	require_once("../system/server/Validate.php");
 	
+//Generate the breadcrumb
+	$home = mysql_fetch_array(mysql_query("SELECT * FROM pages WHERE position = '1' AND `published` != '0'", $connDBA));
+	$title = unserialize($home['content' . $home['display']]);
+	$breadcrumb = "\n<li><a href=\"index.php?page=" . $home['id'] . "\">" . $title['title'] . "</a></li>
+<li><a href=\"../\">Book Exchange</a></li>
+<li>Sell Books</li>\n";
+	
 /**
  * Process the form
  *
@@ -82,7 +89,7 @@
 <script src=\"../../tiny_mce/tiny_mce.js\"></script>
 <script src=\"../../tiny_mce/jquery.tinymce.js\"></script>
 <script src=\"../../javascripts/common/tiny_mce_simple.php\"></script>
-<script src=\"../../javascripts/jQuery/jquery.validationEngine.min.js\"></script>");
+<script src=\"../../javascripts/jQuery/jquery.validationEngine.min.js\"></script>", $breadcrumb);
 	
 	echo "<section class=\"body\">
 ";

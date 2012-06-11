@@ -78,175 +78,6 @@
 //Grab the sidebar	
 	$sideBarCheck = mysql_query("SELECT * FROM sidebar WHERE visible = 'on' AND published != '0'", $connDBA);
 	$sideBarResult = mysql_fetch_array($sideBarCheck);
-	
-//Security question validator
-	if (isset($_POST['validateValue']) && isset($_POST['validateId']) && isset($_POST['validateError'])) {
-		$security = query("SELECT * FROM `siteprofiles` WHERE `id` = '1'");
-		$value = $_POST['validateValue'];
-		$id = $_POST['validateId'];
-		$message = $_POST['validateError'];
-		
-		$return = array();
-		$return[0] = $id;
-		$return[1] = $message;
-		
-		if ($security['saptcha'] == "auto") {
-			$answer = query("SELECT * FROM `saptcha` WHERE `id` = '{$id}'");
-			
-			if (strtolower($value) == strtolower(prepare($answer['answer']))) {
-				$return[2] = "true";
-				echo "{\"jsonValidateReturn\":" . json_encode($return) . "}";
-			} else {
-				$return[2] = "false";
-				echo "{\"jsonValidateReturn\":" . json_encode($return) . "}";
-			}
-		} else {
-			if (strtolower($value) == strtolower(prepare($security['answer']))) {
-				$return[2] = "true";
-				echo "{\"jsonValidateReturn\":" . json_encode($return) . "}";
-			} else {
-				$return[2] = "false";
-				echo "{\"jsonValidateReturn\":" . json_encode($return) . "}";
-			}
-		}
-		
-		exit;
-	}
-	
-//Process a login
-	login();
-
-//Process the comments
-	if (isset($_POST['submit']) && !empty($_POST['id']) && !empty($_POST['comment'])) {
-		$secure = "false";
-		$pageID = $_GET['page'];
-		
-		if (!loggedIn()) {
-			$security = query("SELECT * FROM `siteprofiles` WHERE `id` = '1'");
-			
-			if ($security['saptcha'] == "auto") {
-				$questionID = $_POST['questionID'];
-				$value = $_POST['security'];
-				
-				$answer = query("SELECT * FROM `saptcha` WHERE `id` = '{$questionID}'");
-				
-				if (strtolower($value) == strtolower(prepare($answer['answer']))) {
-					$secure = "true";
-				}
-			} else {
-				$value = $_POST['security'];
-				
-				if (strtolower($value) == strtolower(prepare($security['answer']))) {
-					$secure = "true";
-				}
-			}
-		}
-		
-		if (loggedIn() || $secure == "true") {
-			$id = $_POST['id'];
-			$comment = $_POST['comment'];
-			$date = time();
-			
-			if ($pageID == "") {
-				$oldDataGrabber = mysql_query("SELECT * FROM `pages` WHERE `position` = '1'", $connDBA);
-			} else {
-				$oldDataGrabber = mysql_query("SELECT * FROM `pages` WHERE `id` = '{$pageID}'", $connDBA);
-			}
-			
-			$oldData = mysql_fetch_array($oldDataGrabber);
-			$oldComments = unserialize($oldData['comment']);
-			$oldNames = unserialize($oldData['name']);
-			$oldDates = unserialize($oldData['date']);
-	
-			if (is_array($oldComments)) {
-				array_push($oldComments, $comment);
-				array_push($oldNames, $id);
-				array_push($oldDates, $date);
-					
-				$comments = mysql_real_escape_string(serialize($oldComments));
-				$names = mysql_real_escape_string(serialize($oldNames));
-				$dates = mysql_real_escape_string(serialize($oldDates));
-			} else {
-				$comments = mysql_real_escape_string(serialize(array($comment)));
-				$names = mysql_real_escape_string(serialize(array($id)));
-				$dates = mysql_real_escape_string(serialize(array($date)));
-			}
-			
-			if (!isset($_GET['page'])) {
-				mysql_query("UPDATE `pages` SET `name` = '{$names}', `date` = '{$dates}', `comment` = '{$comments}' WHERE `position` = '1'", $connDBA);
-			} else {
-				mysql_query("UPDATE `pages` SET `name` = '{$names}', `date` = '{$dates}', `comment` = '{$comments}' WHERE `id` = '{$pageID}'", $connDBA);
-			}
-			
-			if (isset($_GET['page'])) {
-				header("Location: index.php?page=" . $pageID . "&message=added");
-			} else {
-				header("Location: index.php?message=added");
-			}
-		}
-		
-		exit;
-	}
-	
-//Delete a comment
-	if (isset($_SESSION['MM_UserGroup']) && privileges("deleteComments") == "true") {
-		if (isset($_GET['action']) && $_GET['action'] == "delete" && isset($_GET['comment'])) {
-			if (!$_GET['page']) {
-				$pageIDGrabber = mysql_query("SELECT * FROM `pages` WHERE `position` = '1'", $connDBA);
-				$pageIDArray = mysql_fetch_array($pageIDGrabber);
-				$pageID = $pageIDArray['id'];
-			} else {
-				$pageID = $_GET['page'];
-			}
-			
-			$comment = $_GET['comment'];
-			
-		//If only a single comment is deleted
-			if (is_numeric($comment)) {
-				$oldDataGrabber = mysql_query("SELECT * FROM `pages` WHERE `id` = '{$pageID}'", $connDBA);
-				$oldData = mysql_fetch_array($oldDataGrabber);
-				$values = sizeof(unserialize($oldData['date'])) - 1;
-				$oldComments = unserialize($oldData['comment']);
-				$oldNames = unserialize($oldData['name']);
-				$oldDates = unserialize($oldData['date']);
-				
-				for ($count = 0; $count <= $values; $count++) {
-					if ($count == $comment - 1) {
-						unset($oldComments[$count]);
-						unset($oldNames[$count]);
-						unset($oldDates[$count]);
-					}
-				}
-				
-				$comments = mysql_real_escape_string(serialize(array_merge($oldComments)));
-				$names = mysql_real_escape_string(serialize(array_merge($oldNames)));
-				$dates = mysql_real_escape_string(serialize(array_merge($oldDates)));
-				
-				if ($pageID == "") {
-					mysql_query("UPDATE `pages` SET `name` = '{$names}', `date` = '{$dates}', `comment` = '{$comments}' WHERE `position` = '1'", $connDBA);
-				} else {
-					mysql_query("UPDATE `pages` SET `name` = '{$names}', `date` = '{$dates}', `comment` = '{$comments}' WHERE `id` = '{$pageID}'", $connDBA);
-				}
-				
-				header("Location: index.php?page=" . $pageID . "&message=deleted");
-				exit;
-		//If all comments are deleted
-			} else {
-				$comments = "";
-				$names = "";
-				$dates = "";
-				
-				if ($pageID == "") {
-					mysql_query("UPDATE `pages` SET `name` = '{$names}', `date` = '{$dates}', `comment` = '{$comments}' WHERE `position` = '1'", $connDBA);
-				} else {
-					mysql_query("UPDATE `pages` SET `name` = '{$names}', `date` = '{$dates}', `comment` = '{$comments}' WHERE `id` = '{$pageID}'", $connDBA);
-				}
-				
-				header("Location: index.php?page=" . $pageID . "&message=deletedAll");
-				exit;
-			}
-		}
-	}
 ?>
 <?php
 	if ($pageInfoPrep == 0 && $pagesExist == 0) {
@@ -265,9 +96,86 @@
 		$content = $pageInfo['content'];
 		$commentsDisplay = $pageInfo['comments'];
 	}
+	
+//Build the dynamic breadcrumb :(
+	$breadcrumbGrabber = mysql_query("SELECT * FROM pages", $connDBA);
+	$pagesArray = array();
+	
+//Assign the ID of each page to its own key of the array for the algorithm after this step
+	while($breadcrumb = mysql_fetch_array($breadcrumbGrabber)) {
+		$pagesArray[$breadcrumb['id']] = $breadcrumb;
+	}
+	
+/**
+ * This algorithm uses the array, was generated in the previous step,
+ * to create a breadcrumb navigator. The previous step extraced every
+ * page from the database and placed it in an array, each having a key
+ * whose value is the same as the page ID in the database.
+ * 
+ * Here is the process used to generate the breadcrumb navigator:
+ *  [1] Start with the array element whose key is the same as the
+ *      "page" parameter in the URL.
+ *  [2] Generate the HTML for the list item, containing the text of
+ *      the current page's title. Do not generate a link for this 
+ *      list item since this is the current page. Push this generated
+ *      value onto the $breadcrumbContainer array.
+ *  [3] Check and see if this page has a "parentPage" (i.e.: if this
+ *      value is not 0). If so, navigate to the array element whose key
+ *      equals the value of "parentPage".
+ *  [4] Generate the HTML for the list item, containing the text of
+ *      the current page's title and a link to this page. Push this 
+ *      generated value onto the $breadcrumbContainer array.
+ *  [5] Repeat steps 3 and 4 until "parentPage" has a value of 0, when
+ *      no parentPage exists.
+ *  [6] Reverse the $breadcrumbContainer array, since it was generated
+ *      in reverse of how it should display.
+ *  [7] Display the output of the $breadcrumbContainer array.
+*/
+	
+	$counter = 1;
+	$breadcrumbContainer = array();
+	
+//Set the initial value for the page ID tracker
+	if(!isset($_GET['page'])) {
+		$pageID = $pageInfoPrep['id'];
+	} else {
+		$pageID = $_GET['page'];
+	}
+	
+	do {		
+	//Extract the title
+		$rowContent = unserialize($pagesArray[$pageID]['content' . $pagesArray[$pageID]['display']]);
+		
+	//Generate the list item
+		if ($counter == 1 && $pagesArray[$pageID]['parentPage'] == 0) {
+			array_push($breadcrumbContainer, "\n<li class=\"noLink\">" . $rowContent['title'] . "</li>\n");
+		} elseif ($counter == 1) {
+			array_push($breadcrumbContainer, "\n<li>" . $rowContent['title'] . "</li>\n");
+		} else {
+			array_push($breadcrumbContainer, "\n<li><a href=\"index.php?page=" . $pagesArray[$pageID]['id'] . "\">" . $rowContent['title'] . "</a></li>");
+		}
+		
+	//Does a parent page exist?
+		if ($pagesArray[$pageID]['parentPage'] == 0) {
+			break;
+		} else {
+			$pageID = $pagesArray[$pageID]['parentPage'];
+			$counter ++;
+		}
+	} while(true);
+	
+//Reverse the array
+	$breadcrumbContainer = array_reverse($breadcrumbContainer);
+	
+//Convert the array to a string
+	$breadcrumb = "";
+	
+	foreach($breadcrumbContainer as $item) {
+		$breadcrumb .= $item;
+	}
 ?>
 <?php
-	topPage("public", $title);
+	topPage("public", $title, "", "", "", $breadcrumb);
 ?>
 <?php
 //Display the title
@@ -320,123 +228,7 @@
 	}
 	
 //Display the page content	
-	echo "<section class=\"body" . $bodyLoc . "\">\n" . stripslashes($content);
-	
-//Display the comments
-	if (isset($commentsDisplay) && $commentsDisplay == "1") {
-		$arrayCheck = unserialize($pageInfoPrep['comment']);
-		
-		if (is_array($arrayCheck) && !empty($arrayCheck)) {
-			$values = sizeof(unserialize($pageInfoPrep['date'])) - 1;
-			$names = unserialize($pageInfoPrep['name']);
-			$dates = unserialize($pageInfoPrep['date']);
-			$comments = unserialize($pageInfoPrep['comment']);
-			
-			echo "<p>&nbsp;</p><p class=\"homeDivider\">Comments";
-			
-			if (isset($_SESSION['MM_UserGroup'])) {
-				if (privileges("deleteComments") == "true" && !empty($comments)) {
-					if (isset ($_GET['page'])) {
-						$processor = "?page=" . $_GET['page'] . "&";
-					} else {
-						$processor = "?";
-					}
-					
-					echo "<a class=\"action smallDelete\" href=\"index.php" . $processor . "action=delete&comment=all\" onclick=\"return confirm('This action cannot be undone. Continue?')\" onmouseover=\"Tip('Delete all comments')\" onmouseout=\"UnTip()\"></a>";
-				}
-			}
-			
-			echo "</p>";
-			
-			for ($count = 0; $count <= $values; $count++) {
-				echo "<div class=\"commentBox\">";
-				
-				if (is_numeric($names[$count])) {
-					$userID = $names[$count];
-					
-					if (exist("users", "id", $userID)) {
-						$userGrabber = mysql_query("SELECT * FROM `users` WHERE `id` = '{$userID}'", $connDBA);
-						$user = mysql_fetch_array($userGrabber);
-						echo "<p class=\"commentTitle\">" . $user['firstName'] . " " . $user['lastName'] . " commented on " .  date("l, M j, Y \\a\\t h:i:s A", $dates[$count]);
-					} else {
-						echo "<p class=\"commentTitle\">An unknown staff member commented on " .  date("l, M j, Y \\a\\t h:i:s A", $dates[$count]);
-					}
-				} else {
-					echo "<p class=\"commentTitle\">" . $names[$count] . " commented on " . date("l, M j, Y \\a\\t h:i:s A", $dates[$count]);
-				}
-				
-				if (isset($_SESSION['MM_UserGroup'])) {
-					if (privileges("deleteComments") == "true") {
-						if (isset ($_GET['page'])) {
-							$processor = "?page=" . $_GET['page'] . "&";
-						} else {
-							$processor = "?";
-						}
-						
-						$commentID = $count + 1;
-						
-						echo "<a class=\"action smallDelete\" href=\"index.php" . $processor . "action=delete&comment=" . $commentID . "\" onclick=\"return confirm('This action cannot be undone. Continue?')\" onmouseover=\"Tip('Delete this comment')\" onmouseout=\"UnTip()\"></a>";
-					}
-				}
-				
-				echo "</p>";
-				echo commentTrim(0, stripslashes($comments[$count]), true);
-				echo "</div>";
-				
-				unset($userGrabber);
-				unset($user);
-			}
-		} else {
-			echo "<p>&nbsp;</p><p class=\"homeDivider\">Comments";
-			
-			if (isset($_SESSION['MM_UserGroup'])) {
-				if (privileges("deleteComments") == "true" && !empty($comments)) {
-					if (isset ($_GET['page'])) {
-						$processor = "?page=" . $_GET['page'] . "&";
-					} else {
-						$processor = "?";
-					}
-					
-					echo "<a class=\"action smallDelete\" href=\"index.php" . $processor . "action=delete&comment=all\" onclick=\"return confirm('This action cannot be undone. Continue?')\" onmouseover=\"Tip('Delete all comments')\" onmouseout=\"UnTip()\"></a>";
-				}
-			}
-			
-			echo "</p><div class=\"noResults\">No comments yet! Be the first to comment.</div>";
-		}
-		
-		if (isset($_SESSION['MM_UserGroup'])) {
-			$userName = $_SESSION['MM_Username'];
-			$userGrabber = mysql_query("SELECT * FROM `users` WHERE `userName` = '{$userName}'", $connDBA);
-			$user = mysql_fetch_array($userGrabber);
-			
-			echo "<form name=\"comments\" id=\"validate\" action=\"" . $_SERVER['REQUEST_URI'] . "\" method=\"post\" onsubmit=\"return errorsOnSubmit(this)\"><input type=\"hidden\" name=\"id\" id=\"id\" value=\"" . $user['id'] . "\" />";
-			echo "<blockquote><textarea name=\"comment\" id=\"comment\" style=\"width:450px;\" class=\"validate[required]\"></textarea><br /><p>";
-			submit("submit", "Add Comment");
-			echo "</p></blockquote></form>";
-		} else {
-			$security = query("SELECT * FROM `siteprofiles` WHERE id = '1'");
-			
-			echo "<form name=\"comments\" method=\"post\" id=\"validate\" action=\"" . $_SERVER['REQUEST_URI'] . "\"><p>Your name:</p><blockquote><input type=\"text\" name=\"id\" id=\"id\" class=\"validate[required]\" size=\"50\" autocomplete=\"off\" /></blockquote>";
-			echo "<p>Comment:</p><blockquote><textarea name=\"comment\" id=\"comment\" style=\"width:450px;\" class=\"validate[required]\"></textarea></blockquote>";
-			
-			if ($security['saptcha'] == "auto") {
-				$question = query("SELECT * FROM `saptcha` ORDER BY RAND() LIMIT 1");
-				
-				echo "<p>Security Question:</p><blockquote>" . $question['question'] . "</blockquote><p>Your Answer:</p><blockquote>";
-				echo "<input type=\"hidden\" name=\"questionID\" value=\"" . $question['id'] . "\" />";
-				echo "<input type=\"text\" name=\"security\" id=\"" . $question['id'] . "\" class=\"validate[required,ajax[ajaxName]]\" size=\"50\" autocomplete=\"off\"  /></blockquote>";
-			} else {
-				echo "<p>Security Question:</p><blockquote><p>" . prepare(strip_tags($security['question'])) . "</p></blockquote><p>Your Answer:</p><blockquote>";
-				echo "<input type=\"text\" name=\"security\" id=\"security\" class=\"validate[required,ajax[ajaxName]]\" size=\"50\" autocomplete=\"off\" /></blockquote>";
-			}
-			
-			echo "<br /><p>";
-			submit("submit", "Add Comment");
-			echo "</p></blockquote></form>";
-		}
-	}
-	
-	echo "\n</section>\n";
+	echo "<section class=\"body" . $bodyLoc . "\">\n" . stripslashes($content) . "\n</section>\n";
 	
 //Display the sidebar	
 	if ($sideBarResult || hasChildren() || hasParents() && $pageInfoPrep !== 0 && $pagesExist == 1) {
@@ -481,25 +273,18 @@
 			echo "</ul>\n</section>\n";
 		}
 		
+		$counter = 1;
+		
 		while ($sideBarPrep = mysql_fetch_array($sideBarCheck)) {
 			$sideBar = unserialize($sideBarPrep['content' . $sideBarPrep['display']]);
+						
+			if (!isset($_SESSION['MM_Username']) || (isset($_SESSION['MM_Username']) && privileges("editSideBar") != "true")) {
+				echo "\n<section class=\"item" . $counter . "\">\n<h2>" . stripslashes($sideBar['title']) . "</h2>\n" . stripslashes($sideBar['content']) . "\n</section>\n";
+			} else {
+				echo "\n<section class=\"item" . $counter . "\">\n<h2>" . stripslashes($sideBar['title']) . "&nbsp;<a class=\"smallEdit\" href=\"admin/cms/sidebar/manage_sidebar.php?id=" . $sideBarPrep['id'] . "\"></a></h2>\n" . stripslashes($sideBar['content']) . "\n</section>\n";
+			}
 			
-			switch ($sideBarPrep['type']) {
-			//If this is a custom content box
-				case "Custom Content" : 				
-					if (!isset($_SESSION['MM_Username']) || (isset($_SESSION['MM_Username']) && privileges("editSideBar") != "true")) {
-						echo "\n<section>\n<h2>" . stripslashes($sideBar['title']) . "</h2>\n" . stripslashes($sideBar['content']) . "\n</section>\n";
-					} else {
-						echo "\n<section>\n<h2>" . stripslashes($sideBar['title']) . "&nbsp;<a class=\"smallEdit\" href=\"admin/cms/sidebar/manage_sidebar.php?id=" . $sideBarPrep['id'] . "\"></a></h2>\n" . stripslashes($sideBar['content']) . "\n</section>\n";
-					} break;
-			//If this is a login box	
-				case "Login" : 
-					if (!isset($_SESSION['MM_Username'])) {
-						echo "\n<section>\n<h2>" . stripslashes($sideBar['title']) . "</h2>\n" . stripslashes($sideBar['content']) . "\n\n<form id=\"login\" name=\"login\" method=\"post\" action=\"index.php\">\n<p>User name: <input type=\"text\" name=\"username\" id=\"username\" autocomplete=\"off\" />\n<br />\nPassword: <input type=\"password\" name=\"password\" id=\"password\" autocomplete=\"off\" /></p>\n<p><input type=\"submit\" name=\"submit\" id=\"submit\" value=\"Login\" /></p>\n</form>\n</section>\n";
-					} elseif (isset($_SESSION['MM_Username']) && privileges("editSideBar") == "true") {
-						echo "\n<section>\n<h2>" . stripslashes($sideBar['title']) . "&nbsp;<a class=\"smallEdit\" href=\"admin/cms/sidebar/manage_sidebar.php?id=" . $sideBarPrep['id'] . "\"></a></h2>\n" . stripslashes($sideBar['content']) . "\n\n<form id=\"login\" name=\"login\" method=\"post\" action=\"index.php\">\n<p>User name: <input type=\"text\" name=\"username\" id=\"username\" autocomplete=\"off\" />\n<br />\nPassword: <input type=\"password\" name=\"password\" id=\"password\" autocomplete=\"off\" /></p>\n<p><input type=\"submit\" name=\"submit\" id=\"submit\" value=\"Login\" /></p>\n</form>\n</section>\n";
-					} break;
-			  }
+			$counter ++;
 		}
 		
 		echo "</aside>";

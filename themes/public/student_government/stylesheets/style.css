@@ -207,11 +207,18 @@ nav.main ul.breadcrumb {
 	background-color: #FCFCFC;
 	font-size: 11px;
 	margin: 0px;
-	padding: 0px;
+	padding: 0px 0px 0px 10%;
 }
 
 nav.main ul.breadcrumb li:first-child {
-	padding-left: 10%;
+	background: url(../images/home.png) no-repeat;
+	padding-left: 20px;
+}
+
+nav.main ul.breadcrumb li.noLink:first-child {
+	background: url(../images/home.png) no-repeat;
+	background-position: 0px -13px; 
+	padding-left: 20px;
 }
 
 nav.main ul.breadcrumb li {

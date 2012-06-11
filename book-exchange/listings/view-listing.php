@@ -10,9 +10,17 @@
 		redirect("index.php");
 	}
 	
+//Generate the breadcrumb
+	$home = mysql_fetch_array(mysql_query("SELECT * FROM pages WHERE position = '1' AND `published` != '0'", $connDBA));
+	$title = unserialize($home['content' . $home['display']]);
+	$breadcrumb = "\n<li><a href=\"index.php?page=" . $home['id'] . "\">" . $title['title'] . "</a></li>
+<li><a href=\"../\">Book Exchange</a></li>
+<li><a href=\"../listings\">All Book Listings</a></li>
+<li>" . $category['name'] . "</li>\n";
+	
 //Include the top of the page from the administration template
 	topPage("public", $category['name'], "" , "", "<link href=\"../system/stylesheets/style.css\" rel=\"stylesheet\" />
-<script src=\"../system/javascripts/interface.js\"></script>");
+<script src=\"../system/javascripts/interface.js\"></script>", $breadcrumb);
 	echo "<section class=\"body\">
 ";
 

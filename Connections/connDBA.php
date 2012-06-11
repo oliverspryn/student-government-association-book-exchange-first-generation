@@ -75,7 +75,7 @@ ob_start();
 	function headers() {}
 	
 	//Include all top-page items
-	function topPage($type, $title, $headerClass = "", $highlight = "", $HTML = "") {
+	function topPage($type, $title, $headerClass = "", $highlight = "", $HTML = "", $breadCrumb = "") {
 		global $dirRoot, $root, $connDBA, $userData;
 		
 	//Clean up the given $HTML variables
