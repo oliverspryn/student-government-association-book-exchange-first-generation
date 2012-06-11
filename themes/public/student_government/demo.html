@@ -3,11 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <title>Student Government Association</title>
+<link href="http://delfinicdn.ffstatic.com/stylesheets/delfini.all.min.css" rel="stylesheet" />
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css" rel="stylesheet" />
+<link href="stylesheets/style.min.css" rel="stylesheet" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-<script src="http://delfinicdn.appspot.com/javascripts/delfini.all.min.js"></script>
-<link href="http://delfinicdn.appspot.com/stylesheets/delfini.all.min.css" rel="stylesheet" />
-<link href="stylesheets/style.css" rel="stylesheet" />
-<script src="javascripts/login_panel.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+<script src="http://delfinicdn.ffstatic.com/javascripts/delfini.all.min.js"></script>
+<script src="javascripts/template.min.js.php"></script>
+<script src="https://widget.uservoice.com/JkKcZfC4qw8m0wz3PeMf5Q.js"></script>
 </head>
 
 <body>
@@ -18,6 +21,7 @@
 <h2>Login</h2>
 <p>Email address:</p><input name="username" type="email" />
 <p>Password:</p><input name="password" type="password"/>
+<input class="redirect" name="redirect" type="hidden" />
 <br /><br />
 <input class="red" type="submit" value="Login" />
 </form>
@@ -26,20 +30,17 @@
 <span class="toggle"></span>
 
 <div class="register">
-<form action="#" method="post">
+<form action="#" method="get">
 <h2>Register</h2>
 <p>First and last name:</p><input name="name" type="text" />
 <p>Email address:</p><input name="email" type="email" />
 <p>Password:</p><input name="username" type="password" />
+<input class="redirect" name="redirect" type="hidden" />
 <br /><br />
 <input class="green" type="submit" value="Register" />
 </form>
 </div>
 </div>
-</section>
-
-<section class="search">
-<input class="noMod" type="text" x-webkit-speech="x-webkit-speech" />
 </section>
 
 <nav class="main">
@@ -57,6 +58,23 @@
 <li><a href="#">Book Exchange</a></li>
 <li>View my Books</li>
 </ul>
+
+<ul class="exchange">
+<li><a href="#">Sell Books</a></li>
+<li><a href="#">Search</a></li>
+<li><a href="#">Browse</a></li>
+<li class="myAccount"><a href="#">My Account</a></li>
+<li class="admin"><a href="#">Administration</a></li>
+</ul>
+
+<section class="search">
+<form action="#" method="post">
+<input autocomplete="off" class="noMod search template" name="search" type="text" />
+<input type="hidden" name="category" value="0" />
+<input type="hidden" name="searchBy" value="Title" />
+<span class="performSearch"></span>
+</form>
+</section>
 
 <section class="flag">
 <img src="images/login.png" />
@@ -90,24 +108,24 @@
 </ul>
 </section>
 
-<section>
-<h2 class="red">Newsletter</h2>
+<section class="item1">
+<h2>Newsletter</h2>
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In blandit porttitor massa, vitae aliquet arcu pellentesque vel.</p>
 <p>Pellentesque vitae justo non lacus aliquet euismod. Etiam hendrerit ante nec magna fermentum at convallis libero condimentum.</p>
 </section>
 
-<section>
-<h2 class="orange">Announcement</h2>
+<section class="item2">
+<h2>Announcement</h2>
 <p>Nullam auctor leo a ante pulvinar convallis. Suspendisse potenti. Mauris pharetra convallis porttitor. </p>
 </section>
 
-<section>
-<h2 class="blue">Contact Us</h2>
+<section class="item3">
+<h2>Contact Us</h2>
 <p>Suspendisse ultrices commodo metus et consectetur. Fusce ut nibh eu risus molestie tincidunt vel quis diam. Phasellus odio lectus, condimentum posuere vulputate vitae, fringilla eget ligula.</p>
 </section>
 
-<section>
-<h2 class="green">Voting Stands Open!</h2>
+<section class="item4">
+<h2>Voting Stands Open!</h2>
 <p>Sed vitae odio purus. Nunc non mauris vitae justo feugiat semper quis sit amet diam. Nam quis molestie libero.</p>
 </section>
 </aside>
@@ -118,7 +136,7 @@
 <ul>
 <li>
 <ul>
-<li><a class="red" href="#">Events</a></li>
+<li><a class="item1" href="#">Events</a></li>
 <li><a href="#">Event 1</a></li>
 <li><a href="#">Event 2</a></li>
 <li><a href="#">Event 3</a></li>
@@ -127,7 +145,7 @@
 
 <li>
 <ul>
-<li><a class="orange" href="#">Book Exchange</a></li>
+<li><a class="item2 locked" href="#">Book Exchange</a></li>
 <li><a href="#">Seach Books</a></li>
 <li><a href="#">Book Categories</a></li>
 <li><a class="locked" href="#">Sell Books</a></li>
@@ -137,7 +155,7 @@
 
 <li>
 <ul>
-<li><a class="blue" href="#">Literature</a></li>
+<li><a class="item3" href="#">Literature</a></li>
 <li><a href="#">Newsletters</a></li>
 <li><a class="locked" href="http://google.com/">Meeting Notes</a></li>
 <li><a href="#">Announcements</a></li>
@@ -146,7 +164,7 @@
 
 <li>
 <ul>
-<li><a class="green" href="#">About Us</a></li>
+<li><a class="item4" href="#">About Us</a></li>
 <li><a href="#">Contact Us</a></li>
 <li><a href="#">Officers</a></li>
 <li><a href="#">Committees</a></li>

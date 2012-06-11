@@ -78,15 +78,9 @@ ob_start();
 	function topPage($type, $title, $headerClass = "", $highlight = "", $HTML = "") {
 		global $dirRoot, $root, $connDBA, $userData;
 		
-	//Some system scripts to always include
-		if ($HTML == "") {
-			$HTML = "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js\"></script>
-<script src=\"http://delfinicdn.ffstatic.com/javascripts/delfini.all.min.js\"></script>
-<link href=\"http://delfinicdn.ffstatic.com/stylesheets/delfini.all.min.css\" rel=\"stylesheet\" />";
-		} else {
-			$HTML = "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js\"></script>
-<script src=\"http://delfinicdn.ffstatic.com/javascripts/delfini.all.min.js\"></script>
-<link href=\"http://delfinicdn.ffstatic.com/stylesheets/delfini.all.min.css\" rel=\"stylesheet\" />\n" . $HTML . "\n";
+	//Clean up the given $HTML variables
+		if ($HTML != "") {
+			$HTML = $HTML . "\n";
 		}
 		
 	//Include the theme intended for the top of a public webpage
@@ -140,6 +134,7 @@ ob_start();
 		if ($type == "public") {
 		//Generate the navigation bar
 			$pageData = mysql_query("SELECT * FROM pages WHERE visible = 'on' AND published != '0' AND parentPage = '0' ORDER BY position ASC", $connDBA);
+			$counter = 1;
 			$navigation = "<ul>\n";
 			
 			while ($page = mysql_fetch_array($pageData)) {
@@ -149,7 +144,7 @@ ob_start();
 				$pageInfo = unserialize($page['content' . $page['display']]);
 			 
 			 //Show the top-level link
-				$navigation .= "<li><a href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
+				$navigation .= "<li><a class=\"item" . $counter . "\" href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
 				
 			//Show any sub-pages of the current parent-page
 				$subPageData = mysql_query("SELECT * FROM pages WHERE visible = 'on' AND published != '0' AND parentPage = '" . $page['id'] . "' ORDER BY subPosition ASC");
@@ -162,6 +157,7 @@ ob_start();
 				}
 				
 				$navigation .= "</ul>\n</li>\n";
+				$counter++;
 			}
 			
 			$navigation .= "</ul>\n";
