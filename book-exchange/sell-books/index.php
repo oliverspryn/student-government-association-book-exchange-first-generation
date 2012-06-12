@@ -6,7 +6,7 @@
 //Generate the breadcrumb
 	$home = mysql_fetch_array(mysql_query("SELECT * FROM pages WHERE position = '1' AND `published` != '0'", $connDBA));
 	$title = unserialize($home['content' . $home['display']]);
-	$breadcrumb = "\n<li><a href=\"index.php?page=" . $home['id'] . "\">" . $title['title'] . "</a></li>
+	$breadcrumb = "\n<li><a href=\"" . $root . "index.php?page=" . $home['id'] . "\">" . $title['title'] . "</a></li>
 <li><a href=\"../\">Book Exchange</a></li>
 <li>Sell Books</li>\n";
 	

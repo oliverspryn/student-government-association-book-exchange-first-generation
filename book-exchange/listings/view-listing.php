@@ -4,7 +4,7 @@
 	
 //Grab the information about a certain book category
 	if (exist("bookcategories", "id", $_GET['id'])) {
-		$categoryGrabber = mysql_query("SELECT * FROM `bookcategories` WHERE `id` = '{$_GET['id']}'", $connDBA);
+		$categoryGrabber = mysql_query("SELECT bookcategories.*, COUNT(DISTINCT books.linkID) as total FROM `bookcategories` LEFT JOIN (books) ON bookcategories.id = books.course WHERE bookcategories.id = '{$_GET['id']}' GROUP BY bookcategories.name ORDER BY name ASC", $connDBA);
 		$category = mysql_fetch_array($categoryGrabber);
 	} else {
 		redirect("index.php");
@@ -13,7 +13,7 @@
 //Generate the breadcrumb
 	$home = mysql_fetch_array(mysql_query("SELECT * FROM pages WHERE position = '1' AND `published` != '0'", $connDBA));
 	$title = unserialize($home['content' . $home['display']]);
-	$breadcrumb = "\n<li><a href=\"index.php?page=" . $home['id'] . "\">" . $title['title'] . "</a></li>
+	$breadcrumb = "\n<li><a href=\"" . $root . "index.php?page=" . $home['id'] . "\">" . $title['title'] . "</a></li>
 <li><a href=\"../\">Book Exchange</a></li>
 <li><a href=\"../listings\">All Book Listings</a></li>
 <li>" . $category['name'] . "</li>\n";
@@ -47,24 +47,41 @@
 	echo "<img class=\"icon\" src=\"../../data/book-exchange/icons/" . $category['id'] . "/icon_256.png\" />";
 	
 //Display a search form for this listing
-	echo "
-	
+	if ($category['total'] > 0) {
+		echo "
+
 <h2 style=\"color:" . $category['color1'] . "\">Search this Listing</h2>
-<input type=\"text\" />
-<br />
-<button class=\"button\">Search</button>";
+<form action=\"" . $root . "book-exchange/search\" method=\"get\">
+<input autocomplete=\"off\" class=\"search full\" name=\"search\" type=\"text\" />
+<input type=\"hidden\" name=\"category\" value=\"" . $_GET['id'] . "\" />
+<span class=\"expand\">Advanced Search Options</span>
+
+<div class=\"controls hidden\">
+<span class=\"step\">Search by:</span>
+<ul class=\"dropdown\" data-name=\"searchBy\">
+<li class=\"selected\">Title</li>
+<li>Author</li>
+<li>ISBN</li>
+</ul>
+
+<br>
+<span class=\"step\">In: <strong>" . $category['name'] . "</strong></span>
+</div>
+<input type=\"submit\" value=\"Search\" />
+</form>";
+	}
 	
 //Display a listing of featured books in this category
 	$featuredList = "";
-	$featuredGrabber = mysql_query("SELECT title, author, imageURL, count(id) AS repeats FROM books WHERE course = '" . $_GET['id'] . "' GROUP BY title HAVING repeats > 1 ORDER BY repeats DESC LIMIT 7", $connDBA);
+	$featuredGrabber = mysql_query("SELECT ISBN, title, author, imageURL, COUNT(DISTINCT linkID) AS repeats FROM books WHERE course = '" . $_GET['id'] . "' GROUP BY ISBN HAVING repeats > 1 ORDER BY repeats DESC LIMIT 7", $connDBA);
 		
 	while ($featured = mysql_fetch_assoc($featuredGrabber)) {
 		 $featuredList .= "
 <li>
-<a href=\"#\"><img src=\"" . $featured['imageURL'] . "\" /></a>
-<a href=\"#\" class=\"title\" title=\"" . $featured['title'] . "\">" . $featured['title'] . "</a>
+<a href=\"../search/?search=" . $featured['ISBN'] . "&category=" . $_GET['id'] . "&searchBy=ISBN&options=false\"><img src=\"" . $featured['imageURL'] . "\" /></a>
+<a href=\"../search/?search=" . $featured['ISBN'] . "&category=" . $_GET['id'] . "&searchBy=ISBN&options=false\" class=\"title\" title=\"" . $featured['title'] . "\">" . $featured['title'] . "</a>
 <span class=\"details\">Author: " . $featured['author'] . "</span>
-<a href=\"#\" class=\"buttonLink\"><span>Browse from " . $featured['repeats'] . " Sellers</span></a>
+<a href=\"../search/?search=" . $featured['ISBN'] . "&category=" . $_GET['id'] . "&searchBy=ISBN&options=false\" class=\"buttonLink\"><span>Browse from " . $featured['repeats'] . " Sellers</span></a>
 </li>
 ";
 	}
@@ -81,16 +98,16 @@
 	
 //Display a listing of recent additions to this category
 	$recentList = "";
-	$recentGrabber = mysql_query("SELECT books.*, users.id AS userTableID, users.firstName, users.lastName, users.emailAddress1 FROM books RIGHT JOIN (users) ON books.userID = users.id WHERE books.course = '" . $_GET['id'] . "' ORDER BY books.upload DESC LIMIT 7", $connDBA);
+	$recentGrabber = mysql_query("SELECT books.*, users.id AS userTableID, users.firstName, users.lastName, users.emailAddress1 FROM books RIGHT JOIN (users) ON books.userID = users.id WHERE books.course = '" . $_GET['id'] . "' GROUP BY books.linkID ORDER BY books.upload DESC LIMIT 7", $connDBA);
 		
 	while ($recent = mysql_fetch_assoc($recentGrabber)) {
 		 $recentList .= "
 <li>
-<a href=\"#\"><img src=\"" . $recent['imageURL'] . "\" /></a>
-<a href=\"#\" class=\"title\" title=\"" . $recent['title'] . "\">" . $recent['title'] . "</a>
+<a href=\"../book/?id=" . $recent['id'] . "\"><img src=\"" . $recent['imageURL'] . "\" /></a>
+<a href=\"../book/?id=" . $recent['id'] . "\" class=\"title\" title=\"" . $recent['title'] . "\">" . $recent['title'] . "</a>
 <span class=\"details\">Author: " . $recent['author'] . "</span>
 <span class=\"details\">Seller: " . $recent['firstName'] . " " . $recent['lastName'] . "</span>
-<a href=\"#\" class=\"buttonLink\"><span>\$" . $recent['price'] . "</span></a>
+<a href=\"javascript:;\" class=\"buttonLink buy\" data-fetch=\"" . $recent['id'] . "\"><span>\$" . $recent['price'] . "</span></a>
 </li>
 ";
 	}
@@ -116,10 +133,10 @@
 	while ($allCat = mysql_fetch_array($allCatGrabber)) {
 		if ($allCat['id'] == $_GET['id']) {
 			echo "
-<li><a href=\"view-listing.php?id=" . $allCat['id'] . "\" style=\"color: " . $category['color1'] . "; font-weight: bold;\">" . $allCat['name'] . " <span class=\"arrow\">&gt;</span></a></li>";
+<li><a href=\"view-listing.php?id=" . $allCat['id'] . "\" style=\"color: " . $category['color1'] . "; font-weight: bold;\">" . $allCat['name'] . " <span class=\"arrow\">&raquo;</span></a></li>";
 		} else {
 			echo "
-<li><a href=\"view-listing.php?id=" . $allCat['id'] . "\">" . $allCat['name'] . " <span class=\"arrow\" style=\"color: " . $category['color1'] . ";\">&gt;</span></a></li>";
+<li><a href=\"view-listing.php?id=" . $allCat['id'] . "\">" . $allCat['name'] . " <span class=\"arrow\" style=\"color: " . $category['color1'] . ";\">&raquo;</span></a></li>";
 		}
 	}
 	
@@ -134,7 +151,7 @@
 //Client-side code will fetch the article, so just provide the container
 	echo "<article class=\"description\">
 <section class=\"article loading\"></section>
-<a href=\"\" class=\"buttonLink\" style=\"display: none;\"><span>Read More</span></a>
+<a href=\"javascript:;\" class=\"buttonLink\" style=\"display: none;\"><span>Read More</span></a>
 <section class=\"disclaimer hidden\">The entry was extracted from <a class=\"highlight\" href=\"http://en.wikipedia.org/\" target=\"_blank\">Wikipedia</a>, which is licensed under the <a class=\"highlight\" href=\"http://creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\">CC BY-SA 3.0</a> license. The contents of the entry above reflect the views of the Wikipedia contributors, not the views of this site's owner, maintenance staff, or parent organization.</section>
 </article>";
 
@@ -158,11 +175,11 @@
 </section>
 
 <section class=\"courses\">
-<h2 style=\"color: " . $category['color1'] .";\">" . $category['course'] . " " . $books['number'] . "</h2>
+<h2><a href=\"#\" style=\"color: " . $category['color1'] .";\">" . $category['course'] . " " . $books['number'] . " &raquo;</a></h2>
 ";
 			} else {
 				echo "<section class=\"courses\">
-<h2 style=\"color: " . $category['color1'] .";\">" . $category['course'] . " " . $books['number'] . "</h2>
+<h2><a href=\"#\" style=\"color: " . $category['color1'] .";\">" . $category['course'] . " " . $books['number'] . " &raquo;</a></h2>
 ";
 			}
 			
@@ -190,7 +207,7 @@
 <span class=\"title\" title=\"" . htmlentities($books['title']) . "\">" . $books['title'] . "</span>
 <span class=\"details\">Author: " . $books['author'] . "</span>
 <span class=\"details\">Seller: " . $books['firstName'] . " " . $books['lastName'] . "</span>
-<a href=\"#\" class=\"buttonLink\"><span>\$" . $books['price'] . "</span></a>
+<a href=\"javascript:;\" class=\"buttonLink buy\" data-fetch=\"" . $books['id'] . "\"><span>\$" . $books['price'] . "</span></a>
 </li>
 ";
 		$currentSection = $books['section'];
@@ -208,7 +225,7 @@
 </section>";
 	} else {
 		echo "<section class=\"empty\">
-<p>We don't have any books for sale on " . $category['name'] . " right now! Come back later, and we'll be sure to have some.</p>
+<p>We don't have any books for sale in " . $category['name'] . " right now. Come back later, and we'll be sure to have some!</p>
 </section>";
 	}
 

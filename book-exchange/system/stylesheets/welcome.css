@@ -16,7 +16,7 @@ a.explore {
 }
 
 a.explore::after {
-	content: " Â»";
+	content: " »";
 }
 
 /**

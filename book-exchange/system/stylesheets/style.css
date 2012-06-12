@@ -36,7 +36,7 @@ a.buttonLink span:hover {
 	background: #33CCFF;
 }
 
-span.title {
+span.title, a.title {
 	display: block;
 	font-size: 13px;
 	font-weight: bold;
@@ -204,6 +204,18 @@ ul.categoryFly.open li ul li:hover {
 }
 
 /**
+ * Purchase book dialog
+ * ------------------------------------
+*/
+
+section.purchase div.loading {
+	color: #CCCCCC;
+	font-size: 36px;
+	padding: 60px 20px 45px 20px;
+	text-align: center;
+}
+
+/**
  * Unordered list of book categories
  * ------------------------------------
 */
@@ -255,7 +267,6 @@ header.styled {
 	border-top-style: solid;
 	border-top-width: 5px;
 	margin-top: -10px;
-	position: relative;
 }
 
 header.styled h1 {
@@ -289,8 +300,8 @@ header.styled h2 {
 	font-weight: lighter;
 	margin: 17px 0px 15px 0px;
 	position: absolute;
-	right: 15px;
-	top: 0px;
+	right: 11.5%;
+	top: 128px;
 }
 
 /**
@@ -302,8 +313,8 @@ aside.info {
 	border-right: 4px double #EDEDED;
 	height: 100%;
 	float: left;
-	position: relative;
 	width: 290px;
+	z-index: 2;
 }
 
 aside.info img.icon {
@@ -317,27 +328,61 @@ aside.info h2 {
 	font-weight: lighter;
 }
 
-aside.info ul {
-	list-style: none;
-	padding: 0px 0px 30px 2px;
+aside.info form span.expand {
+	background: url(../images/icons/expand.png) no-repeat left;
+	background-position: 0px 3px;
+	cursor: pointer;
+	display: block;
+	font-size: 12px;
+	margin: 2px 0px 2px 1px;
+	padding: 3px 0px 4px 20px;
 }
 
-aside.info ul li {
+aside.info form span.expand:hover {
+	background-position: 0px -19px;
+}
+
+aside.info form div.controls {
+	padding: 7px 0px 7px 0px;
+}
+
+aside.info form div.controls span.step {
+	display: inline-block;
+	font-size: 14px;
+	padding-top: 4px;
+	vertical-align: top;
+}
+
+aside.info > ul {
+	list-style: none;
+	padding-left: 2px;
+}
+
+aside.info > ul li {
 	clear: both;
 	display: block;
 	padding-bottom: 20px;
 	overflow: auto;
 }
 
-aside.info ul li img {
+aside.info > ul li img {
 	display: inline;
 	float: left;
 	max-width: 60px;
 	padding-right: 5px;
 }
 
-aside.info ul li span.details {
+aside.info > ul li a.title {
 	display: block;
+	max-width: 200px;
+	padding-top: 0px;
+	width: 200px;
+}
+
+aside.info > ul li span.details {
+	display: block;
+	max-width: 200px;
+	width: 200px;
 }
 
 aside.info ul.moreListings {
@@ -413,6 +458,12 @@ section.listing article.description section.disclaimer {
  * letter
  * ------------------------------------
 */
+
+section.listing section.empty {
+	font-weight: bolder;
+	padding: 30px 20px 45px 20px;
+	text-align: center;
+}
 
 section.listing section.books section.courses h2 {
 	font-weight: lighter;

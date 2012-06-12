@@ -12,7 +12,7 @@
 	//Different search methods will vary the query that is executed on the database
 		//switch($searchBy) {
 		//	case "Title" : 
-				$searchGrabber = mysql_query("SELECT books.*, MATCH(title) AGAINST('{$query}' IN BOOLEAN MODE) AS score, count(books.id) AS total, MIN(books.price) AS price FROM books RIGHT JOIN (users) ON books.userID = users.id WHERE MATCH(title) AGAINST('{$query}' IN BOOLEAN MODE) GROUP BY title ORDER BY score DESC, title ASC, upload ASC LIMIT 7", $connDBA);
+				$searchGrabber = mysql_query("SELECT books.*, MATCH(title) AGAINST('{$query}' IN BOOLEAN MODE) AS score, COUNT(DISTINCT books.linkID) AS total, MIN(books.price) AS price FROM books RIGHT JOIN (users) ON books.userID = users.id WHERE MATCH(title) AGAINST('{$query}' IN BOOLEAN MODE) GROUP BY ISBN ORDER BY score DESC, title ASC, upload ASC LIMIT 7", $connDBA);
 		//		break;
 		//}
 	} else {

@@ -224,9 +224,13 @@ $(document).ready(function() {
 					var article = data.query.pages[keys[0]].extract;
 					container.children('section.article').removeClass('loading').html(article);
 					
-				//Update the "Read More" button to link to the article and show the button
-					var link = data.query.pages[keys[0]].title;
-					container.children('a.buttonLink').attr('href', 'http://en.wikipedia.org/wiki/' + link).attr('target', '_blank').removeAttr('style');
+				//Is all of the article being displayed, or should a "Read More/Less" button display?
+					var normalHieght = container.children('section.article').css('max-height', 'none').height();
+					container.children('section.article').removeAttr('style');
+					
+					if (normalHieght > 350) {
+						container.children('a.buttonLink').removeAttr('style');
+					}
 					
 				//Show the disclaimer
 					container.children('section.disclaimer').removeClass('hidden');
@@ -235,6 +239,98 @@ $(document).ready(function() {
 				}
 			}
 		});
+	}
+	
+/**
+ * Slide the Wikipedia article into 
+ * full view
+ * ------------------------------------
+*/
+	
+	$('article.description a.buttonLink').click(function() {
+		var button = $(this);
+		var article = button.siblings('section.article');
+		var beforeHeight = article.height();
+		var normalHieght = article.css('max-height', 'none').height();
+		article.css('height', beforeHeight);
+		
+		if (button.text() == 'Read More') {
+		//Resize the aritcle container
+			article.animate({
+				'height' : normalHieght + 'px'
+			}, 1000, function() {
+			//Change the text of the button
+				button.html('<span>Read Less</span>');
+			});
+		} else {
+		//Resize the aritcle container
+			article.animate({
+				'height' : '350px'
+			}, 1000, function() {
+			//Reset the style tag after animation
+				article.removeAttr('style');
+				
+			//Change the text of the button
+				button.html('<span>Read More</span>');
+			});			
+		}
+	});
+	
+/**
+ * Make an offer for a book
+ * ------------------------------------
+*/
+	
+	$('a.buttonLink.buy').click(function() {
+		$('<section class="purchase" title="Buy"><div class="loading">Please wait...</div></section>').dialog({
+			'height' : 600,
+			'modal' : true,
+			'resizable' : false,
+			'width' : 900,
+			'create' : function() {
+				var dialog = $(this);
+				var requestURL = location.substring(0, location.indexOf('book-exchange')) + 'book-exchange/system/server/purchase.php';
+			}
+		});
+	});
+	
+/**
+ * Provide search suggestions when 
+ * entering a search query
+ * ------------------------------------
+*/
+	
+	var location = document.location.href;
+	var requestURL = location.substring(0, location.indexOf('book-exchange')) + 'book-exchange/system/server/suggestions.php';
+	
+	$('input.search.full').autocomplete({
+		'source' : requestURL,
+		'minLength' : 2,
+		'select' : function(event, ui) {
+			$(this).val(ui.item.label).parent().parent().submit();
+		}, 'search' : function(event, ui) {
+			var search = $(this);
+			var searchBy = search.parent().parent().children('div.controls').find('div.dropdownWrapper ul li.selected').text();
+			var searchIn = search.parent().parent().children('div.controls').find('div.menuWrapper ul li ul li.selected').attr('data\-value');
+			
+			if (!searchIn || (searchIn && searchIn == '') || searchIn == undefined) {
+				searchIn = search.parent().parent().children('input[type=hidden]').val();
+			}
+			
+			search.autocomplete('option', 'source', requestURL + '?searchBy=' + searchBy + '&category=' + searchIn);
+		}
+	});	
+
+	$['ui']['autocomplete'].prototype['_renderItem'] = function(ul, item) {
+		var details;		
+
+		if (item.total == 1) {
+			details = '1 book avaliable for $' + item.price; 
+		} else {
+			details = item.total + ' books starting at $' + item.price;
+		}
+		
+		return $('<li />').data('item.autocomplete', item).append($('<a title="' + item.label + '"></a>').html('<img src="' + item.image + '" /><span class="title">' + item.label + '</span><span class="author details">Author: ' + item.author + '</span><span class="details total">' + details + '</span>')).appendTo(ul);
 	}
 	
 /**

@@ -255,6 +255,9 @@
 				//... and select the new item when we come across the right one
 					if (currentSection.text() == selectedClasses[i][2]) {
 						currentSection.addClass('selected');
+						
+					//Update the text field value
+						newClass.find('div.dropdownWrapper input').attr('value', currentSection.text());
 					}
 				});
 			}

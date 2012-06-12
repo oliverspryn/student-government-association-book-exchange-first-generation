@@ -5,7 +5,7 @@
 //Generate the breadcrumb
 	$home = mysql_fetch_array(mysql_query("SELECT * FROM pages WHERE position = '1' AND `published` != '0'", $connDBA));
 	$title = unserialize($home['content' . $home['display']]);
-	$breadcrumb = "\n<li><a href=\"index.php?page=" . $home['id'] . "\">" . $title['title'] . "</a></li>
+	$breadcrumb = "\n<li><a href=\"" . $root . "index.php?page=" . $home['id'] . "\">" . $title['title'] . "</a></li>
 <li><a href=\"../\">Book Exchange</a></li>
 <li>All Books Listings</li>\n";
 	
@@ -13,7 +13,7 @@
 	if (exist("bookcategories")) {
 		$categories = array();
 		$total = 0;
-		$categoryGrabber = mysql_query("SELECT * FROM `bookcategories` ORDER BY name ASC", $connDBA);
+		$categoryGrabber = mysql_query("SELECT bookcategories.*, COUNT(DISTINCT books.linkID) as total FROM `bookcategories` LEFT JOIN (books) ON bookcategories.id = books.course GROUP BY bookcategories.name ORDER BY name ASC", $connDBA);
 		
 		while($category = mysql_fetch_array($categoryGrabber)) {
 			array_push($categories, $category);
