@@ -282,14 +282,73 @@ $(document).ready(function() {
 */
 	
 	$('a.buttonLink.buy').click(function() {
-		$('<section class="purchase" title="Buy"><div class="loading">Please wait...</div></section>').dialog({
+		var title = $(this).siblings('span.title, a.title').text();
+		var id = $(this).attr('data-fetch');
+		
+		$('<section class="purchase" title="Purchase <i>' + title + '</i>"><div class="loading">Please wait...</div></section>').dialog({
 			'height' : 600,
 			'modal' : true,
 			'resizable' : false,
 			'width' : 900,
+			'buttons' : {
+				'Send Request' : function() {
+					
+				}, 'Preview Request' : function() {
+					
+				}, 'Cancel' : function() {
+					$(this).dialog('close').remove();
+				}
+			},
 			'create' : function() {
 				var dialog = $(this);
-				var requestURL = location.substring(0, location.indexOf('book-exchange')) + 'book-exchange/system/server/purchase.php';
+				var requestURL = location.substring(0, location.indexOf('book-exchange')) + 'book-exchange/system/server/purchase.php?id=' + id;
+				
+				$.ajax({
+					'dataType' : 'json',
+					'url' : requestURL,
+					'success' : function(data) {
+						var HTML = '<aside class="bookInfo">';
+						HTML += '<div class="cover"><img src="' + data.imageURL + '" /></div>';
+						HTML += '<span class="previewTitle">' + data.title + '</span>';
+						HTML += '<span class="previewDetails"><strong>ISBN:</strong> ' + data.ISBN + '</span>';
+						HTML += '<span class="previewDetails"><strong>Author:</strong> ' + data.author + '</span>';
+						
+						if (data.edition != '') {
+							HTML += '<span class="previewDetails"><strong>Edition:</strong> ' + data.edition + '</span>';
+						}
+						
+					//Conditionally format the condition statement
+						if (data.condition == "Excellent") {
+							HTML += '<span class="previewDetails"><strong>Condition:</strong> <span style="color: #33CC66;">Excellent</span></span>';
+						} else if (data.condition == "Very Good") {
+							HTML += '<span class="previewDetails"><strong>Condition:</strong> <span style="color: #0099FF;">Very Good</span></span>';
+						} else if (data.condition == "Good") {
+							HTML += '<span class="previewDetails"><strong>Condition:</strong> <span style="color: #FFCC33;">Good</span></span>';
+						} else if (data.condition == "Fair") {
+							HTML += '<span class="previewDetails"><strong>Condition:</strong> <span style="color: #FF6633;">Fair</span></span>';
+						} else if (data.condition == "Poor") {
+							HTML += '<span class="previewDetails"><strong>Condition:</strong> <span style="color: #CC0000;">Poor</span></span>';
+						}
+						
+					//Conditionally format the written in statement
+						if (data.written == 'No') {
+							HTML += '<span class="previewDetails"><strong>Written in:</strong> <span style="color: #33CC66;">No</span></span>';
+						} else {
+							HTML += '<span class="previewDetails"><strong>Written in:</strong> <span style="color: #CC0000;">Yes</span></span>';
+						}
+						
+						HTML += '<span class="previewDetails"><strong>Classes used:</strong> ' + data.class + '</span>'
+						HTML += '<br>';
+						
+						if (data.comments != '') {
+							HTML += '<span class="previewDetails"><strong>Seller comments:</strong> <a class="highlight viewComments" href="javascript:;">View comments</a></span>';
+						}
+						
+						HTML += '</aside><section class="main">' + data.comments + '</section>';
+						
+						dialog.html(HTML);
+					}
+				});
 			}
 		});
 	});

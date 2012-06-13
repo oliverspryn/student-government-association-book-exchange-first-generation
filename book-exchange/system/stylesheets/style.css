@@ -215,6 +215,44 @@ section.purchase div.loading {
 	text-align: center;
 }
 
+section.purchase aside.bookInfo {
+	border-right: 4px double #EDEDED;
+	float: left;
+	height: 100%;
+	padding-right: 15px;
+	width: 250px;
+}
+
+section.purchase aside.bookInfo div.cover {
+	padding-bottom: 25px;
+	text-align: center;
+}
+
+section.purchase aside.bookInfo div.cover img {
+	max-height: 200px;
+}
+
+section.purchase aside.bookInfo span.previewTitle {
+	color: #333333;
+	display: block;
+	font-weight: bold;
+	padding-bottom: 10px;
+}
+
+section.purchase aside.bookInfo span.previewDetails {
+	color: #7B8084;
+	display: block;
+	font-size: 14px;
+	padding-bottom: 5px;
+}
+
+section.purchase section.main {
+	border-left: 4px double #EDEDED;
+	margin-left: 265px;
+	padding-left: 15px;
+	width: auto;
+}
+
 /**
  * Unordered list of book categories
  * ------------------------------------
@@ -311,8 +349,8 @@ header.styled h2 {
 
 aside.info {
 	border-right: 4px double #EDEDED;
-	height: 100%;
 	float: left;
+	height: 100%;
 	width: 290px;
 	z-index: 2;
 }
