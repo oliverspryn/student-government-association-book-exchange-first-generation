@@ -285,23 +285,77 @@ $(document).ready(function() {
 		var title = $(this).siblings('span.title, a.title').text();
 		var id = $(this).attr('data-fetch');
 		
-		$('<section class="purchase" title="Purchase <i>' + title + '</i>"><div class="loading">Please wait...</div></section>').dialog({
+		var parentDialog = $('<section class="purchase" title="Purchase <i>' + title + '</i>"><div class="loading">Please wait...</div></section>').dialog({
 			'height' : 600,
 			'modal' : true,
 			'resizable' : false,
 			'width' : 900,
 			'buttons' : {
 				'Send Request' : function() {
-					
-				}, 'Preview Request' : function() {
-					
+					var confirmDialog = $('<section class="confirm" title="Confirm Request"></section>')
+					.html('<p><span class="ui-icon ui-icon-alert"></span>Are you sure you wish to send a request to purchase this book at the listed price from the seller? Your name and email address will be shared with this person.</p><p>Clicking &quot;Yes&quot; will immediately initiate the transaction.</p>')
+					.dialog({
+						'height' : 300,
+						'modal' : true,
+						'resizable' : false,
+						'width' : 500,
+						'buttons' : {
+							'Yes' : function() {
+								var requestURL = location.substring(0, location.indexOf('book-exchange')) + 'book-exchange/system/server/purchase-request.php?id=' + id;
+								
+							//Close the open dialogs
+								confirmDialog.dialog('close').remove();
+								parentDialog.dialog('close').remove();
+								
+							//Display a sending request notice
+								var message = $('<div class="center"><div class="message">Sending purchase request...</div></div>').appendTo('body');
+								
+								$.ajax({
+									'url' : requestURL,
+									'success' : function(data) {
+										if (data == 'success') {
+										//Update the message to the user
+											message.html('<div class="success">Purchase request sent! The seller will respond via email.</div>');
+											
+										//Remove the message after a certain period of time
+											setTimeout(function() {
+												message.fadeOut(400, function() {
+													$(this).remove();
+												});
+											}, 10000);
+										} else {
+										//Update the message to the user
+											message.html('<div class="error">Purchase request could not be sent. Please refresh the page and try again.</div>');
+										}
+									}
+								});
+							}, 'No' : function() {
+								$(this).dialog('close').remove();
+							}
+						}
+					});
+				}, 'Help' : function() {
+					var helpDialog = $('<section class="helpDialog" title="How Does This Work?"></section>')
+					.html('<p>Once you click the &quot;Send Request&quot; button, the seller will be sent an email notifying him or her that you would like to purchase this book. This person will be prompted to send you a reply email with a place and time to meet in person so that you may recieve this book.</p>')
+					.dialog({
+						'height' : 300,
+						'modal' : true,
+						'resizable' : false,
+						'width' : 500,
+						'buttons' : {
+							'Close' : function() {
+								$(this).dialog('close').remove();
+							} 
+						}
+					});
 				}, 'Cancel' : function() {
 					$(this).dialog('close').remove();
 				}
 			},
 			'create' : function() {
 				var dialog = $(this);
-				var requestURL = location.substring(0, location.indexOf('book-exchange')) + 'book-exchange/system/server/purchase.php?id=' + id;
+				var location = document.location.href;
+				var requestURL = location.substring(0, location.indexOf('book-exchange')) + 'book-exchange/system/server/purchase-data.php?id=' + id;
 				
 				$.ajax({
 					'dataType' : 'json',
@@ -310,6 +364,7 @@ $(document).ready(function() {
 						var HTML = '<aside class="bookInfo">';
 						HTML += '<div class="cover"><img src="' + data.imageURL + '" /></div>';
 						HTML += '<span class="previewTitle">' + data.title + '</span>';
+						HTML += '<span class="buttonLink"><span>$' + data.price + '</span></span>';
 						HTML += '<span class="previewDetails"><strong>ISBN:</strong> ' + data.ISBN + '</span>';
 						HTML += '<span class="previewDetails"><strong>Author:</strong> ' + data.author + '</span>';
 						
@@ -337,14 +392,29 @@ $(document).ready(function() {
 							HTML += '<span class="previewDetails"><strong>Written in:</strong> <span style="color: #CC0000;">Yes</span></span>';
 						}
 						
-						HTML += '<span class="previewDetails"><strong>Classes used:</strong> ' + data.class + '</span>'
-						HTML += '<br>';
+						HTML += '</aside><section class="main">';
+						HTML += '<div class="userInfo"><h2>Seller information:</h2><div><span>' + data.firstName + ' ' + data.lastName + '</span><span>Email: <a class="highlight" href="mailto:' + data.email + '">' + data.email + '</a></span></div></div>';
 						
 						if (data.comments != '') {
-							HTML += '<span class="previewDetails"><strong>Seller comments:</strong> <a class="highlight viewComments" href="javascript:;">View comments</a></span>';
+							HTML += '<h2>User comments:</h2><div class="comments">' + data.comments + '</div>';
 						}
 						
-						HTML += '</aside><section class="main">' + data.comments + '</section>';
+						HTML += '<h2>Classes used:</h2><div class="classes"><ul>';
+						
+					//Split the class data into an array and display each class individually
+						var location = document.location.href;
+						var classes = data.class.split(',');
+						var classIDs = data.classID.split(',');
+						var colors = data.color.split(',');
+						var icon;
+						
+						for(var i = 0; i <= classes.length - 1; i++) {
+							icon = location.substring(0, location.indexOf('book-exchange')) + 'data/book-exchange/icons/' + classIDs[i] + '/icon_032.png';
+							
+							HTML += '<li><span class="class"><span class="band" style="border-left-color: ' + colors[i] + ';"><span class="icon" style="background-image: url(' + icon + ')">' + classes[i] + '</span></span></span></li>'
+						}
+						
+						HTML += '</ul></div></section>';
 						
 						dialog.html(HTML);
 					}
