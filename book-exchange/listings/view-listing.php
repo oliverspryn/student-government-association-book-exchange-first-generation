@@ -50,6 +50,7 @@
 	
 //Include the top of the page from the administration template
 	topPage("public", $title, "" , "", "<link href=\"../system/stylesheets/style.css\" rel=\"stylesheet\" />
+<link href=\"../system/stylesheets/view-listing.css\" rel=\"stylesheet\" />
 <script src=\"../system/javascripts/interface.js\"></script>", $breadcrumb);
 	echo "<section class=\"body\">
 ";
@@ -70,7 +71,39 @@
 ";
 	}
 	
-//Onlyd display the sidebar whenever the user hasn't drilled down
+//Display a sort by dropdown menu whenever the user has drilled down to section level
+	if (isset($_GET['section'])) {
+		if (isset($_GET['sort'])) {
+			$sortSelected = $_GET['sort'];
+		} else {
+			$sortSelected = "titleASC";
+		}
+		
+		echo "<div class=\"sort\">
+<span>Sort by:</span>
+
+<form action=\"" . $_SERVER['REQUEST_URI'] . "\" method=\"get\">
+<input name=\"id\" type=\"hidden\" value=\"" . $_GET['id'] . "\" />
+<input name=\"number\" type=\"hidden\" value=\"" . $_GET['number'] . "\" />
+<input name=\"section\" type=\"hidden\" value=\"" . $_GET['section'] . "\" />
+
+<select name=\"sort\">
+<option value=\"titleASC\"" . ($sortSelected == "titleASC" ? " selected" : "") . ">Title A-Z</option>
+<option value=\"titleDESC\"" . ($sortSelected == "titleDESC" ? " selected" : "") . ">Title Z-A</option>
+<option value=\"priceASC\"" . ($sortSelected == "priceASC" ? " selected" : "") . ">Price Low to High</option>
+<option value=\"priceDESC\"" . ($sortSelected == "priceDESC" ? " selected" : "") . ">Price High to Low</option>
+<option value=\"authorASC\"" . ($sortSelected == "authorASC" ? " selected" : "") . ">Author A-Z</option>
+<option value=\"authorDESC\"" . ($sortSelected == "authorDESC" ? " selected" : "") . ">Author Z-A</option>
+</select>
+
+<input class=\"blue\" type=\"submit\" value=\"Go\" />
+</form>
+</div>
+
+";
+	}
+	
+//Only display the sidebar whenever the user hasn't drilled down
 	if (!isset($_GET['number'])) {
 		echo "<aside class=\"info\">
 ";
@@ -127,11 +160,6 @@
 <ul>";
 			echo $featuredList;
 			echo "</ul>";
-		}
-		
-	//Display a listing of other class numbers
-		if (true) {
-			
 		}
 		
 	//Display a listing of recent additions to this category
@@ -215,11 +243,48 @@
 	$sectionCounter = 1;
 	
 	if (isset($_GET['number']) && isset($_GET['section'])) {
-		$booksGrabber = mysql_query("SELECT books.*, users.id AS userTableID, users.firstName, users.lastName, users.emailAddress1 FROM books RIGHT JOIN (users) ON books.userID = users.id WHERE books.course = '" . $_GET['id'] . "' AND books.number = '{$_GET['number']}' AND books.section = '{$_GET['section']}' ORDER BY books.number, books.section, books.title ASC");
+		if (isset($_GET['sort'])) {
+			switch($_GET['sort']) {
+				case "titleASC" : 
+					$sort = "books.title ASC, books.price ASC";
+					break;
+					
+				case "titleDESC" : 
+					$sort = "books.title DESC, books.price ASC";
+					break;
+					
+				case "priceASC" : 
+					$sort = "books.price ASC, books.title ASC";
+					break;
+					
+					
+				case "priceDESC" : 
+					$sort = "books.price DESC, books.title ASC";
+					break;
+					
+					
+				case "authorASC" : 
+					$sort = "books.author ASC, books.title ASC";
+					break;
+					
+					
+				case "authorDESC" : 
+					$sort = "books.author DESC, books.title ASC";
+					break;
+					
+				default : 
+					$sort = "books.title ASC";
+					break;
+			}
+		} else {
+			$sort = "books.title ASC";
+		}
+		
+		$booksGrabber = mysql_query("SELECT books.*, users.id AS userTableID, users.firstName, users.lastName, users.emailAddress1 FROM books RIGHT JOIN (users) ON books.userID = users.id WHERE books.course = '" . $_GET['id'] . "' AND books.number = '{$_GET['number']}' AND books.section = '{$_GET['section']}' ORDER BY books.number ASC, books.section ASC, " . $sort);
 	} elseif (isset($_GET['number']) && !isset($_GET['section'])) {
-		$booksGrabber = mysql_query("SELECT books.*, users.id AS userTableID, users.firstName, users.lastName, users.emailAddress1 FROM books RIGHT JOIN (users) ON books.userID = users.id WHERE books.course = '" . $_GET['id'] . "' AND books.number = '{$_GET['number']}' ORDER BY books.number, books.section, books.title ASC");
+		$booksGrabber = mysql_query("SELECT books.*, users.id AS userTableID, users.firstName, users.lastName, users.emailAddress1 FROM books RIGHT JOIN (users) ON books.userID = users.id WHERE books.course = '" . $_GET['id'] . "' AND books.number = '{$_GET['number']}' ORDER BY books.number ASC, books.section ASC, books.title ASC");
 	} else {
-		$booksGrabber = mysql_query("SELECT books.*, users.id AS userTableID, users.firstName, users.lastName, users.emailAddress1 FROM books RIGHT JOIN (users) ON books.userID = users.id WHERE books.course = '" . $_GET['id'] . "' ORDER BY books.number, books.section, books.title ASC");
+		$booksGrabber = mysql_query("SELECT books.*, users.id AS userTableID, users.firstName, users.lastName, users.emailAddress1 FROM books RIGHT JOIN (users) ON books.userID = users.id WHERE books.course = '" . $_GET['id'] . "' ORDER BY books.number ASC, books.section ASC, books.title ASC");
 	}
 	
 	echo "<section class=\"books\">
@@ -299,7 +364,12 @@
 ";
 				}
 				
-				echo "<ul>";
+			//This unordered list will display if the user is viewing a section, which will require a special class
+				if (isset($_GET['section'])) {
+					echo "<ul class=\"viewAll\">";
+				} else {
+					echo "<ul>";
+				}
 		
 			//... otherwise include the section letter inline with the book titles
 				if (!isset($_GET['number'])) {
@@ -311,7 +381,7 @@
 		}
 		
 	//Only display four books if this is the main page, but display up to 6 if we are looking within a class number
-		if ((!isset($_GET['number']) && $sectionCounter <= 4) || (isset($_GET['number']) && !isset($_GET['section']) && $sectionCounter <= 6) || (isset($_GET['number']) && isset($_GET['section']))) {
+		if ((!isset($_GET['number']) && $sectionCounter <= 4) || (isset($_GET['number']) && !isset($_GET['section']) && $sectionCounter <= 7) || (isset($_GET['number']) && isset($_GET['section']))) {
 			echo "
 <li>
 <a href=\"../book/?id=" . $books['id'] . "\"><img src=\"" . $books['imageURL'] . "\" /></a>
