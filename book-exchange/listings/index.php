@@ -25,7 +25,7 @@
 
 //Include the top of the page from the administration template
 	topPage("public", "All Book Listings", "" , "", "<link href=\"../system/stylesheets/style.css\" rel=\"stylesheet\" />
-<script src=\"../system/javascripts/interface.js\"></script>", $breadcrumb);
+<link href=\"../system/stylesheets/listings.css\" rel=\"stylesheet\" />", $breadcrumb);
 	echo "<section class=\"body\">
 ";
 

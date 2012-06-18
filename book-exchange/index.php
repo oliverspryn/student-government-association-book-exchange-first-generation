@@ -11,37 +11,7 @@
 //Include the top of the page from the administration template
 	topPage("public", "Book Exchange", "" , "", "<link href=\"system/stylesheets/style.css\" rel=\"stylesheet\" />
 <link href=\"system/stylesheets/welcome.css\" rel=\"stylesheet\" />
-<script src=\"system/javascripts/interface.js\"></script>
-<script>
-$(document).ready(function() {
-	var requestURL = 'system/server/suggestions.php';
-	
-	$('input.search.full').autocomplete({
-		'source' : requestURL,
-		'minLength' : 2,
-		'select' : function(event, ui) {
-			$(this).val(ui.item.label).parent().parent().submit();
-		}, 'search' : function(event, ui) {
-			var searchBy = $(this).parent().parent().children('div.controls').find('div.dropdownWrapper ul li.selected').text();
-			var searchIn = $(this).parent().parent().children('div.controls').find('div.menuWrapper ul li ul li.selected').attr('data\-value');
-			$(this).autocomplete('option', 'source', requestURL + '?searchBy=' + searchBy + '&category=' + searchIn);
-		}
-	});
-	
-	$['ui']['autocomplete'].prototype['_renderItem'] = function(ul, item) {
-		var details;
-		
-		if (item.total == 1) {
-			details = '1 book avaliable for \$' + item.price; 
-		} else {
-			details = item.total + ' books starting at \$' + item.price;
-		}
-		
-		return $('<li />').data('item.autocomplete', item).append($('<a title=\"' + item.label + '\"></a>').html('<img src=\"' + item.image + '\" /><span class=\"title\">' + item.label + '</span><span class=\"author details\">Author: ' + item.author + '</span><span class=\"details total\">' + details + '</span>')).appendTo(ul);
-	};
-
-});
-</script>", $breadcrumb);
+<script src=\"system/javascripts/interface.js\"></script>", $breadcrumb);
 	echo "<section class=\"body\">
 ";
 

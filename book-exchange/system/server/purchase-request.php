@@ -71,7 +71,7 @@
 <li>Go and get your cash!</li>
 </ol>
 
-<div style=\"background: #FFCCCD; border: 3px solid #FF9999; margin: 30px 10% 0px 10%; padding: 7px; width: 80%;\">This book will be automatically removed from the book exchange in two days. If you choose to not sell this book to " . $userData['firstName'] . ", you may login at any time and restore this book to the exchange in one click.</div>
+<div style=\"background: #FFCCCD; border: 3px solid #FF9999; margin: 30px 10% 0px 10%; padding: 7px; width: 80%;\">This book will be automatically removed from the book exchange in two days. If you choose to not sell this book to " . $userData['firstName'] . ", you may login at any time and restore this book to the exchange with one click.</div>
 </td>
 </tr>
 
@@ -101,10 +101,10 @@
 |**************************************************
 |  BOOK INFORMATION
 |
-|  " . $book['title'] . "
+|  Title: " . $book['title'] . "
 |  Price: \$" . $book['price'] . "
 |  ISBN: " . $book['ISBN'] . "
-|  Author: " . $book['ISBN'] . (!empty($book['edition']) ? "
+|  Author: " . $book['author'] . (!empty($book['edition']) ? "
 |  Edition: " . $book['edition'] . "
 |**************************************************" : "
 |**************************************************") . "
@@ -117,7 +117,7 @@ Congratulations! You are just two steps away from selling your book:
 |**************************************************
 |  This book will be automatically removed from the book exchange in two days. If you choose to not
 |  sell this book to " . $userData['firstName'] . ", you may login at any time and restore this
-|  book to the exchange in one click.
+|  book to the exchange with one click.
 |**************************************************
 
 Thank you, we hope that was easy!

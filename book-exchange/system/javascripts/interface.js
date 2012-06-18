@@ -157,11 +157,7 @@ $(document).ready(function() {
 			item.addClass('selected');
 			
 		//Grab the value of the selected item and store it in the associated hidden element
-			if (item.attr('data-value') == '0') { //This is an invalid value
-				menu.parent().find('div div input.collapse').attr('value', '');
-			} else {
-				menu.parent().find('div div input.collapse').attr('value', item.attr('data-value'));
-			}
+			menu.parent().find('input').attr('value', item.attr('data-value'));
 			
 		//Slide the unselected menu items out of the way
 			menu.animate({
@@ -466,6 +462,21 @@ $(document).ready(function() {
  * Misc
  * ------------------------------------
 */
+	
+//Animate the magnifying glass on the search page
+	var magnifier = $('img.animatedSearch');
+	
+	if (magnifier && magnifier != undefined) {
+		var containerWidth = $(document).width();
+		var magnifierWidth = 219;
+		
+	//We need everything in terms of percents, so calculute the total percentage that the glass takes up
+		var magnifierPercent = Math.round((magnifierWidth / containerWidth) * 100);
+		
+		magnifier.animate({
+			'left' : (100 - magnifierPercent - 12) + '%'
+		}, 150000);
+	}
 
 //Clear any alert bubbles
 	setTimeout(function() {

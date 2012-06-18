@@ -1,4 +1,13 @@
 /**
+ * Page header
+ * ------------------------------------
+*/
+
+header.styled.noSide h1 {
+	padding-left: 10px;
+}
+
+/**
  * Sort by bar
  * ------------------------------------
 */
@@ -254,152 +263,4 @@ section.listing section.books section.courses > a span.arrow {
 
 section.listing section.books section.empty {
 	height: 200px;
-}
-
-/**
- * Purchase book dialog
- * ------------------------------------
-*/
-
-section.purchase div.loading {
-	color: #CCCCCC;
-	font-size: 36px;
-	padding: 60px 20px 45px 20px;
-	text-align: center;
-}
-
-section.purchase aside.bookInfo {
-	border-right: 4px double #EDEDED;
-	float: left;
-	height: 100%;
-	overflow-y: auto;
-	padding-right: 15px;
-	width: 250px;
-}
-
-section.purchase aside.bookInfo div.cover {
-	padding-bottom: 25px;
-	text-align: center;
-}
-
-section.purchase aside.bookInfo div.cover img {
-	max-height: 200px;
-}
-
-section.purchase aside.bookInfo span.previewTitle {
-	color: #333333;
-	display: block;
-	font-weight: bold;
-}
-
-section.purchase aside.bookInfo span.buttonLink {
-	font-size: 20px;
-	margin: 5px 0px 20px 0px;
-	padding-bottom: 2px;
-}
-
-section.purchase aside.bookInfo span.previewDetails {
-	color: #7B8084;
-	display: block;
-	font-size: 14px;
-	padding-bottom: 5px;
-}
-
-section.purchase section.main {
-	background: url(../images/icons/tips.png) no-repeat bottom right;
-	border-left: 4px double #EDEDED;
-	margin-left: 265px;
-	min-height: 100%;
-	padding-left: 15px;
-	width: auto;
-}
-
-section.purchase section.main div.userInfo {
-	border: 1px solid #DDDDDD;
-}
-
-section.purchase section.main div.userInfo {
-	margin: 0px auto 0px auto;
-	width: 300px;
-}
-
-section.purchase section.main div.userInfo h2 {
-	background: #DDDDDD;
-	color: #333333;
-	font-size: 16px;
-	margin: 2px 2px 0px 2px;
-}
-
-section.purchase section.main div.userInfo div {
-	background: url(../images/icons/avatar.jpg) #EEEEEE no-repeat left;
-	height: 85px;
-	padding-left: 90px;
-	margin: 0px 2px 2px 2px;
-}
-
-section.purchase section.main div.userInfo div span {
-	display: block;
-	font-size: 14px;
-	padding: 5px 0px 5px 0px;
-}
-
-section.purchase section.main > h2 {
-	border-bottom: 1px solid #333333;
-	font-size: 16px;
-	margin: 10px 0px 10px 0px;
-}
-
-section.purchase section.main div.comments {
-	font-size: 14px;
-}
-
-section.purchase section.main div.comments p {
-	margin: 0px;
-}
-
-section.purchase section.main div.classes ul {
-	list-style: none;
-	margin: 0px;
-	padding: 0px;
-}
-
-section.purchase section.main div.classes ul li {
-	display: inline-block;
-	padding: 5px 10px 5px 0px;
-}
-
-section.purchase section.main div.classes ul li span.class {
-	background: #FFFFFF;
-	border: 1px solid #000000;
-	color: #7B8084;
-	display: block;
-	font-size: 13px;
-	font-weight: normal;
-	height: 40px;
-	margin: 0px;
-	padding: 0px;
-	width: 248px;
-}
-
-section.purchase section.main div.classes ul li span.class span.band {
-	border-left-style: solid;
-	border-left-width: 50px;
-	display: block;
-	height: 40px;
-	width: 250px;
-}
-
-section.purchase section.main div.classes ul li span.class span.band span.icon {
-	background-repeat: no-repeat;
-	background-position: 9px 6px;
-	display: block;
-	height: 40px;
-	margin-left: -50px;
-	padding: 11px 0px 0px 55px;
-	width: 250px;
-}
-
-section.confirm span {
-	 float: left;
-	 margin: 5px 7px 100px 0px;
 }

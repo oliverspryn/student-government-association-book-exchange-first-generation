@@ -1,4 +1,26 @@
 /**
+ * General styles
+ * ------------------------------------
+*/
+
+.tooltip {
+	-moz-box-shadow: 0 0 10px #000000;
+	-ms-box-shadow: 0 0 10px #000000;
+	-o-box-shadow: 0 0 10px #000000;
+	-webkit-box-shadow: 0 0 10px #000000;
+    background-color: #000000;
+    border: 1px solid #FFFFFF;
+	box-shadow: 0 0 10px #000000;
+	color: #FFFFFF;
+	display: none;
+	font-size: 12px;
+    padding: 10px 15px;
+    width: 200px;
+    text-align: left;
+	z-index: 10;
+}
+
+/**
  * Sell books dialog suggestion
  * ------------------------------------
 */
