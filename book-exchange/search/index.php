@@ -104,11 +104,11 @@
 			$length = mysql_num_rows($lengthGrabber);
 			
 			if ($length == 0) {
-				redirect("../search/?message=none");
+				redirect("../search/?message=none&query=" . $_GET['search'] . "&by=" . $_GET['searchBy']);
 			}
 	//Or did the query fail altogether?
 		} else {
-			redirect("../search/?message=none");
+			redirect("../search/?message=none&query=" . $_GET['search'] . "&by=" . $_GET['searchBy']);
 		}
 	} else if (isset($_GET['search']) && $_GET['search'] == "") {
 		redirect("../search/");
@@ -566,7 +566,7 @@
 	} else {
 	//Was the user redirected back here because of an error?
 		if (isset($_GET['message']) && $_GET['message'] == "none") {
-			echo "<div class=\"center\"><div class=\"error\">Sorry we couldn't results for your search. Did you enter it correctly?</div></div>
+			echo "<div class=\"center\"><div class=\"error\">Sorry we couldn't find any results for <strong>" . $_GET['query'] . "</strong> when searching by <strong>" . $_GET['by'] . "</strong>. Did you enter it correctly?</div></div>
 			
 	";
 		}

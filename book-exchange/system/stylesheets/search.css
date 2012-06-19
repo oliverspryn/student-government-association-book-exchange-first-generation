@@ -16,7 +16,7 @@ img.shadow {
 */
 
 header.styled.search.noSide h1 {
-	padding-left: 10px;
+	padding: 10px 200px 10px 10px;
 }
 
 header.styled.search h1 {
@@ -278,7 +278,7 @@ section.results ul li.result a.buttonLink {
 section.results ul li.result span.excellent {
 	background: url(../images/icons/condition.png) no-repeat #33CC66;
 	background-position: 3px 3px;
-	border: 1px solid #000000;
+	border: 1px solid #7B8084;
 	bottom: 65px;
 	color: #FFFFFF;
 	font-size: 14px;
@@ -290,7 +290,7 @@ section.results ul li.result span.excellent {
 section.results ul li.result span.veryGood {
 	background: url(../images/icons/condition.png) no-repeat #0099FF;
 	background-position: 3px 3px;
-	border: 1px solid #000000;
+	border: 1px solid #7B8084;
 	bottom: 65px;
 	color: #FFFFFF;
 	font-size: 14px;
@@ -302,7 +302,7 @@ section.results ul li.result span.veryGood {
 section.results ul li.result span.good {
 	background: url(../images/icons/condition.png) no-repeat #FFCC33;
 	background-position: 3px -15px;
-	border: 1px solid #000000;
+	border: 1px solid #7B8084;
 	bottom: 65px;
 	color: #000000;
 	font-size: 14px;
@@ -314,7 +314,7 @@ section.results ul li.result span.good {
 section.results ul li.result span.fair {
 	background: url(../images/icons/condition.png) no-repeat #FF6633;
 	background-position: 3px -34px;
-	border: 1px solid #000000;
+	border: 1px solid #7B8084;
 	bottom: 65px;
 	color: #FFFFFF;
 	font-size: 14px;
@@ -326,7 +326,7 @@ section.results ul li.result span.fair {
 section.results ul li.result span.poor {
 	background: url(../images/icons/condition.png) no-repeat #CC0000;
 	background-position: 3px -34px;
-	border: 1px solid #000000;
+	border: 1px solid #7B8084;
 	bottom: 65px;
 	color: #FFFFFF;
 	font-size: 14px;

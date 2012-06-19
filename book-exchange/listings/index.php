@@ -81,7 +81,7 @@
 		$categories = false;
 	}
 
-//Include the footer from the administration template
+//Include the footer from the public template
 	echo "
 </section>";
 

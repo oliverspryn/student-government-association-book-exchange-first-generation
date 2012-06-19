@@ -1,0 +1,190 @@
+/**
+ * Header styles
+ * ------------------------------------
+*/
+
+header.styled h1 {
+	padding-left: 315px;
+}	
+
+/**
+ * Category information sidebar
+ * ------------------------------------
+*/
+
+aside.info {
+	border-right: 4px double #EDEDED;
+	clear: both;
+	float: left;
+	height: 100%;
+	width: 305px;
+	z-index: 5;
+}
+
+aside.info section.cover {
+	background: #3D3D3D;
+	display: block;
+	margin: -45px 0px 0px 12px;
+	overflow: auto;
+	padding: 10px;
+	position: relative;
+	width: 260px;
+	z-index: 500;
+}
+
+aside.info section.cover img {
+	display: block;
+	float: left;
+	max-width: 260px;
+}
+
+aside.info section.cover div.facebookContainer, aside.info section.cover div.twitterContainer, aside.info section.cover div.gplusContainer, aside.info section.cover div.pinContainer {
+	max-width: 90px;
+	overflow: hidden;
+	padding: 7px 7px 0px 0px;
+	width: 90px;
+}
+
+aside.info section.cover div.facebookContainer {
+	padding-top: 10px;
+}
+
+aside.info section.cover a.buttonLink {
+	bottom: 94px;
+	display: inline-table;
+	float: right;
+	font-size: 20px;
+	margin: 10px 0px 0px 0px;
+	overflow: auto;
+	padding-bottom: 2px;
+	position: absolute;
+	right: 10px;
+	white-space: nowrap;
+}
+
+/**
+ * Book information content
+ * ------------------------------------
+*/
+
+section.allInfo {
+	margin-left: 305px;
+	padding-left: 15px;
+	width: auto;
+}
+
+section.allInfo section {
+	padding: 10px 0px 10px 35px;
+}
+
+section.allInfo section h2 {
+	background: url(../images/icons/book_details.png) no-repeat left;
+	color: #333333;
+	font-size: 18px;
+	margin: 0px 0px 0px -35px;
+	padding: 5px 0px 5px 35px;
+}
+
+section.allInfo section.purchase {
+	padding: 30px 0px 30px 0px;
+	text-align: center;
+}
+
+section.allInfo section.general h2 {
+	background-position: -71px 3px;
+}
+
+section.allInfo section.general span.details {
+	font-size: 13px;
+	max-width: none;
+}
+
+section.allInfo section.general span.details strong {
+	display: inline-block;
+	width: 50px;
+}
+
+section.allInfo section.general span.excellent {
+	background: url(../images/icons/condition.png) no-repeat #33CC66;
+	background-position: 3px 3px;
+	border: 1px solid #7B8084;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 14px;
+	margin-top: 25px;
+	padding: 2px 3px 2px 25px;
+}
+
+section.allInfo section.general span.veryGood {
+	background: url(../images/icons/condition.png) no-repeat #0099FF;
+	background-position: 3px 3px;
+	border: 1px solid #7B8084;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 14px;
+	margin-top: 25px;
+	padding: 2px 3px 2px 25px;
+}
+
+section.allInfo section.general span.good {
+	background: url(../images/icons/condition.png) no-repeat #FFCC33;
+	background-position: 3px -15px;
+	border: 1px solid #7B8084;
+	color: #000000;
+	display: inline-block;
+	font-size: 14px;
+	margin-top: 25px;
+	padding: 2px 3px 2px 25px;
+}
+
+section.allInfo section.general span.fair {
+	background: url(../images/icons/condition.png) no-repeat #FF6633;
+	background-position: 3px -34px;
+	border: 1px solid #7B8084;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 14px;
+	margin-top: 25px;
+	padding: 2px 3px 2px 25px;
+}
+
+section.allInfo section.general span.poor {
+	background: url(../images/icons/condition.png) no-repeat #CC0000;
+	background-position: 3px -34px;
+	border: 1px solid #7B8084;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 14px;
+	margin-top: 25px;
+	padding: 2px 3px 2px 25px;
+}
+
+section.allInfo section.general span.noMarks {
+	background: url(../images/icons/quill.png) no-repeat #33CC66;
+	background-position: 3px 3px;
+	border: 1px solid #7B8084;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 14px;
+	margin-top: 25px;
+	padding: 2px 3px 2px 25px;
+}
+
+section.allInfo section.general span.marks {
+	background: url(../images/icons/quill.png) no-repeat #FF6633;
+	background-position: 3px 3px;
+	border: 1px solid #7B8084;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 14px;
+	margin-top: 25px;
+	padding: 2px 3px 2px 25px;
+}
+
+section.allInfo section.comments h2 {
+	background-position: -36px -33px;
+}
+
+section.allInfo section.classes h2 {
+	background-position: 0px -71px;
+}
