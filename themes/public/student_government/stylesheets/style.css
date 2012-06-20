@@ -409,6 +409,7 @@ h1.title {
 }
 
 section.body {
+	background: url(../images/release_message.png) repeat-y;
 	padding: 10px 0px 10px 10%;
 	width: 80%;
 }

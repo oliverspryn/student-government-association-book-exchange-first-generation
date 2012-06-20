@@ -279,7 +279,8 @@
 	//Display a list of other categories that the user can browse
 			$allCatGrabber = mysql_query("SELECT * FROM `bookcategories` ORDER BY name ASC", $connDBA);
 			
-			echo "<h2 style=\"color:" . $category['color1'] . "\">More Book Listings</h2>
+			echo "<section class=\"categories\">
+<h2 style=\"color:" . $category['color1'] . "\">More Book Listings</h2>
 <ul class=\"moreListings\">";
 			
 			while ($allCat = mysql_fetch_array($allCatGrabber)) {
@@ -289,6 +290,7 @@
 			
 			echo "
 </ul>
+</section>
 </aside>
 
 ";

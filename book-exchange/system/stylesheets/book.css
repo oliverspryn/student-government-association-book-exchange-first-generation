@@ -62,19 +62,33 @@ aside.info section.cover a.buttonLink {
 	white-space: nowrap;
 }
 
+aside.info section.categories h2 {
+	font-weight: lighter;
+}
+
+aside.info section.categories ul {
+	list-style: none;
+	padding-left: 10px;
+}
+
+aside.info section.categories ul li {
+	padding-bottom: 20px;
+}
+
 /**
  * Book information content
  * ------------------------------------
 */
 
 section.allInfo {
+	border-left: 4px double #EDEDED;
 	margin-left: 305px;
 	padding-left: 15px;
 	width: auto;
 }
 
 section.allInfo section {
-	padding: 10px 0px 10px 35px;
+	padding: 10px 0px 30px 35px;
 }
 
 section.allInfo section h2 {
@@ -91,7 +105,7 @@ section.allInfo section.purchase {
 }
 
 section.allInfo section.general h2 {
-	background-position: -71px 3px;
+	background-position: -111px 3px;
 }
 
 section.allInfo section.general span.details {
@@ -182,9 +196,99 @@ section.allInfo section.general span.marks {
 }
 
 section.allInfo section.comments h2 {
-	background-position: -36px -33px;
+	background-position: -75px -33px;
 }
 
 section.allInfo section.classes h2 {
-	background-position: 0px -71px;
+	background-position: 0px -110px;
+}
+
+section.allInfo section.classes ul {
+	list-style: none;
+	margin: 0px;
+	padding: 0px;
+}
+
+section.allInfo section.classes ul li {
+	display: inline-block;
+}
+
+section.allInfo section.classes ul li span.classDetails {
+	display: block;
+	font-weight: bold;
+	text-align: center;
+}
+
+section.allInfo section.seller h2 {
+	background-position: -38px -75px;
+}
+
+section.allInfo section.seller span.details {
+	font-size: 13px;
+	max-width: none;
+}
+
+section.allInfo section.seller span.details strong {
+	display: inline-block;
+	width: 50px;
+}
+
+section.allInfo section.seller span.details strong.extended {
+	width: 110px;
+}
+
+section.allInfo section.more {
+	margin-left: -35px;
+	padding: 100px 0px 0px 35px;
+}
+
+section.allInfo section.other {
+	margin-left: -35px;
+}
+
+section.allInfo section.more h2, section.allInfo section.other h2 {
+	background: none;
+	font-weight: lighter;
+}
+
+section.allInfo section.more ul, section.allInfo section.other ul {
+	display: block;
+	list-style: none;
+	min-height: 150px;
+	min-width: 30px;
+	overflow: hidden;
+	padding: 5px 0px 25px 0px;
+	width: 100%;
+}
+
+section.allInfo section.more ul li, section.allInfo section.other ul li {
+	display: table-cell;
+	height: 100%;
+	max-width: 130px;
+	min-width: 130px;
+	padding: 0px 0px 0px 15px;
+	vertical-align: bottom;
+}
+
+section.allInfo section.more ul li:first-child, section.allInfo section.other ul li:first-child {
+	padding-left: 0px;
+}
+
+section.allInfo section.more ul li a img, section.allInfo section.other ul li a img {
+	display: block;
+	margin: 0px;
+	max-width: 100px;
+}
+
+section.allInfo section.more a.more, section.allInfo section.other a.more {
+	display: block;
+	margin-left: 61px;
+	padding: 0px 0px 10px 0px;
+	text-align: right;
+}
+
+section.allInfo section.more a.more span.arrow, section.allInfo section.other a.more span.arrow {
+	font: "Helvetica Narrow", "Arial Narrow", Tahoma, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	padding: 3px;
 }
