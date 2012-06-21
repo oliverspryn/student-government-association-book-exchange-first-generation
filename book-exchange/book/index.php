@@ -279,7 +279,7 @@
 	
 	$SQL = ltrim($SQL, " OR ");
 	$title = ltrim($title, ", ");
-	$catOtherGrabber = mysql_query("SELECT books.*, bookcategories.*, users.*, books.id AS bookID, books.course AS courseID FROM books RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN (users) ON books.userID = users.ID WHERE {$SQL} GROUP BY books.linkID ORDER BY RAND() LIMIT 4", $connDBA);
+	$catOtherGrabber = mysql_query("SELECT books.*, bookcategories.*, users.*, books.id AS bookID, books.course AS courseID FROM books RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN (users) ON books.userID = users.ID WHERE {$SQL} AND books.id !='{$_GET['id']}' GROUP BY books.linkID ORDER BY RAND() LIMIT 4", $connDBA);
 	
 	if (mysql_num_rows($catOtherGrabber)) {
 		echo "<section class=\"other\">
