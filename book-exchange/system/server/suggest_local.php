@@ -1,7 +1,7 @@
 <?php
 //Include the system's core
-	require_once("../../Connections/connDBA.php");
-	require_once("../../Connections/jsonwrapper/jsonwrapper.php");
+	require_once("../../../Connections/connDBA.php");
+	require_once("../../../Connections/jsonwrapper/jsonwrapper.php");
 	
 //Check and see if a given ISBN number exists in the database
 	if (isset($_GET['ISBN']) && strlen($_GET['ISBN']) == 10) {
@@ -14,19 +14,26 @@
 		while($ISBNData = mysql_fetch_array($ISBNGrabber)) {
 		//We only need this info once
 			if (++$counter == 1) {
-				$returnArray['ISBN'] = $ISBNData['ISBN'];
-				$returnArray['title'] = $ISBNData['title'];
-				$returnArray['author'] = $ISBNData['author'];
-				$returnArray['edition'] = $ISBNData['edition'];
-				$returnArray['imageURL'] = $ISBNData['imageURL'];
+				$returnArray['ISBN'] = stripslashes($ISBNData['ISBN']);
+				$returnArray['title'] = stripslashes($ISBNData['title']);
+				$returnArray['author'] = stripslashes($ISBNData['author']);
+				$returnArray['edition'] = stripslashes($ISBNData['edition']);
+				$returnArray['imageID'] = stripslashes($ISBNData['imageID']);
+				
+			//Suggest the REAL cover image, even if it hasn't been approved yet
+				if (!empty($ISBNData['awaitingImage'])) {
+					$returnArray['imageURL'] = stripslashes($ISBNData['awaitingImage']);
+				} else {
+					$returnArray['imageURL'] = stripslashes($ISBNData['imageURL']);
+				}
 			}
 			
 		//Collect all of the classes in which this book is used
-			array_push($classes, array("id" => $ISBNData['course'], "name" => $ISBNData['name'], "collegeCID" => $ISBNData['courseID'], "classNum" => $ISBNData['number'], "section" => $ISBNData['section'], "color" => $ISBNData['color1']));
+			array_push($classes, array("id" => stripslashes($ISBNData['course']), "name" => stripslashes($ISBNData['name']), "collegeCID" => stripslashes($ISBNData['courseID']), "classNum" => stripslashes($ISBNData['number']), "section" => stripslashes($ISBNData['section']), "color" => stripslashes($ISBNData['color1'])));
 		}
 		
 	//Was any data collected about for this ISBN?
-		if ($classes) {	
+		if ($classes && sizeof($classes) > 0) {	
 		//Remove duplicate entries from classes array. array_unique() will not work with multideminsional arrays
 			$classes = array_intersect_key($classes, array_unique(array_map('serialize', $classes)));
 		

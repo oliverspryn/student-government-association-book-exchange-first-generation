@@ -9,7 +9,7 @@
 		var forwardButton = $('span.forward');
 		var APIKey = 'AIzaSyCCfXsNv47Xg62-Kz6opyvmn3YBPhliZ0k';
 		var APIRequest = 'https://www.googleapis.com/shopping/search/v1/public/products?country=US&key=' + APIKey + '&q=';
-		var localRequest = 'api.php?ISBN=';
+		var localRequest = '../system/server/suggest_local.php?ISBN=';
 		
 	/**
 	 * Fetch an image from the local 
@@ -30,7 +30,10 @@
 			//Check with the local database and see if an entry for this book already exists
 				$.ajax({
 					'url' : localRequest + ISBN,
-					success : function(data) {					
+					success : function(data) {		
+					//Empty the imageID input field so any previous image ID isn't linked to this book
+						$('input.imageID').attr('value', '');
+						
 					//Is the book already in the database? If so, let the user know, and give them the option to auto fill the form
 						if (data.toString() != 'failure') {
 							data = $.parseJSON(data);
@@ -50,7 +53,7 @@
 							}
 							
 						//Construct the alert dialog with the fetched information from the server
-							dialog = $('<section class="dialog suggestions"><h1>We Already Have this Book On Record</h1><div class="content"><div class="imagePreview"><p>Verify that the suggested book cover is correct:</p><img src="' + data.imageURL + '"></div><div class="bookInfo"><p>Check the title, author, and edition (if available):</p><span class="titleInfo"><strong>Title:</strong> ' + data.title + '</span><span class="authorInfo"><strong>Author:</strong> ' + data.author + '</span>' + edition + '</div><div class="classInfo"><p><span class="highlight">Click on the classes</span> where you used this book (you can add more later):</p>' + classes + '</div></div><div class="buttons"><button class="green accurate">This Information Is Accurate</button><button class="red inAccurate">This Information Is Not Accurate</button></div></section>').appendTo('body').delfini_dialog();
+							dialog = $('<section class="dialog suggestions"><h1>We Already Have this Book On Record</h1><div class="content"><div class="imagePreview"><p>Verify that the suggested book cover is correct:</p><img src="' + data.imageURL + '"><span class=\"imageID\" style=\"display: none;\"">' + data.imageID + '</span></div><div class="bookInfo"><p>Check the title, author, and edition (if available):</p><span class="titleInfo"><strong>Title:</strong> ' + data.title + '</span><span class="authorInfo"><strong>Author:</strong> ' + data.author + '</span>' + edition + '</div><div class="classInfo"><p><span class="highlight">Click on the classes</span> where you used this book (you can add more later):</p>' + classes + '</div></div><div class="buttons"><button class="green accurate">This Information Is Accurate</button><button class="red inAccurate">This Information Is Not Accurate</button></div></section>').appendTo('body').delfini_dialog();
 							
 						//Hide the image browser controls
 							$('div.imageBrowser').addClass('hidden');
@@ -96,6 +99,9 @@
 										
 									//Hide the image browser controls
 										$('div.imageBrowser').addClass('hidden');
+										
+									//Let the user know that the reason the a cover could not be found is probably because it was entered incorrectly
+										checkISBNDialog = $('<section class="dialog checkISBN" style="margin: 0px 30% 0px 30%; width: 40%;"><h1>Whoops!</h1><div class="content"><p style="font-size: 16px; margin-top: 5px;">We were unable to find a cover to match the ISBN you entered. This is usually because it was entered incorrectly. Check it again to see if you typed it in correctly.<br><br>If you did enter it in correctly, this may be a rare case where we cannot match the ISBN to a book cover.</p></div><div class="buttons"><button class="blue close">Ok, thanks</button></div></section>').appendTo('body').delfini_dialog();
 									} else {
 									//Put the first image in the placeholder on the page
 										container.html('<img src="' + images[0] + '" />');
@@ -110,9 +116,11 @@
 										$('div.imageBrowser').removeClass('hidden');
 										
 									//Build a prompt to point out the controls, after a delay so the image can load
-										setTimeout(function() {
-											$('div.imageBrowser span.forward').validationEngine('showPrompt', 'Click on these arrows to browse through the images and find the best looking cover!', 'load', 'topRight', true);
-										}, 2000);
+										if (images.length > 1) {
+											setTimeout(function() {
+												$('div.imageBrowser span.forward').validationEngine('showPrompt', 'Click on these arrows to browse through the images and find the best looking cover!', 'pass', 'topRight', true);
+											}, 4000);
+										}
 									}
 								}
 							});
@@ -158,23 +166,27 @@
 			
 		//Grab all of the needed text from the dialog
 			var image = dialog.children('div.content').children('div.imagePreview').children('img').attr('src');
+			var imageID = dialog.children('div.content').children('div.imagePreview').children('span.imageID').text();
 			var title = dialog.children('div.content').children('div.bookInfo').children('span.titleInfo').text();
-			var author = dialog.children('div.content').children('div.bookInfo').children('span.authorInfo').text();
-			var edition = dialog.children('div.content').children('div.bookInfo').children('span.editionInfo').text();
+			var authorHTML = dialog.children('div.content').children('div.bookInfo').children('span.authorInfo').html();
+			var authorText = dialog.children('div.content').children('div.bookInfo').children('span.authorInfo').text();
+			var editionHTML = dialog.children('div.content').children('div.bookInfo').children('span.editionInfo').html();
+			var editionText = dialog.children('div.content').children('div.bookInfo').children('span.editionInfo').text();
 			
 		//.substring() will remove the "Title: ", "Author: ", or "Edition: " that was extracted from the dialog
 			$('input.titleInput').val(title.substring(7, title.length));
-			$('input.authorInput').val(author.substring(8, author.length));
-			$('input.editionInput').val(edition.substring(9, edition.length));
+			$('input.authorInput').val(authorText.substring(8, authorText.length));
+			$('input.editionInput').val(editionText.substring(9, editionText.length));
 			
 		//We can use all of the text, including the "Title: ", "Author: ", or "Edition: ", when generating the preview in the <aside> tag
 			$('div.imageContainer').html('<img src="' + image + '" />');
 			$('input.imageURL').attr('value', image);
+			$('input.imageID').attr('value', imageID);
 			$('span.titlePreview').text(title.substring(7, title.length)); //Except for the title
-			$('span.authorPreview').text(author);
+			$('span.authorPreview').html(authorHTML);
 			
-			if (edition != '') {
-				$('span.editionPreview').text(edition).show();
+			if (editionText != '') {
+				$('span.editionPreview').html(editionHTML).show();
 			} else {
 				$('span.editionPreview').hide()
 			}
@@ -201,7 +213,7 @@
 			});
 			
 		//Now remove any existing classes that are listed in step 2 and add in the ones seleceted from the dialog
-			var targetLoc = $('div.courseInformationSection');
+			var targetLoc = $('section.courseInformationSection');
 			var flyoutMenu = targetLoc.children('div.flyoutTemplate').html();   //The DOM we need to copy was already generated
 			var sectionMenu = targetLoc.children('div.sectionTemplate').html(); //by the server and we simply need to grab it
 			
@@ -278,6 +290,18 @@
 		//Close the dialog
 			$(this).parent().parent().delfini_dialog('close');
 			
+		//Change the text of the image container
+			container.text('Guessing...');
+			
+		//Empty the images array
+			images = new Array();
+			
+		//Reset the back button to disabled
+			backButton.addClass('disabled');
+			
+		//Reset the forward button
+			forwardButton.removeClass('disabled');
+			
 		//Fetch a suggestion book cover from the Google Shopping API
 			$.ajax({
 				'url' : URL,
@@ -286,17 +310,46 @@
 					var APIItems = data.items;
 					currentImage = 0;
 					
-				//Generate the array of possible book URLs
-					for (var i = 0; i <= APIItems.length - 1; i++) {
-						images.push(APIItems[i].product.images[0].link);
+					if (APIItems && APIItems != undefined) {
+					//Generate the array of possible book URLs
+						for (var i = 0; i <= APIItems.length - 1; i++) {
+							if (APIItems[i].product.images && APIItems[i].product.images != undefined) {
+								images.push(APIItems[i].product.images[0].link);
+							}
+						}
 					}
 					
-				//Put the first image in the placeholder on the page
-					container.html('<img src="' + images[0] + '" />');
-					$('input.imageURL').attr('value', images[0]);
-					
-				//Show the image browser controls
-					$('div.imageBrowser').removeClass('hidden');
+				//Were images retrieved?
+					if ((!APIItems && APIItems == undefined) || (APIItems && APIItems != undefined && APIItems.length == 0)) {
+					//Generate the link to the default image
+						var URL = document.location.href.toString().match(/(.*)\/sell-books\//)[1] + '/system/images/icons/default_book.png';
+						
+					//Display a standard image
+						container.html('<img src="' + URL + '" />');
+						$('input.imageURL').attr('value', URL);
+						
+					//Hide the image browser controls
+						$('div.imageBrowser').addClass('hidden');
+					} else {
+					//Put the first image in the placeholder on the page
+						container.html('<img src="' + images[0] + '" />');
+						$('input.imageURL').attr('value', images[0]);
+						
+					//Is there only one suggestion?
+						if (APIItems.length == 1) {
+							forwardButton.addClass('disabled');
+						}
+						
+					//Show the image browser controls
+						$('div.imageBrowser').removeClass('hidden');
+						
+					//Build a prompt to point out the controls, after a delay so the image can load
+						if (images.length > 1) {
+							setTimeout(function() {
+								$('div.imageBrowser span.forward').validationEngine('showPrompt', 'Click on these arrows to browse through the images and find the best looking cover!', 'pass', 'topRight', true);
+							}, 4000);
+						}
+					}
 				}
 			});
 		});
@@ -363,9 +416,9 @@
 			var input = $(this);
 			
 			if (input.val() == '') {
-				$('span.authorPreview').html('Author: &lt;Book Title&gt;');
+				$('span.authorPreview').html('<strong>Author:</strong> &lt;Book Title&gt;');
 			} else {
-				$('span.authorPreview').text('Author: ' + input.val());
+				$('span.authorPreview').html('<strong>Author:</strong> ' + input.val());
 			}
 		});
 		
@@ -374,9 +427,9 @@
 			var input = $(this);
 			
 			if (input.val() == '') {
-				$('span.editionPreview').text('Edition: ').hide();
+				$('span.editionPreview').html('<strong>Edition:</strong> ').hide();
 			} else {
-				$('span.editionPreview').text('Edition: ' + input.val()).show();
+				$('span.editionPreview').html('<strong>Edition:</strong> ' + input.val()).show();
 			}
 		});
 		
@@ -384,9 +437,8 @@
 		$('input.priceInput').on('change', function() {
 			var input = $(this);
 			var price = parseInt(input.val().replace(/[^0-9]/g, '')); //Strip off the decimal
-			var priceRegex = /^\d+(\.\d{2})?$/;
 			
-			if (input.val() != '' && price >= 0 && price <= 99999 && priceRegex.test(input.val())) {
+			if (input.val() != '' && price >= 0 && price <= 99999) {
 				$('span.pricePreview span').text('$' + parseFloat(input.val()).toFixed(2));
 				input.attr('value', parseFloat(input.val()).toFixed(2));
 			} else {
@@ -419,7 +471,7 @@
 	//Add a table row
 		$('span.add').click(function() {
 		//Fetch the target location and dynmaic menus that are hidden from the user in the DOM
-			var targetLoc = $('div.courseInformationSection');
+			var targetLoc = $('section.courseInformationSection');
 			var flyoutMenu = targetLoc.children('div.flyoutTemplate').html();   //The DOM we need to copy was already generated
 			var sectionMenu = targetLoc.children('div.sectionTemplate').html(); //by the server and we simply need to grab it
 			
@@ -427,7 +479,7 @@
 			var newClass = $('<div class="classUsed" />');
 			newClass.insertAfter(targetLoc.children('div:last'));
 			newClass.append(flyoutMenu);
-			newClass.append('<div class="inputWrapper"><input autocomplete[off] class="noIcon validate[required,custom[integer],min[101],max[499]]" maxlength="3" name="classNum[]" type="text" value="" /><div>');
+			newClass.append('<div class="inputWrapper"><input autocomplete="off" class="noIcon validate[required,custom[integer],min[101],max[499]]" maxlength="3" name="classNum[]" type="text" value="" /><div>');
 			newClass.append(sectionMenu);
 			newClass.append('<span class="delete" title="Delete this class"></span>');
 		});

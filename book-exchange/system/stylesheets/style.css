@@ -36,6 +36,23 @@ a.buttonLink span:hover {
 	background: #33CCFF;
 }
 
+a.buttonLink.big, span.buttonLink.big {
+	background: #3D3D3D;
+	border: 1px solid #FFFFFF;
+	padding: 4px 1px 4px 1px;
+	white-space: nowrap;
+}
+
+a.buttonLink.big span, span.buttonLink.big span {
+	background: #42B6C9;
+	font-size: 15px;
+	padding: 2px 7px 2px 7px;
+}
+
+a.buttonLink.big span:hover {
+	background: #33CCFF;
+}
+
 span.title, a.title {
 	display: block;
 	font-size: 13px;
@@ -131,20 +148,27 @@ ul.ui-autocomplete li a {
 ul.ui-autocomplete li a img {
 	max-height: 50px;
 	max-width: 37px;
+	min-width: 37px;
 }
 
-ul.ui-autocomplete li a span.title {
+ul.ui-autocomplete li a span.label {
 	left: 50px;
 	padding-top: 0px;
 	position: absolute;
+	max-width: none;
+	right: 10px;
 	top: 0px;
+	width: auto;
 }
 
-ul.ui-autocomplete li a span.author {
+ul.ui-autocomplete li a span.byLine {
 	left: 50px;
 	max-width: 130px;
 	position: absolute;
+	max-width: none;
+	right: 10px;
 	top: 12px;
+	width: auto;
 }
 
 ul.ui-autocomplete li a span.total {
@@ -292,6 +316,7 @@ section.purchase aside.bookInfo div.cover {
 
 section.purchase aside.bookInfo div.cover img {
 	max-height: 200px;
+	min-height: 200px;
 }
 
 section.purchase aside.bookInfo span.previewTitle {
@@ -301,9 +326,7 @@ section.purchase aside.bookInfo span.previewTitle {
 }
 
 section.purchase aside.bookInfo span.buttonLink {
-	font-size: 20px;
-	margin: 5px 0px 20px 0px;
-	padding-bottom: 2px;
+	margin-bottom: 20px;
 }
 
 section.purchase aside.bookInfo span.previewDetails {
@@ -311,6 +334,88 @@ section.purchase aside.bookInfo span.previewDetails {
 	display: block;
 	font-size: 14px;
 	padding-bottom: 5px;
+}
+
+section.purchase aside.bookInfo span.previewDetails strong {
+	display: inline-block;
+	width: 55px;
+}
+
+section.purchase aside.bookInfo span.excellent {
+	background: url(../images/icons/condition.png) no-repeat #33CC66;
+	background-position: 3px 3px;
+	border: 1px solid #7B8084;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 14px;
+	margin-top: 5px;
+	padding: 2px 3px 2px 25px;
+}
+
+section.purchase aside.bookInfo span.veryGood {
+	background: url(../images/icons/condition.png) no-repeat #0099FF;
+	background-position: 3px 3px;
+	border: 1px solid #7B8084;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 14px;
+	margin-top: 5px;
+	padding: 2px 3px 2px 25px;
+}
+
+section.purchase aside.bookInfo span.good {
+	background: url(../images/icons/condition.png) no-repeat #FFCC33;
+	background-position: 3px -15px;
+	border: 1px solid #7B8084;
+	color: #000000;
+	display: inline-block;
+	font-size: 14px;
+	margin-top: 5px;
+	padding: 2px 3px 2px 25px;
+}
+
+section.purchase aside.bookInfo span.fair {
+	background: url(../images/icons/condition.png) no-repeat #FF6633;
+	background-position: 3px -34px;
+	border: 1px solid #7B8084;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 14px;
+	margin-top: 5px;
+	padding: 2px 3px 2px 25px;
+}
+
+section.purchase aside.bookInfo span.poor {
+	background: url(../images/icons/condition.png) no-repeat #CC0000;
+	background-position: 3px -34px;
+	border: 1px solid #7B8084;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 14px;
+	margin-top: 5px;
+	padding: 2px 3px 2px 25px;
+}
+
+section.purchase aside.bookInfo span.noMarks {
+	background: url(../images/icons/quill.png) no-repeat #33CC66;
+	background-position: 3px 3px;
+	border: 1px solid #7B8084;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 14px;
+	margin-top: 5px;
+	padding: 2px 3px 2px 25px;
+}
+
+section.purchase aside.bookInfo span.marks {
+	background: url(../images/icons/quill.png) no-repeat #FF6633;
+	background-position: 3px 3px;
+	border: 1px solid #7B8084;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 14px;
+	margin-top: 5px;
+	padding: 2px 3px 2px 25px;
 }
 
 section.purchase section.main {
@@ -351,10 +456,19 @@ section.purchase section.main div.userInfo div span {
 	padding: 5px 0px 5px 0px;
 }
 
-section.purchase section.main > h2 {
-	border-bottom: 1px solid #333333;
-	font-size: 16px;
-	margin: 10px 0px 10px 0px;
+section.purchase section.main h2 {
+	background: url(../images/icons/book_details.png) no-repeat left;
+	color: #333333;
+	font-size: 18px;
+	padding: 5px 0px 5px 35px;
+}
+
+section.purchase section.main h2:first-child {
+	margin-top: 0px;
+}
+
+section.purchase section.main h2.comments {
+	background-position: -75px -33px;
 }
 
 section.purchase section.main div.comments {
@@ -363,12 +477,18 @@ section.purchase section.main div.comments {
 
 section.purchase section.main div.comments p {
 	margin: 0px;
+	padding-left: 35px;
 }
+
+section.purchase section.main h2.classes {
+	background-position: 0px -110px;
+}
+
 
 section.purchase section.main div.classes ul {
 	list-style: none;
 	margin: 0px;
-	padding: 0px;
+	padding: 0px 0px 0px 35px;
 }
 
 section.purchase section.main div.classes ul li {
@@ -376,35 +496,33 @@ section.purchase section.main div.classes ul li {
 	padding: 5px 10px 5px 0px;
 }
 
-section.purchase section.main div.classes ul li span.class {
-	background: #FFFFFF;
-	border: 1px solid #000000;
-	color: #7B8084;
+section.purchase section.main div.classes ul li span.courseDetails {
+	color: black;
 	display: block;
-	font-size: 13px;
-	font-weight: normal;
-	height: 40px;
+	font-size: 10px;
 	margin: 0px;
 	padding: 0px;
-	width: 248px;
+	text-align: center;
 }
 
-section.purchase section.main div.classes ul li span.class span.band {
-	border-left-style: solid;
-	border-left-width: 50px;
-	display: block;
-	height: 40px;
-	width: 250px;
+section.purchase section.main h2.seller {
+	background-position: -38px -75px;
+	
 }
 
-section.purchase section.main div.classes ul li span.class span.band span.icon {
-	background-repeat: no-repeat;
-	background-position: 9px 6px;
-	display: block;
-	height: 40px;
-	margin-left: -50px;
-	padding: 11px 0px 0px 55px;
-	width: 250px;
+section.purchase section.main div.seller span.details {
+	font-size: 13px;
+	max-width: none;
+	padding-left: 35px;
+}
+
+section.purchase section.main div.seller span.details strong {
+	display: inline-block;
+	width: 50px;
+}
+
+section.purchase section.main div.seller span.details strong.extended {
+	width: 110px;
 }
 
 section.confirm span {

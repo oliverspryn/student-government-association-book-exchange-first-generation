@@ -7,7 +7,7 @@
 	if (isset($_GET['search']) && $_GET['search'] != "") {
 		$query = mysql_real_escape_string($_GET['search']);
 		$category = mysql_real_escape_string(Validate::numeric($_GET['category']));
-		$searchBy = mysql_real_escape_string(Validate::required($_GET['searchBy'], array("title", "author", "ISBN", "course")));
+		$searchBy = mysql_real_escape_string(Validate::required($_GET['searchBy'], array("title", "author", "ISBN", "course", "seller")));
 		
 	//Search by a specific category
 		if ($category != 0) {
@@ -15,6 +15,10 @@
 		} else {
 			$category = "";
 		}
+		
+	//Don't fetch expired books
+		$exchangeSettings = mysql_fetch_assoc(mysql_query("SELECT * FROM exchangesettings WHERE id = '1'", $connDBA));
+		
 		
 	//Is there a sort criteria?
 		if (isset($_GET['sortBy'])) {
@@ -70,28 +74,35 @@
 		}
 		
 	//Different search methods will vary the query that is executed on the database
+		$now = strtotime("now");
+		
 		switch($searchBy) {
 			case "title" : 
-				$searchGrabber = mysql_query("SELECT books.*, users.firstName, users.lastName, MATCH(title) AGAINST('{$query}' IN BOOLEAN MODE) AS score, GROUP_CONCAT(books.course) AS listedInID, GROUP_CONCAT(bookcategories.name) AS listedIn, GROUP_CONCAT(books.number) AS listedInNumber, GROUP_CONCAT(books.section) AS listedInSection FROM books RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (bookcategories) ON books.course = bookcategories.id WHERE MATCH(title) AGAINST('{$query}' IN BOOLEAN MODE){$category} GROUP BY linkID ORDER BY score DESC, " . $sort . " LIMIT " . $start . ", " . $limit, $connDBA);
-				$lengthGrabber = mysql_query("SELECT books.*, users.firstName, users.lastName, MATCH(title) AGAINST('{$query}' IN BOOLEAN MODE) AS score, GROUP_CONCAT(books.course) AS listedInID, GROUP_CONCAT(bookcategories.name) AS listedIn, GROUP_CONCAT(books.number) AS listedInNumber, GROUP_CONCAT(books.section) AS listedInSection FROM books RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (bookcategories) ON books.course = bookcategories.id WHERE MATCH(title) AGAINST('{$query}' IN BOOLEAN MODE){$category} GROUP BY linkID ORDER BY score DESC, " . $sort, $connDBA);
+				$searchGrabber = mysql_query("SELECT books.*, exchangesettings.expires, users.firstName, users.lastName, MATCH(title) AGAINST('{$query}' IN BOOLEAN MODE) AS score, GROUP_CONCAT(books.course) AS listedInID, GROUP_CONCAT(bookcategories.name) AS listedIn, GROUP_CONCAT(books.number) AS listedInNumber, GROUP_CONCAT(books.section) AS listedInSection FROM books RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN(exchangesettings) ON books.id WHERE MATCH(title) AGAINST('{$query}' IN BOOLEAN MODE) AND books.sold = '0' AND books.userID != '0' AND books.upload + exchangesettings.expires > {$now}{$category} GROUP BY linkID ORDER BY score DESC, " . $sort . " LIMIT " . $start . ", " . $limit, $connDBA);
+				$lengthGrabber = mysql_query("SELECT books.*, exchangesettings.expires, users.firstName, users.lastName, MATCH(title) AGAINST('{$query}' IN BOOLEAN MODE) AS score, GROUP_CONCAT(books.course) AS listedInID, GROUP_CONCAT(bookcategories.name) AS listedIn, GROUP_CONCAT(books.number) AS listedInNumber, GROUP_CONCAT(books.section) AS listedInSection FROM books RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN(exchangesettings) ON books.id WHERE MATCH(title) AGAINST('{$query}' IN BOOLEAN MODE) AND books.sold = '0' AND books.userID != '0' AND books.upload + exchangesettings.expires > {$now}{$category} GROUP BY linkID ORDER BY score DESC, " . $sort, $connDBA);
 				break;
 				
 			case "author" : 
-				$searchGrabber = mysql_query("SELECT books.*, users.firstName, users.lastName, MATCH(author) AGAINST('{$query}' IN BOOLEAN MODE) AS score, GROUP_CONCAT(books.course) AS listedInID, GROUP_CONCAT(bookcategories.name) AS listedIn, GROUP_CONCAT(books.number) AS listedInNumber, GROUP_CONCAT(books.section) AS listedInSection FROM books RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (bookcategories) ON books.course = bookcategories.id WHERE MATCH(author) AGAINST('{$query}' IN BOOLEAN MODE){$category} GROUP BY linkID ORDER BY score DESC, " . $sort . " LIMIT " . $start . ", " . $limit, $connDBA);
-				$lengthGrabber = mysql_query("SELECT books.*, users.firstName, users.lastName, MATCH(author) AGAINST('{$query}' IN BOOLEAN MODE) AS score, GROUP_CONCAT(books.course) AS listedInID, GROUP_CONCAT(bookcategories.name) AS listedIn, GROUP_CONCAT(books.number) AS listedInNumber, GROUP_CONCAT(books.section) AS listedInSection FROM books RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (bookcategories) ON books.course = bookcategories.id WHERE MATCH(author) AGAINST('{$query}' IN BOOLEAN MODE){$category} GROUP BY linkID ORDER BY score DESC, " . $sort, $connDBA);
+				$searchGrabber = mysql_query("SELECT books.*, exchangesettings.expires, users.firstName, users.lastName, MATCH(author) AGAINST('{$query}' IN BOOLEAN MODE) AS score, GROUP_CONCAT(books.course) AS listedInID, GROUP_CONCAT(bookcategories.name) AS listedIn, GROUP_CONCAT(books.number) AS listedInNumber, GROUP_CONCAT(books.section) AS listedInSection FROM books RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN(exchangesettings) ON books.id WHERE MATCH(author) AGAINST('{$query}' IN BOOLEAN MODE) AND books.sold = '0' AND books.userID != '0' AND books.upload + exchangesettings.expires > {$now}{$category} GROUP BY linkID ORDER BY score DESC, " . $sort . " LIMIT " . $start . ", " . $limit, $connDBA);
+				$lengthGrabber = mysql_query("SELECT books.*, exchangesettings.expires, users.firstName, users.lastName, MATCH(author) AGAINST('{$query}' IN BOOLEAN MODE) AS score, GROUP_CONCAT(books.course) AS listedInID, GROUP_CONCAT(bookcategories.name) AS listedIn, GROUP_CONCAT(books.number) AS listedInNumber, GROUP_CONCAT(books.section) AS listedInSection FROM books RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN(exchangesettings) ON books.id WHERE MATCH(author) AGAINST('{$query}' IN BOOLEAN MODE) AND books.sold = '0' AND books.userID != '0' AND books.upload + exchangesettings.expires > {$now}{$category} GROUP BY linkID ORDER BY score DESC, " . $sort, $connDBA);
 				break;
 				
 			case "ISBN" : 
-				$searchGrabber = mysql_query("SELECT books.*, users.firstName, users.lastName, GROUP_CONCAT(books.course) AS listedInID, GROUP_CONCAT(bookcategories.name) AS listedIn, GROUP_CONCAT(books.number) AS listedInNumber, GROUP_CONCAT(books.section) AS listedInSection FROM books RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (bookcategories) ON books.course = bookcategories.id WHERE ISBN = '{$query}'{$category} GROUP BY linkID ORDER BY ISBN ASC, " . $sort . " LIMIT " . $start . ", " . $limit, $connDBA);
-				$lengthGrabber = mysql_query("SELECT books.*, users.firstName, users.lastName, GROUP_CONCAT(books.course) AS listedInID, GROUP_CONCAT(bookcategories.name) AS listedIn, GROUP_CONCAT(books.number) AS listedInNumber, GROUP_CONCAT(books.section) AS listedInSection FROM books RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (bookcategories) ON books.course = bookcategories.id WHERE ISBN = '{$query}'{$category} GROUP BY linkID ORDER BY ISBN ASC, " . $sort, $connDBA);
+				$searchGrabber = mysql_query("SELECT books.*, exchangesettings.expires, users.firstName, users.lastName, GROUP_CONCAT(books.course) AS listedInID, GROUP_CONCAT(bookcategories.name) AS listedIn, GROUP_CONCAT(books.number) AS listedInNumber, GROUP_CONCAT(books.section) AS listedInSection FROM books RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN(exchangesettings) ON books.id WHERE ISBN = '{$query}' AND books.sold = '0' AND books.userID != '0' AND books.upload + exchangesettings.expires > {$now}{$category} GROUP BY linkID ORDER BY " . $sort . " LIMIT " . $start . ", " . $limit, $connDBA);
+				$lengthGrabber = mysql_query("SELECT books.*, exchangesettings.expires, users.firstName, users.lastName, GROUP_CONCAT(books.course) AS listedInID, GROUP_CONCAT(bookcategories.name) AS listedIn, GROUP_CONCAT(books.number) AS listedInNumber, GROUP_CONCAT(books.section) AS listedInSection FROM books RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN(exchangesettings) ON books.id WHERE ISBN = '{$query}' AND books.sold = '0' AND books.userID != '0' AND books.upload + exchangesettings.expires > {$now}{$category} GROUP BY linkID ORDER BY " . $sort, $connDBA);
 				break;
 				
 			case "course" : 
 				$number = substr($query, strlen($query) - 5, strlen($query) - 2);
 				$section = substr($query, strlen($query) - 1, strlen($query));
+				$searchGrabber = mysql_query("SELECT books.*, exchangesettings.expires, users.firstName, users.lastName, GROUP_CONCAT(books.course) AS listedInID, GROUP_CONCAT(bookcategories.name) AS listedIn, GROUP_CONCAT(books.number) AS listedInNumber, GROUP_CONCAT(books.section) AS listedInSection FROM books RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN(exchangesettings) ON books.id WHERE number = '{$number}' AND section = '{$section}' AND books.sold = '0' AND books.userID != '0' AND books.upload + exchangesettings.expires > {$now}{$category} GROUP BY linkID ORDER BY " . $sort . " LIMIT " . $start . ", " . $limit, $connDBA);
+				$lengthGrabber = mysql_query("SELECT books.*, exchangesettings.expires, users.firstName, users.lastName, GROUP_CONCAT(books.course) AS listedInID, GROUP_CONCAT(bookcategories.name) AS listedIn, GROUP_CONCAT(books.number) AS listedInNumber, GROUP_CONCAT(books.section) AS listedInSection FROM books RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN(exchangesettings) ON books.id WHERE number = '{$number}' AND section = '{$section}' AND books.sold = '0' AND books.userID != '0' AND books.upload + exchangesettings.expires > {$now}{$category} GROUP BY linkID ORDER BY " . $sort, $connDBA);
+				break;
 				
-				$searchGrabber = mysql_query("SELECT books.*, users.firstName, users.lastName, GROUP_CONCAT(books.course) AS listedInID, GROUP_CONCAT(bookcategories.name) AS listedIn, GROUP_CONCAT(books.number) AS listedInNumber, GROUP_CONCAT(books.section) AS listedInSection FROM books RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (bookcategories) ON books.course = bookcategories.id WHERE number = '{$number}' AND section = '{$section}'{$category} GROUP BY linkID ORDER BY ISBN ASC, " . $sort . " LIMIT " . $start . ", " . $limit, $connDBA);
-				$lengthGrabber = mysql_query("SELECT books.*, users.firstName, users.lastName, GROUP_CONCAT(books.course) AS listedInID, GROUP_CONCAT(bookcategories.name) AS listedIn, GROUP_CONCAT(books.number) AS listedInNumber, GROUP_CONCAT(books.section) AS listedInSection FROM books RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (bookcategories) ON books.course = bookcategories.id WHERE number = '{$number}' AND section = '{$section}'{$category} GROUP BY linkID ORDER BY ISBN ASC, " . $sort, $connDBA);
+			case "seller" : 
+				$name = explode(" ", $query);
+				$searchGrabber = mysql_query("SELECT books.*, exchangesettings.expires, users.firstName, users.lastName, users.emailAddress1, users.emailAddress2, users.emailAddress3, GROUP_CONCAT(books.course) AS listedInID, GROUP_CONCAT(bookcategories.name) AS listedIn, GROUP_CONCAT(books.number) AS listedInNumber, GROUP_CONCAT(books.section) AS listedInSection, MATCH(firstName, lastName) AGAINST('{$query}' IN BOOLEAN MODE) AS score FROM users RIGHT JOIN (books) ON users.id = books.userID RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN(exchangesettings) ON users.id WHERE MATCH(firstName, lastName) AGAINST('{$query}' IN BOOLEAN MODE) AND books.sold = '0' AND books.userID != '0' AND books.upload + exchangesettings.expires > {$now}{$category} GROUP BY linkID ORDER BY " . $sort . " LIMIT " . $start . ", " . $limit, $connDBA);
+				$lengthGrabber = mysql_query("SELECT books.*, exchangesettings.expires, users.firstName, users.lastName, users.emailAddress1, users.emailAddress2, users.emailAddress3, GROUP_CONCAT(books.course) AS listedInID, GROUP_CONCAT(bookcategories.name) AS listedIn, GROUP_CONCAT(books.number) AS listedInNumber, GROUP_CONCAT(books.section) AS listedInSection, MATCH(firstName, lastName) AGAINST('{$query}' IN BOOLEAN MODE) AS score FROM users RIGHT JOIN (books) ON users.id = books.userID RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN(exchangesettings) ON users.id WHERE MATCH(firstName, lastName) AGAINST('{$query}' IN BOOLEAN MODE) AND books.sold = '0' AND books.userID != '0' AND books.upload + exchangesettings.expires > {$now}{$category} GROUP BY linkID ORDER BY " . $sort, $connDBA);
 				break;
 				
 			default : 
@@ -117,20 +128,20 @@
 //Generate the breadcrumb
 	$home = mysql_fetch_array(mysql_query("SELECT * FROM pages WHERE position = '1' AND `published` != '0'", $connDBA));
 	$title = unserialize($home['content' . $home['display']]);
-	$breadcrumb = "\n<li><a href=\"" . $root . "index.php?page=" . $home['id'] . "\">" . $title['title'] . "</a></li>
+	$breadcrumb = "\n<li><a href=\"" . $root . "index.php?page=" . $home['id'] . "\">" . stripslashes($title['title']) . "</a></li>
 <li><a href=\"../\">Book Exchange</a></li>
 ";
 	
 //The breadcrumb and title will requrie some specialization depending if a search query is entered
-	if (isset($_GET['search'])) {
-		$breadcrumb .= "<li><a href=\"../search\">Search</a></li>
-<li>" . $_GET['search'] . "</li>\n";
-		
+	if (isset($_GET['search'])) {		
 		if ($_GET['searchBy'] == "ISBN") {
-			$title = "ISBN: " . $_GET['search'];
+			$title = "ISBN: " . urldecode($_GET['search']);
 		} else {
-			$title = $_GET['search'];
+			$title = urldecode($_GET['search']);
 		}
+		
+		$breadcrumb .= "<li><a href=\"../search\">Search</a></li>
+<li>" . $title . "</li>\n";
 	} else {
 		$breadcrumb .= "<li>Search</li>\n";
 		$title = "Search";
@@ -184,6 +195,7 @@
 <li" . ($_GET['searchBy'] == "author" ? " class=\"selected\"" : "") . " data-value=\"author\">Author</li>
 <li" . ($_GET['searchBy'] == "ISBN" ? " class=\"selected\"" : "") . ">ISBN</li>
 <li" . ($_GET['searchBy'] == "course" ? " class=\"selected\"" : "") . " data-value=\"course\">Course</li>
+<li" . ($_GET['searchBy'] == "seller" ? " class=\"selected\"" : "") . " data-value=\"seller\">Seller</li>
 </ul>
 
 <br>
@@ -250,10 +262,10 @@
 		//Should this category be selected?
 			if (isset($_GET['category']) && $_GET['category'] == $category['id']) {
 				echo "
-<li class=\"selected\" data-value=\"" . $category['id'] . "\"><span class=\"band\" style=\"border-left-color: " . $category['color1'] . ";\"><span class=\"icon\" style=\"background-image: url('../../data/book-exchange/icons/" . $category['id'] . "/icon_032.png');\">" . $category['name'] . "</span></span></li>";
+<li class=\"selected\" data-value=\"" . $category['id'] . "\"><span class=\"band\" style=\"border-left-color: " . stripslashes($category['color1']) . ";\"><span class=\"icon\" style=\"background-image: url('../../data/book-exchange/icons/" . $category['id'] . "/icon_032.png');\">" . stripslashes($category['name']) . "</span></span></li>";
 			} else {
 				echo "
-<li data-value=\"" . $category['id'] . "\"><span class=\"band\" style=\"border-left-color: " . $category['color1'] . ";\"><span class=\"icon\" style=\"background-image: url('../../data/book-exchange/icons/" . $category['id'] . "/icon_032.png');\">" . $category['name'] . "</span></span></li>";
+<li data-value=\"" . $category['id'] . "\"><span class=\"band\" style=\"border-left-color: " . stripslashes($category['color1']) . ";\"><span class=\"icon\" style=\"background-image: url('../../data/book-exchange/icons/" . $category['id'] . "/icon_032.png');\">" . stripslashes($category['name']) . "</span></span></li>";
 			}
 	
 			if ($counter % 10 == 0) {
@@ -280,12 +292,12 @@
 			$allCatGrabber = mysql_query("SELECT * FROM `bookcategories` ORDER BY name ASC", $connDBA);
 			
 			echo "<section class=\"categories\">
-<h2 style=\"color:" . $category['color1'] . "\">More Book Listings</h2>
+<h2 style=\"color:" . stripslashes($category['color1']) . "\">More Book Listings</h2>
 <ul class=\"moreListings\">";
 			
 			while ($allCat = mysql_fetch_array($allCatGrabber)) {
 				echo "
-<li><a href=\"../listings/view-listing.php?id=" . $allCat['id'] . "\">" . $allCat['name'] . " <span class=\"arrow\">&raquo;</span></a></li>";
+<li><a href=\"../listings/view-listing.php?id=" . $allCat['id'] . "\">" . stripslashes($allCat['name']) . " <span class=\"arrow\">&raquo;</span></a></li>";
 			}
 			
 			echo "
@@ -303,6 +315,35 @@
 			$class = " noSide";
 		}
 		
+	//If we are searching by seller, display the seller's profile at top
+		if ($_GET['searchBy'] == "seller" && loggedIn() && (!isset($_GET['page']) || (isset($_GET['page']) && $_GET['page'] == "1"))) {
+		//Yes, we did use $lengthGrabber for finding the number of results, but let's steal it here
+			$seller = mysql_fetch_array($lengthGrabber);
+			
+		//Sometimes the user may not provide an alternative email address
+			if ($seller['emailAddress2'] != "") {
+				$email2 = "<a href=\"mailto:" . stripslashes($seller['emailAddress2']) . "\">" . stripslashes($seller['emailAddress2']) . "</a>";
+			} else {
+				$email2 = "<span class=\"none\">None given</span>";
+			}
+			
+			if ($seller['emailAddress3'] != "") {
+				$email3 = "<a href=\"mailto:" . stripslashes($seller['emailAddress3']) . "\">" . stripslashes($seller['emailAddress3']) . "</a>";
+			} else {
+				$email3 = "<span class=\"none\">None given</span>";
+			}
+			
+			echo "<section class=\"profile" . $class . "\">
+<h2>" . stripslashes($seller['firstName']) . "'s Profile</h2>
+<span class=\"row\"><strong>Name:</strong> " . stripslashes($seller['firstName']) . " " . stripslashes($seller['lastName']) . "</a></span>
+<span class=\"row\"><strong>Email address:</strong> <a href=\"mailto:" . stripslashes($seller['emailAddress1']) . "\">" . stripslashes($seller['emailAddress1']) . "</a></span>
+<span class=\"row\"><strong>Alternate email address:</strong> " . $email2 . "</span>
+<span class=\"row\"><strong>Alternate email address:</strong> " . $email3 . "</span>
+</section>
+
+";
+		}
+		
 	//Display the search results
 		echo "<section class=\"results" . $class . "\">
 <ul>";
@@ -310,11 +351,11 @@
 		while ($search = mysql_fetch_array($searchGrabber)) {
 			echo "
 <li class=\"result\">
-<a href=\"../book/?id=" . $search['id'] . "\"><img src=\"" . $search['imageURL'] . "\" /></a>
-<a class=\"title\" href=\"../book/?id=" . $search['id'] . "\" title=\"" . htmlentities($search['title']) . "\">" . $search['title'] . "</a>
-<span class=\"details\"><strong>Author:</strong> <a href=\"../search/?search=" . urlencode($search['author']) . "&searchBy=author&category=0\">" . $search['author'] . "</a></span>
-<span class=\"details\"><strong>Seller:</strong> " . $search['firstName'] . " " . $search['lastName'] . "</span>
-<span class=\"details\"><strong>ISBN:</strong> " . $search['ISBN'] . "</span>
+<a href=\"../book/?id=" . $search['id'] . "\"><img src=\"" . stripslashes($search['imageURL']) . "\" /></a>
+<a class=\"title\" href=\"../book/?id=" . $search['id'] . "\" title=\"" . htmlentities(stripslashes($search['title'])) . "\">" . stripslashes($search['title']) . "</a>
+<span class=\"details\"><strong>Author:</strong> <a href=\"../search/?search=" . urlencode(stripslashes($search['author'])) . "&searchBy=author&category=0\">" . stripslashes($search['author']) . "</a></span>
+<span class=\"details\"><strong>Seller:</strong> <a href=\"../search/?search=" . urlencode(stripslashes($search['firstName'] . " " . $search['lastName'])) . "&searchBy=seller&category=0\">" . stripslashes($search['firstName']) . " " . stripslashes($search['lastName']) . "</a></span>
+<span class=\"details\"><strong>ISBN:</strong> <a href=\"../search/?search=" . urlencode(stripslashes($search['ISBN'])) . "&searchBy=ISBN&category=0\">" . stripslashes($search['ISBN']) . "</a></span>
 ";
 			
 		//Conditionally format the condition of the book
@@ -341,10 +382,10 @@
 			}
 			
 		//Generate the list of classes that are listed for this book
-			$classIDs = explode(",", $search['listedInID']);
-			$classes = explode(",", $search['listedIn']);
-			$classNums = explode(",", $search['listedInNumber']);
-			$classSections = explode(",", $search['listedInSection']);
+			$classIDs = explode(",", stripslashes($search['listedInID']));
+			$classes = explode(",", stripslashes($search['listedIn']));
+			$classNums = explode(",", stripslashes($search['listedInNumber']));
+			$classSections = explode(",", stripslashes($search['listedInSection']));
 			
 			echo "
 
@@ -354,15 +395,21 @@
 			for ($i = 0; $i <= sizeof($classIDs) - 1; $i++) {
 				echo "
 <li>
-<img src=\"../../data/book-exchange/icons/" . $classIDs[$i] . "/icon_032.png\" title=\"" . $classes[$i] . "\" />
-<span class=\"courseDetails\">" . $classNums[$i] . " " . $classSections[$i] . "</span>
+<img src=\"../../data/book-exchange/icons/" . $classIDs[$i] . "/icon_032.png\" title=\"" . htmlentities(stripslashes($classes[$i])) . "\" />
+<span class=\"courseDetails\">" . stripslashes($classNums[$i]) . " " . stripslashes($classSections[$i]) . "</span>
 </li>
 ";
 			}
 			
+			if (loggedIn() && $search['userID'] == $userData['id']) {
+				$buy = " noBuy";
+			} else {
+				$buy = " buy";
+			}
+			
 			echo "</ul>
 			
-<a class=\"buttonLink buy\" data-fetch=\"" . $search['id'] . "\" href=\"javascript:;\"><span>\$" . $search['price'] . "</span></a>
+<a class=\"buttonLink" . $buy . "\" data-fetch=\"" . $search['id'] . "\" href=\"javascript:;\"><span>\$" . stripslashes($search['price']) . "</span></a>
 </li>
 ";
 		}
@@ -389,20 +436,20 @@
 			
 		//Generate the base URL for each of the pagination links
 			$baseURL = "../search/";
-			$baseURL .= "?search=" . $_GET['search'];
-			$baseURL .= "&searchBy=" . $_GET['searchBy'];
-			$baseURL .= "&category=" . $_GET['category'];
+			$baseURL .= "?search=" . urlencode(urldecode($_GET['search']));
+			$baseURL .= "&searchBy=" . urlencode(urldecode($_GET['searchBy']));
+			$baseURL .= "&category=" . urlencode(urldecode($_GET['category']));
 			
 			if (isset($_GET['display'])) {
-				$baseURL .= "&display=" . $_GET['display'];
+				$baseURL .= "&display=" . urlencode(urldecode($_GET['display']));
 			}
 			
 			if (isset($_GET['sortBy'])) {
-				$baseURL .= "&sortBy=" . $_GET['sortBy'];
+				$baseURL .= "&sortBy=" . urlencode(urldecode($_GET['sortBy']));
 			}
 			
 			if (isset($_GET['options'])) {
-				$baseURL .= "&options=" . $_GET['options'];
+				$baseURL .= "&options=" . urlencode(urldecode($_GET['options']));
 			}
 			
 			echo "
@@ -568,7 +615,7 @@
 	} else {
 	//Was the user redirected back here because of an error?
 		if (isset($_GET['message']) && $_GET['message'] == "none") {
-			echo "<div class=\"center\"><div class=\"error\">Sorry we couldn't find any results for <strong>" . $_GET['query'] . "</strong> when searching by <strong>" . $_GET['by'] . "</strong>. Did you enter it correctly?</div></div>
+			echo "<div class=\"center\"><div class=\"error\">Sorry we couldn't find any results for <strong>" . urldecode($_GET['query']) . "</strong> when searching by <strong>" . urldecode($_GET['by']) . "</strong>. Did you enter it correctly?</div></div>
 			
 	";
 		}
@@ -587,6 +634,7 @@
 <li data-value=\"author\">Author</li>
 <li>ISBN</li>
 <li data-value=\"course\">Course</li>
+<li data-value=\"seller\">Seller</li>
 </ul>
 
 <br>
@@ -620,7 +668,7 @@
 		}
 		
 		echo "
-<li data-value=\"" . $category['id'] . "\"><span class=\"band\" style=\"border-left-color: " . $category['color1'] . ";\"><span class=\"icon\" style=\"background-image: url('../../data/book-exchange/icons/" . $category['id'] . "/icon_032.png');\">" . $category['name'] . "</span></span></li>";
+<li data-value=\"" . $category['id'] . "\"><span class=\"band\" style=\"border-left-color: " . stripslashes($category['color1']) . ";\"><span class=\"icon\" style=\"background-image: url('../../data/book-exchange/icons/" . $category['id'] . "/icon_032.png');\">" . stripslashes($category['name']) . "</span></span></li>";
 
 		if ($counter % 10 == 0) {
 			echo "
@@ -643,9 +691,7 @@
 <img class=\"animatedSearch\" src=\"../system/images/icons/search.png\" />
 </section>
 
-<img class=\"shadow\" src=\"../system/images/welcome/paper_shadow.png\" />
-
-";
+<img class=\"shadow\" src=\"../system/images/welcome/paper_shadow.png\" />";
 	}
 	
 //Include the footer from the administration template

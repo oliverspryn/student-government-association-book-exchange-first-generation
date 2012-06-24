@@ -6,8 +6,11 @@ $(document).ready(function() {
  * ------------------------------------
 */
 
-	$('button.openLogin').click(function() {
+	$('a.openLogin, button.openLogin').click(function(event) {
+		event.preventDefault();
+		
 	//The login panel will exist if the user is not logged
+		var trigger = $(this);
 		var panel = $('section.login');
 		
 		if (panel.length) {
@@ -20,7 +23,11 @@ $(document).ready(function() {
 			}, 'slow');
 			
 		//Fill the redirect form element
-			$('input.redirect').val($(this).attr('data-redirect'))
+			if (trigger && trigger.attr('href') && trigger.attr('href') != undefined && trigger.attr('href') != '') {
+				$('input.redirect').val(trigger.attr('href'));
+			} else {
+				$('input.redirect').val(trigger.attr('data-redirect'));
+			}
 		} else {
 			document.location = 'sell-books/';
 		}
@@ -281,140 +288,270 @@ $(document).ready(function() {
 		var title = $(this).siblings('span.title, a.title').text();
 		var id = $(this).attr('data-fetch');
 		
-		var parentDialog = $('<section class="purchase" title="Purchase <i>' + title + '</i>"><div class="loading">Please wait...</div></section>').dialog({
-			'height' : 600,
+	//Wait... is the user logged it? The login panel will exist if not
+		if ($('section.login').length) {
+			var queryString = document.location.href.split('?');
+			
+			if (queryString[1] && queryString[1] != '') {
+				queryString = '?' + queryString['1'];
+			}
+			
+			document.location.href = location.substring(0, location.indexOf('book-exchange')) + 'login.php?accesscheck=' + encodeURIComponent(document.location.pathname + queryString) + "&message=required";
+		} else {
+			var parentDialog = $('<section class="purchase" title="Purchase <i>' + title + '</i>"><div class="loading">Please wait...</div></section>').dialog({
+				'height' : 600,
+				'modal' : true,
+				'resizable' : false,
+				'width' : 900,
+				'buttons' : {
+					'Send Request' : function() {
+						var confirmDialog = $('<section class="confirm" title="Confirm Request"></section>')
+						.html('<p><span class="ui-icon ui-icon-alert"></span>Are you sure you wish to send a request to purchase this book at the listed price from the seller? Your name and email address will be shared with this person.</p><p>Clicking &quot;Yes&quot; will immediately initiate the transaction.</p>')
+						.dialog({
+							'height' : 300,
+							'modal' : true,
+							'resizable' : false,
+							'width' : 500,
+							'buttons' : {
+								'Yes' : function() {
+									var requestURL = location.substring(0, location.indexOf('book-exchange')) + 'book-exchange/system/server/purchase-request.php?id=' + id;
+									
+								//Close the open dialogs
+									confirmDialog.dialog('close').remove();
+									parentDialog.dialog('close').remove();
+									
+								//Display a sending request notice
+									var message = $('<div class="center"><div class="message">Sending purchase request...</div></div>').appendTo('body');
+									
+									$.ajax({
+										'url' : requestURL,
+										'success' : function(data) {
+											if (data == 'success') {
+											//Update the message to the user
+												message.html('<div class="success">Purchase request sent! The seller will respond via email.</div>');
+												
+											//Remove the message after a certain period of time
+												setTimeout(function() {
+													message.fadeOut(400, function() {
+														$(this).remove();
+													});
+												}, 10000);
+											} else {
+											//Update the message to the user
+												message.html('<div class="error">' + data + '</div>');
+											}
+										}
+									});
+								}, 'No' : function() {
+									$(this).dialog('close').remove();
+								}
+							}
+						});
+					}, 'Help' : function() {
+						var helpDialog = $('<section class="helpDialog" title="How Does This Work?"></section>')
+						.html('<p>Once you click the &quot;Send Request&quot; button, here is what will happen: <ol><li>the seller will be sent an email notifying him or her that you would like to purchase this book</li><li>this person will be prompted to send you a reply via email with a time and place to meet in person</li><li>you meet the seller at the designated time and location to recieve your book</li></ol></p>')
+						.dialog({
+							'height' : 340,
+							'modal' : true,
+							'resizable' : false,
+							'width' : 640,
+							'buttons' : {
+								'Close' : function() {
+									$(this).dialog('close').remove();
+								} 
+							}
+						});
+					}, 'Cancel' : function() {
+						$(this).dialog('close').remove();
+					}
+				},
+				'create' : function() {
+					var dialog = $(this);
+					var location = document.location.href;
+					var requestURL = location.substring(0, location.indexOf('book-exchange')) + 'book-exchange/system/server/purchase-data.php?id=' + id;
+					
+					$.ajax({
+						'dataType' : 'json',
+						'url' : requestURL,
+						'success' : function(data) {
+							var HTML = '<aside class="bookInfo">';
+							HTML += '<div class="cover"><img src="' + data.imageURL + '" /></div>';
+							HTML += '<span class="previewTitle">' + data.title + '</span>';
+							HTML += '<span class="buttonLink big"><span>$' + data.price + '</span></span>';
+							HTML += '<span class="previewDetails"><strong>ISBN:</strong> ' + data.ISBN + '</span>';
+							HTML += '<span class="previewDetails"><strong>Author:</strong> ' + data.author + '</span>';
+							
+							if (data.edition != '') {
+								HTML += '<span class="previewDetails"><strong>Edition:</strong> ' + data.edition + '</span>';
+							}
+							
+						//Conditionally format the condition statement
+							if (data.condition == "Excellent") {
+								HTML += '<span class="excellent">Excellent Condition</span>';
+							} else if (data.condition == "Very Good") {
+								HTML += '<span class="veryGood">Very Good Condition</span>';
+							} else if (data.condition == "Good") {
+								HTML += '<span class="good">Good Condition</span>';
+							} else if (data.condition == "Fair") {
+								HTML += '<span class="fair">Fair Condition</span>';
+							} else if (data.condition == "Poor") {
+								HTML += '<span class="poor">Poor Condition</span>';
+							}
+							
+						//Conditionally format the written in statement
+							if (data.written == 'Yes') {
+								HTML += '<span class="marks">Has Writing or Markings</span>';
+							} else {
+								HTML += '<span class="marks">Has Writing or Markings</span>';
+							}
+							
+							HTML += '</aside><section class="main">';
+							
+							if (data.comments != '') {
+								HTML += '<h2 class="comments">Seller Comments</h2><div class="comments">' + data.comments + '</div>';
+							}
+							
+							HTML += '<h2 class="classes">Classes That Use This Book</h2><div class="classes"><ul>';
+							
+						//Split the class data into an array and display each class individually
+							var location = document.location.href;
+							var name = data.name.split(',');
+							var number = data.number.split(',');
+							var section = data.section.split(',');
+							var classID = data.classID.split(',');
+							var icon;
+							
+							for(var i = 0; i <= name.length - 1; i++) {
+								icon = location.substring(0, location.indexOf('book-exchange')) + 'data/book-exchange/icons/' + classID[i] + '/icon_032.png';
+								
+								HTML += '<li><img src="' + icon + '" title="' + name[i] + '" /><span class="courseDetails">' + number[i] + ' ' + section[i] + '</li>';
+							}
+							
+							HTML += '</ul></div>';
+							
+						//Write out the seller's information
+							var classDef = '';
+							
+							if (data.emailAddress2 != '' || data.emailAddress3 != '') {
+								classDef = ' class="extended"';
+							}
+							
+							HTML += '<h2 class="seller">Seller Information</h2>';
+							HTML += '<div class="seller">';
+							HTML += '<span class="details"><strong' + classDef + '>Name:</strong> ' + data.firstName + ' ' + data.lastName + '</span>';
+							HTML += '<span class="details"><strong' + classDef + '>Email:</strong> <a href="mailto:' + data.emailAddress1 + '">' + data.emailAddress1 + '</a></span>';
+							
+							if (data.emailAddress2 != '') {
+								HTML += '<span class="details"><strong' + classDef + '>Alternate email:</strong> <a href="mailto:' + data.emailAddress2 + '">' + data.emailAddress2 + '</a></span>';
+							}
+							
+							if (data.emailAddress3 != '') {
+								HTML += '<span class="details"><strong' + classDef + '>Alternate email:</strong> <a href="mailto:' + data.emailAddress3 + '">' + data.emailAddress3 + '</a></span>';
+							}
+							
+							HTML += '</div></section>';
+							
+							dialog.html(HTML);
+						}
+					});
+				}
+			});
+		}
+	});
+	
+/**
+ * Make an offer for a book, without
+ * previewing its details
+ * ------------------------------------
+*/
+	
+	$('a.buttonLink.buyDirect').click(function() {
+		var id = $(this).attr('data-fetch');
+		var redirect = document.location.pathname + '?id=' + id;
+		var location = document.location.href;
+		var login = location.substring(0, location.indexOf('book-exchange')) + 'login.php?accesscheck=' + encodeURIComponent(redirect) + "&message=required";
+		var requestURL = location.substring(0, location.indexOf('book-exchange')) + 'book-exchange/system/server/purchase-request.php?id=' + id;
+		
+	//The login panel will not exist if the user is logged in
+		if ($('section.login').length) {
+			document.location.href = login;
+		} else {
+			var confirmDialog = $('<section class="confirm" title="Confirm Request"></section>')
+			.html('<p><span class="ui-icon ui-icon-alert"></span>Are you sure you wish to send a request to purchase this book at the listed price from the seller? Your name and email address will be shared with this person.</p><p>Clicking &quot;Yes&quot; will immediately initiate the transaction.</p>')
+			.dialog({
+				'height' : 300,
+				'modal' : true,
+				'resizable' : false,
+				'width' : 500,
+				'buttons' : {
+					'Yes' : function() {					
+					//Close the open dialogs
+						confirmDialog.dialog('close').remove();
+						
+					//Display a sending request notice
+						var message = $('<div class="center"><div class="message">Sending purchase request...</div></div>').appendTo('body');
+						
+						$.ajax({
+							'url' : requestURL,
+							'success' : function(data) {
+								if (data == 'success') {
+								//Update the message to the user
+									message.html('<div class="success">Purchase request sent! The seller will respond via email.</div>');
+									
+								//Remove the message after a certain period of time
+									setTimeout(function() {
+										message.fadeOut(400, function() {
+											$(this).remove();
+										});
+									}, 10000);
+								} else if (data == 'You are not logged in') {								
+									document.location.href = login;
+								} else {
+								//Update the message to the user
+									message.html('<div class="error">Purchase request could not be sent. Please refresh the page and try again.</div>');
+								}
+							}
+						});
+					}, 'No' : function() {
+						$(this).dialog('close').remove();
+					}, 'Help' : function() {
+						var helpDialog = $('<section class="helpDialog" title="How Does This Work?"></section>')
+						.html('<p>Once you click the &quot;Yes&quot; button, here is what will happen: <ol><li>the seller will be sent an email notifying him or her that you would like to purchase this book</li><li>this person will be prompted to send you a reply via email with a time and place to meet in person</li><li>you meet the seller at the designated time and location to recieve your book</li></ol></p>')
+						.dialog({
+							'height' : 340,
+							'modal' : true,
+							'resizable' : false,
+							'width' : 640,
+							'buttons' : {
+								'Close' : function() {
+									$(this).dialog('close').remove();
+								} 
+							}
+						});
+					}
+				}
+			});
+		}
+	});
+	
+/**
+ * Prevent a user from buying their 
+ * own book
+ * ------------------------------------
+*/
+	
+	$('a.buttonLink.noBuy').click(function() {
+		$('<section class="confirm" title="Rest Assured"></section>')
+		.html('<p>This is your book you just clicked on. So, you already have it. ;)</p>')
+		.dialog({
+			'height' : 250,
 			'modal' : true,
 			'resizable' : false,
-			'width' : 900,
+			'width' : 500,
 			'buttons' : {
-				'Send Request' : function() {
-					var confirmDialog = $('<section class="confirm" title="Confirm Request"></section>')
-					.html('<p><span class="ui-icon ui-icon-alert"></span>Are you sure you wish to send a request to purchase this book at the listed price from the seller? Your name and email address will be shared with this person.</p><p>Clicking &quot;Yes&quot; will immediately initiate the transaction.</p>')
-					.dialog({
-						'height' : 300,
-						'modal' : true,
-						'resizable' : false,
-						'width' : 500,
-						'buttons' : {
-							'Yes' : function() {
-								var requestURL = location.substring(0, location.indexOf('book-exchange')) + 'book-exchange/system/server/purchase-request.php?id=' + id;
-								
-							//Close the open dialogs
-								confirmDialog.dialog('close').remove();
-								parentDialog.dialog('close').remove();
-								
-							//Display a sending request notice
-								var message = $('<div class="center"><div class="message">Sending purchase request...</div></div>').appendTo('body');
-								
-								$.ajax({
-									'url' : requestURL,
-									'success' : function(data) {
-										if (data == 'success') {
-										//Update the message to the user
-											message.html('<div class="success">Purchase request sent! The seller will respond via email.</div>');
-											
-										//Remove the message after a certain period of time
-											setTimeout(function() {
-												message.fadeOut(400, function() {
-													$(this).remove();
-												});
-											}, 10000);
-										} else {
-										//Update the message to the user
-											message.html('<div class="error">Purchase request could not be sent. Please refresh the page and try again.</div>');
-										}
-									}
-								});
-							}, 'No' : function() {
-								$(this).dialog('close').remove();
-							}
-						}
-					});
-				}, 'Help' : function() {
-					var helpDialog = $('<section class="helpDialog" title="How Does This Work?"></section>')
-					.html('<p>Once you click the &quot;Send Request&quot; button, the seller will be sent an email notifying him or her that you would like to purchase this book. This person will be prompted to send you a reply email with a place and time to meet in person so that you may recieve this book.</p>')
-					.dialog({
-						'height' : 300,
-						'modal' : true,
-						'resizable' : false,
-						'width' : 500,
-						'buttons' : {
-							'Close' : function() {
-								$(this).dialog('close').remove();
-							} 
-						}
-					});
-				}, 'Cancel' : function() {
+				'Gotcha' : function() {
 					$(this).dialog('close').remove();
 				}
-			},
-			'create' : function() {
-				var dialog = $(this);
-				var location = document.location.href;
-				var requestURL = location.substring(0, location.indexOf('book-exchange')) + 'book-exchange/system/server/purchase-data.php?id=' + id;
-				
-				$.ajax({
-					'dataType' : 'json',
-					'url' : requestURL,
-					'success' : function(data) {
-						var HTML = '<aside class="bookInfo">';
-						HTML += '<div class="cover"><img src="' + data.imageURL + '" /></div>';
-						HTML += '<span class="previewTitle">' + data.title + '</span>';
-						HTML += '<span class="buttonLink"><span>$' + data.price + '</span></span>';
-						HTML += '<span class="previewDetails"><strong>ISBN:</strong> ' + data.ISBN + '</span>';
-						HTML += '<span class="previewDetails"><strong>Author:</strong> ' + data.author + '</span>';
-						
-						if (data.edition != '') {
-							HTML += '<span class="previewDetails"><strong>Edition:</strong> ' + data.edition + '</span>';
-						}
-						
-					//Conditionally format the condition statement
-						if (data.condition == "Excellent") {
-							HTML += '<span class="previewDetails"><strong>Condition:</strong> <span style="color: #33CC66;">Excellent</span></span>';
-						} else if (data.condition == "Very Good") {
-							HTML += '<span class="previewDetails"><strong>Condition:</strong> <span style="color: #0099FF;">Very Good</span></span>';
-						} else if (data.condition == "Good") {
-							HTML += '<span class="previewDetails"><strong>Condition:</strong> <span style="color: #FFCC33;">Good</span></span>';
-						} else if (data.condition == "Fair") {
-							HTML += '<span class="previewDetails"><strong>Condition:</strong> <span style="color: #FF6633;">Fair</span></span>';
-						} else if (data.condition == "Poor") {
-							HTML += '<span class="previewDetails"><strong>Condition:</strong> <span style="color: #CC0000;">Poor</span></span>';
-						}
-						
-					//Conditionally format the written in statement
-						if (data.written == 'No') {
-							HTML += '<span class="previewDetails"><strong>Written in:</strong> <span style="color: #33CC66;">No</span></span>';
-						} else {
-							HTML += '<span class="previewDetails"><strong>Written in:</strong> <span style="color: #CC0000;">Yes</span></span>';
-						}
-						
-						HTML += '</aside><section class="main">';
-						HTML += '<div class="userInfo"><h2>Seller information:</h2><div><span>' + data.firstName + ' ' + data.lastName + '</span><span>Email: <a class="highlight" href="mailto:' + data.email + '">' + data.email + '</a></span></div></div>';
-						
-						if (data.comments != '') {
-							HTML += '<h2>User comments:</h2><div class="comments">' + data.comments + '</div>';
-						}
-						
-						HTML += '<h2>Classes used:</h2><div class="classes"><ul>';
-						
-					//Split the class data into an array and display each class individually
-						var location = document.location.href;
-						var classes = data.class.split(',');
-						var classIDs = data.classID.split(',');
-						var colors = data.color.split(',');
-						var icon;
-						
-						for(var i = 0; i <= classes.length - 1; i++) {
-							icon = location.substring(0, location.indexOf('book-exchange')) + 'data/book-exchange/icons/' + classIDs[i] + '/icon_032.png';
-							
-							HTML += '<li><span class="class"><span class="band" style="border-left-color: ' + colors[i] + ';"><span class="icon" style="background-image: url(' + icon + ')">' + classes[i] + '</span></span></span></li>'
-						}
-						
-						HTML += '</ul></div></section>';
-						
-						dialog.html(HTML);
-					}
-				});
 			}
 		});
 	});
@@ -432,10 +569,37 @@ $(document).ready(function() {
 		'source' : requestURL,
 		'minLength' : 2,
 		'select' : function(event, ui) {
-			$(this).val(ui.item.label).parent().parent().submit();
+			var input = $(this);
+			var searchBy = input.parent().parent().children('div.controls').find('div.dropdownWrapper ul li.selected');
+			
+			if (searchBy.attr('data-value') && searchBy.attr('data\-value') != undefined && searchBy.attr('data\-value') != '') {
+				searchBy = searchBy.attr('data\-value');
+			} else {
+			//If searchBy gathers values from multiple dropdown menus, then the .text() method will combine
+			//the text values of all located items. We only need the first item we find
+				searchBy = $(searchBy[0]).text();
+			}
+			
+		//If we are searching by course, then we will need to update the hidden input of the flyout menu
+		//to be search under the selected course
+			if (searchBy == 'course') {
+				var courseID = ui.item.ID;
+				input.parent().parent().children('div.controls').find('div.menuWrapper input').attr('value', courseID);
+			}
+			
+			input.val(ui.item.label).parent().parent().submit();
 		}, 'search' : function(event, ui) {
 			var search = $(this);
-			var searchBy = search.parent().parent().children('div.controls').find('div.dropdownWrapper ul li.selected').text();
+			var searchBy = search.parent().parent().children('div.controls').find('div.dropdownWrapper ul li.selected');
+			
+			if (searchBy.attr('data-value') && searchBy.attr('data\-value') != undefined && searchBy.attr('data\-value') != '') {
+				searchBy = searchBy.attr('data\-value');
+			} else {
+			//If searchBy gathers values from multiple dropdown menus, then the .text() method will combine
+			//the text values of all located items. We only need the first item we find
+				searchBy = $(searchBy[0]).text();
+			}
+			
 			var searchIn = search.parent().parent().children('div.controls').find('div.menuWrapper ul li ul li.selected').attr('data\-value');
 			
 			if (!searchIn || (searchIn && searchIn == '') || searchIn == undefined) {
@@ -455,7 +619,7 @@ $(document).ready(function() {
 			details = item.total + ' books starting at $' + item.price;
 		}
 		
-		return $('<li />').data('item.autocomplete', item).append($('<a title="' + item.label + '"></a>').html('<img src="' + item.image + '" /><span class="title">' + item.label + '</span><span class="author details">Author: ' + item.author + '</span><span class="details total">' + details + '</span>')).appendTo(ul);
+		return $('<li />').data('item.autocomplete', item).append($('<a title="' + item.label + '"></a>').html('<img src="' + item.image + '" /><span class="title label">' + item.label + '</span><span class="details byLine">' + item.byLine + '</span><span class="details total">' + details + '</span>')).appendTo(ul);
 	}
 	
 /**
@@ -463,10 +627,33 @@ $(document).ready(function() {
  * ------------------------------------
 */
 	
+//Delete a book from the exchange
+	$('.deleteBook').click(function() {
+		var id = $(this).attr('data-id');
+		var location = document.location.href;
+		var requestURL = location.substring(0, location.indexOf('book-exchange')) + 'book-exchange/account/?action=delete&id=' + id;
+		
+		var confirmDialog = $('<section class="confirm" title="Confirm Delete"></section>')
+		.html('<p><span class="ui-icon ui-icon-alert"></span>Are you sure you wish to delete this book?<br><br>This action is permanent and cannot be undone. Contine?</p>')
+		.dialog({
+			'height' : 300,
+			'modal' : true,
+			'resizable' : false,
+			'width' : 500,
+			'buttons' : {
+				'Yes' : function() {
+					document.location.href = requestURL;
+				}, 'No' : function() {
+					$(this).dialog('close').remove();
+				}
+			}
+		});
+	});
+	
 //Animate the magnifying glass on the search page
 	var magnifier = $('img.animatedSearch');
 	
-	if (magnifier && magnifier != undefined) {
+	if (magnifier.length) {
 		var containerWidth = $(document).width();
 		var magnifierWidth = 219;
 		
@@ -477,7 +664,16 @@ $(document).ready(function() {
 			'left' : (100 - magnifierPercent - 12) + '%'
 		}, 150000);
 	}
-
+	
+//Activate the jCarousel plugin
+	if ($('ul.scrollerContainer').length) {
+		$('ul.scrollerContainer').jcarousel({
+			'scroll' : 1,
+			'auto' : 7,
+			'wrap' : 'last'
+		});
+	}
+	
 //Clear any alert bubbles
 	setTimeout(function() {
 		$('.success').fadeOut();

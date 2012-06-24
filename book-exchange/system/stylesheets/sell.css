@@ -69,6 +69,11 @@ section.dialog.suggestions div.content div.bookInfo {
 	padding-left: 50px;
 }
 
+section.dialog.suggestions div.content div.bookInfo span strong {
+	display: inline-block;
+	width: 50px;
+}
+
 section.dialog.suggestions div.content div.classInfo {
 	background: url(../images/icons/sub_steps.png) no-repeat;
 	background-position: 0px -102px;
@@ -149,7 +154,7 @@ header.styled.sell h1 {
 	background: #66C2AA;
 	border-color: #33AD8E;
 	color: #FFFFFF;
-	padding-left: 260px;
+	padding-left: 283px;
 }
 
 /**
@@ -167,6 +172,7 @@ aside.preview {
 
 aside.preview section.bookPreview {
 	background: #3D3D3D;
+	border: 2px solid #FFFFFF;
 	color: #FFFFFF;
 	float: left;
 	margin: -45px 0px 15px 10px;
@@ -277,6 +283,11 @@ aside.preview section.bookPreview span.details {
 	display: block;
 }
 
+aside.preview section.bookPreview span.details strong {
+	display: inline-block;
+	width: 40px;
+}
+
 /**
  * Sell books sidebar tips and hints
  * ------------------------------------
@@ -307,12 +318,13 @@ section.sell {
 }
 
 /* Using the direct child operator, so that no <div> with the targeted <div> is styled */
-section.sell > div {
+section.sell > section {
 	background: url(../images/icons/steps.png) no-repeat;
 	padding-left: 60px;
 }
 
-section.sell div h2 {
+section.sell section h2 {
+	color: #333333;
 	font-size: 18px;
 	padding-top: 18px;
 }
@@ -322,7 +334,7 @@ section.sell div h2 {
  * ------------------------------------
 */
 
-section.sell div.bookInformationSection {
+section.sell section.bookInformationSection {
 	background-position: -109px 0px;
 }
 
@@ -332,50 +344,50 @@ section.sell div.bookInformationSection {
  * ------------------------------------
 */
 
-section.sell div.courseInformationSection {
+section.sell section.courseInformationSection {
 	background-position: -55px -55px;
 }
 
-section.sell div.courseInformationSection div.classTableHeader {
+section.sell section.courseInformationSection div.classTableHeader {
 	font-weight: bold;
 	padding-top: 5px;
 }
 
-section.sell div.courseInformationSection div.classTableHeader span.className {
+section.sell section.courseInformationSection div.classTableHeader span.className {
 	padding-left: 50px;
 }
 
-section.sell div.courseInformationSection div.classTableHeader span.classNum {
+section.sell section.courseInformationSection div.classTableHeader span.classNum {
 	padding-left: 85px;
 }
 
-section.sell div.courseInformationSection div.classTableHeader span.classSec {
+section.sell section.courseInformationSection div.classTableHeader span.classSec {
 	padding-left: 35px;
 }
 
-section.sell div.courseInformationSection div.classUsed {
+section.sell section.courseInformationSection div.classUsed {
 	border-top: 1px solid #CCCCCC;
 	height: 42px;
 	padding: 7px 0px 7px 0px;
 	vertical-align: middle;
 }
 
-section.sell div.courseInformationSection div.classUsed div.inputWrapper {
+section.sell section.courseInformationSection div.classUsed div.inputWrapper {
 	padding-left: 55px;
 	width: 27px;
 }
 
-section.sell div.courseInformationSection div.classUsed div.inputWrapper input {
+section.sell section.courseInformationSection div.classUsed div.inputWrapper input {
 	margin: 10px 0px 0px 10px;
 	width: 27px;
 }
 
-section.sell div.courseInformationSection div.classUsed div.dropdownWrapper {
+section.sell section.courseInformationSection div.classUsed div.dropdownWrapper {
 	display: inline-block;
 	padding: 10px 0px 0px 100px;
 }
 
-section.sell div.courseInformationSection div.classUsed span.delete {
+section.sell section.courseInformationSection div.classUsed span.delete {
 	background: url(../images/icons/delete.png) no-repeat;
 	cursor: pointer;
 	display: inline-block;
@@ -385,7 +397,7 @@ section.sell div.courseInformationSection div.classUsed span.delete {
 	width: 19px;
 }
 
-section.sell div.courseInformationSection span.add {
+section.sell section.courseInformationSection span.add {
 	background: url(../images/icons/add.png) no-repeat left bottom;
 	display: inline-block;
 	cursor: pointer;
@@ -397,28 +409,28 @@ section.sell div.courseInformationSection span.add {
  * ------------------------------------
 */
 
-section.sell div.userInformationSection {
+section.sell section.userInformationSection {
 	background-position: 0px -109px;
 }
 
-section.sell div.userInformationSection table tbody tr td.price span.align {
+section.sell section.userInformationSection table tbody tr td.price span.align {
 	display: inline-block;
 	padding-top: 6px;
 }
 
-section.sell div.userInformationSection table tbody tr td.price input {
+section.sell section.userInformationSection table tbody tr td.price input {
 	width: 47px;
 }
 
-section.sell div.userInformationSection table tbody tr td.containsMenu div {
+section.sell section.userInformationSection table tbody tr td.containsMenu div {
 	display: block;
 }
 
-section.sell div.userInformationSection table tbody tr.editor td.description {
+section.sell section.userInformationSection table tbody tr.editor td.description {
 	padding-top: 5px;
 	vertical-align: top;
 }
 
-section.sell div.userInformationSection table tbody tr.editor td textarea {
+section.sell section.userInformationSection table tbody tr.editor td textarea {
 	width: 450px;
 }

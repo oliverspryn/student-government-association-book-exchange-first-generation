@@ -3,6 +3,10 @@
  * ------------------------------------
 */
 
+header.styled h1 {
+	padding-left: 305px;
+}
+
 header.styled.noSide h1 {
 	padding-left: 10px;
 }
@@ -39,6 +43,7 @@ aside.info {
 
 aside.info img.icon {
 	background: #3D3D3D;
+	border: 2px solid #FFFFFF;
 	margin: -45px 0px 0px 12px;
 	padding: 10px 7px 0px 7px;
 	z-index: 500;
@@ -73,48 +78,56 @@ aside.info form div.controls span.step {
 	vertical-align: top;
 }
 
-aside.info > ul {
+aside.info section ul {
 	list-style: none;
 	padding-left: 2px;
 }
 
-aside.info > ul li {
+aside.info section ul li {
 	clear: both;
 	display: block;
 	padding-bottom: 20px;
 	overflow: auto;
 }
 
-aside.info > ul li img {
+aside.info section ul li img {
 	display: inline;
 	float: left;
 	max-width: 60px;
+	min-width: 60px;
 	padding-right: 5px;
 }
 
-aside.info > ul li a.title {
+aside.info section ul li a.title {
 	display: block;
 	max-width: 200px;
+	min-width: 200px;
 	padding-top: 0px;
 	width: 200px;
 }
 
-aside.info > ul li span.details {
+aside.info section ul li span.details {
 	display: block;
 	max-width: 200px;
+	min-width: 200px;
 	width: 200px;
 }
 
-aside.info ul.moreListings {
+aside.info section ul li span.details strong {
+	display: inline-block;
+	width: 35px;
+}
+
+aside.info section.categories ul {
 	padding-left: 10px;
 }
 
-aside.info ul.moreListings li a {
+aside.info section.categories ul li a {
 	display: block;
 	width: 100%;
 }
 
-aside.info ul.moreListings li a span.arrow {
+aside.info section.categories ul li a span.arrow {
 	font: "Helvetica Narrow", "Arial Narrow", Tahoma, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	padding-left: 3px;
@@ -228,6 +241,7 @@ section.listing section.books section.courses ul li.section {
 	font-weight: bold;
 	height: 100%;
 	max-width: 30px;
+	min-width: 30px;
 	padding: 0px 0px 0px 15px;
 	vertical-align: top;
 	width: 30px;
@@ -237,10 +251,17 @@ section.listing section.books section.courses ul li img {
 	display: block;
 	margin: 0px;
 	max-width: 100px;
+	min-width: 100px;
 }
 
 section.listing section.books section.courses ul li span.details {
 	max-width: 130px;
+	min-width: 130px;
+}
+
+section.listing section.books section.courses ul li span.details strong {
+	display: inline-block;
+	width: 35px;
 }
 
 section.listing section.books section.courses ul.viewAll li {

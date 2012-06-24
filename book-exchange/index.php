@@ -5,12 +5,13 @@
 //Generate the breadcrumb
 	$home = mysql_fetch_array(mysql_query("SELECT * FROM pages WHERE position = '1' AND `published` != '0'", $connDBA));
 	$title = unserialize($home['content' . $home['display']]);
-	$breadcrumb = "\n<li><a href=\"" . $root . "index.php?page=" . $home['id'] . "\">" . $title['title'] . "</a></li>
+	$breadcrumb = "\n<li><a href=\"" . $root . "index.php?page=" . $home['id'] . "\">" . stripslashes($title['title']) . "</a></li>
 <li>Book Exchange</li>\n";
 
 //Include the top of the page from the administration template
 	topPage("public", "Book Exchange", "" , "", "<link href=\"system/stylesheets/style.css\" rel=\"stylesheet\" />
 <link href=\"system/stylesheets/welcome.css\" rel=\"stylesheet\" />
+<script src=\"../javascripts/jQuery/jquery.jcarousel.min.js\"></script>
 <script src=\"system/javascripts/interface.js\"></script>", $breadcrumb);
 	echo "<section class=\"body\">
 ";
@@ -22,7 +23,11 @@
 
 <div class=\"mask\">
 <div class=\"sell\">
-<button class=\"blue large openLogin\">Sell Books</button>
+<ul>
+<li class=\"sell\"><a class=\"openLogin\" href=\"sell-books/\">Sell Your Books</a></li>
+<li class=\"search\"><a href=\"search\">Search</a></li>
+<li class=\"browse\"><a href=\"listings\">Browse Listings</a></li>
+</ul>
 </div>
 
 <span class=\"divider\"></span>
@@ -36,9 +41,11 @@
 <div class=\"controls hidden\">
 <span class=\"searchStep\">Search by:</span>
 <ul class=\"dropdown\" data-name=\"searchBy\">
-<li class=\"selected\">Title</li>
-<li>Author</li>
-<li>ISBN</li>
+<li class=\"selected\" data-value=\"title\">Title</li>
+<li data-value=\"author\">Author</li>
+<li data-value=\"ISBN\">ISBN</li>
+<li data-value=\"course\">Course</li>
+<li data-value=\"seller\">Seller</li>
 </ul>
 
 <br>
@@ -72,7 +79,7 @@
 		}
 		
 		echo "
-<li data-value=\"" . $category['id'] . "\"><span class=\"band\" style=\"border-left-color: " . $category['color1'] . ";\"><span class=\"icon\" style=\"background-image: url('../data/book-exchange/icons/" . $category['id'] . "/icon_032.png');\">" . $category['name'] . "</span></span></li>";
+<li data-value=\"" . $category['id'] . "\"><span class=\"band\" style=\"border-left-color: " . stripslashes($category['color1']) . ";\"><span class=\"icon\" style=\"background-image: url('../data/book-exchange/icons/" . $category['id'] . "/icon_032.png');\">" . stripslashes($category['name']) . "</span></span></li>";
 
 		if ($counter % 10 == 0) {
 			echo "
@@ -122,7 +129,15 @@
 
 //Include section three
 	echo "<section class=\"screenshots\">
-<img src=\"system/images/welcome/view_categories.png\" />
+<div class=\"overflowHide\">
+<ul class=\"scrollerContainer\">
+<li><img src=\"system/images/welcome/view_categories.png\" /></li>
+<li><img src=\"system/images/welcome/view_sell_books.png\" /></li>
+<li><img src=\"system/images/welcome/view_listing.png\" /></li>
+<li><img src=\"system/images/welcome/view_search.png\" /></li>
+<li><img src=\"system/images/welcome/view_book.png\" /></li>
+</ul>
+</div>
 
 <h2>Built By Students, For Students</h2>
 <p>The semiannual book exchange ritual doesn't have to be a drag. From its captivating start to a satisfying end, this service has been designed to <strong>think the way you think</strong>. Here at SGA, we make it a point to <strong>sell your books fast</strong> by giving each of them the attention they deserve. Our new searching and cataloguing systems provide a unique and intuitive interface to help you <strong>quickly find the books you need</strong> for that next class.</p>
@@ -138,7 +153,7 @@
 <h2>Something New: Exchange Tiles</h2>
 <p>Life in college is hard enough, but exchanging your books shouldn't be. That's why we've introduced the exchange titles. They are a colorful feature of our cataloguing system which are designed to <strong>catch your eye</strong> and <strong>trigger your memory</strong> whenever you see one of them.</p>
 <p>These tiles show up all through out the site, from browsing and searching our database, to selling books of your own. Each discipline of study is assigned a <strong>unique color and pair of letters</strong> to help set them apart from others. You'll learn to <strong>quickly spot</strong> them on a page for your <strong>areas of interest</strong>.</p>
-<a class=\"explore highlight\" href=\"listings\">Start Exploring</a>
+<a class=\"explore highlight\" href=\"listings\">Start Exploring &raquo;</a>
 </div>
 </section>
 
@@ -148,12 +163,12 @@
 	echo "<section class=\"features\">
 <div class=\"description\">
 <h2>Sell Your Book in 17.5 Seconds</h2>
-<p>Yes, we actually counted. We've engineered this exchange to be as easy as possible. With lots of <strong>integrated tools</strong> that are desgined to <strong>enhance your speed and productivity</strong>, you'll be able to buy and sell books fast, so you can get back to what is really important.</p>
-<a class=\"explore highlight\" href=\"sell-books\">Sell Your Books</a>
+<p>Yes, we actually counted. We've engineered this exchange to be as easy as possible. With lots of <strong>integrated tools</strong> that are desgined to <strong>enhance your speed and productivity</strong>, you'll be able to buy and sell books fast, so you can get back to what is really important. Who knows? Maybe you can break this record!</p>
+<a class=\"explore highlight\" href=\"sell-books\">Sell Your Books &raquo;</a>
 
 <h2>Real-time Results As You Search</h2>
 <p><strong>Get up to the second</strong> search results as you search for books in our database. Before you can even finish typing the title of your book, you are given a <strong>short, comprehensive overview</strong> of the book you are searching, with details such as the <strong>total number up for sale</strong> and it <strong>starting price</strong>.</p>
-<a class=\"explore highlight\" href=\"search\">Search for Books</a>
+<a class=\"explore highlight\" href=\"search\">Search for Books &raquo;</a>
 </div>
 
 <img class=\"sell\" src=\"system/images/welcome/view_sell_books_mini.png\" />
@@ -180,19 +195,19 @@
 <li style=\"background-image: url(system/images/welcome/sell_books.png);\">
 <h3>Buy and Sell Books</h3>
 <p><strong>Set your own price</strong> and sell your books in three easy steps. You can often <strong>buy other books at discounted prices</strong>.</p>
-<a class=\"explore highlight\" href=\"sell-books\">Sell Your Books</a>
+<a class=\"explore highlight\" href=\"sell-books\">Sell Your Books &raquo;</a>
 </li>
 
 <li style=\"background-image: url(system/images/welcome/search.png);\">
 <h3>Search the Growing Database</h3>
 <p>Search <strong>" . $totalBooks . "</strong> of books by title, author, course, or ISBN, contributed by students like you!</p>
-<a class=\"explore highlight\" href=\"search\">Search for Books</a>
+<a class=\"explore highlight\" href=\"search\">Search for Books &raquo;</a>
 </li>
 
 <li style=\"background-image: url(system/images/welcome/categories.png);\">
 <h3>Browse by Category</h3>
 <p>Each category has its own unique <strong>color exchange tile</strong>, designed to catch your eye when you come across a class you recognize.</p>
-<a class=\"explore highlight\" href=\"listings\">Browse for Books</a>
+<a class=\"explore highlight\" href=\"listings\">Browse for Books &raquo;</a>
 </li>
 </ul>
 </div>
@@ -203,10 +218,20 @@
 //Include section seven
 	echo "<section class=\"finish\">
 <div class=\"books\">
-<h2>Convinced? Jump on board!</h2>
-<button class=\"green large\">Register</button>
+";
+
+	if (!loggedIn()) {
+		echo "<h2>Convinced? Jump on board!</h2>
+<button class=\"green large openLogin\" data-login=\"sell-books/\">Register</button>
 <span class=\"alternate\">or <a class=\"highlight\" href=\"../login\">login</a></span>
-<div class=\"pointer\"></div>
+";
+	} else {
+		echo "<h2>Convinced? Start selling!</h2>
+<button class=\"green large\" onclick=\"document.location.href='sell-books/'\">Sell Books</button>
+";
+	}
+	
+	echo "<div class=\"pointer\"></div>
 </div>
 </section>";
 

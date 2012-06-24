@@ -85,7 +85,7 @@
 <form action="<?php echo $root; ?>book-exchange/search" method="get">
 <input autocomplete="off" class="noMod search template" name="search" type="text" />
 <input type="hidden" name="category" value="0" />
-<input type="hidden" name="searchBy" value="Title" />
+<input type="hidden" name="searchBy" value="title" />
 <span class="performSearch"></span>
 </form>
 </section>

@@ -4,7 +4,7 @@
 */
 
 header.styled h1 {
-	padding-left: 315px;
+	padding-left: 319px;
 }	
 
 /**
@@ -23,6 +23,7 @@ aside.info {
 
 aside.info section.cover {
 	background: #3D3D3D;
+	border: 2px solid #FFFFFF;
 	display: block;
 	margin: -45px 0px 0px 12px;
 	overflow: auto;
@@ -32,10 +33,11 @@ aside.info section.cover {
 	z-index: 500;
 }
 
-aside.info section.cover img {
+aside.info section.cover img.cover {
 	display: block;
 	float: left;
 	max-width: 260px;
+	min-width: 260px;
 }
 
 aside.info section.cover div.facebookContainer, aside.info section.cover div.twitterContainer, aside.info section.cover div.gplusContainer, aside.info section.cover div.pinContainer {
@@ -49,17 +51,18 @@ aside.info section.cover div.facebookContainer {
 	padding-top: 10px;
 }
 
-aside.info section.cover a.buttonLink {
+aside.info section.cover a.buttonLink, aside.info section.cover span.buttonLink {
 	bottom: 94px;
 	display: inline-table;
 	float: right;
-	font-size: 20px;
 	margin: 10px 0px 0px 0px;
-	overflow: auto;
-	padding-bottom: 2px;
 	position: absolute;
 	right: 10px;
-	white-space: nowrap;
+}
+
+aside.info section.toolbar {
+	margin: 7px 0px 15px 0px;
+	text-align: center;
 }
 
 aside.info section.categories h2 {

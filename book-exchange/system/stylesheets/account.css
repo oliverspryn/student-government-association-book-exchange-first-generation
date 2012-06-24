@@ -95,10 +95,11 @@ section.books ul li.book div.alert.sold {
 	background: #E3FFE3;
 }	
 
-section.books ul li.book div.alert a img {
+section.books ul li.book div.alert a img.cover {
 	display: inline;
 	float: left;
 	max-width: 100px;
+	min-width: 100px;
 	padding-right: 10px;
 }
 
@@ -117,6 +118,11 @@ section.books ul li.book div.alert span.details {
 	max-width: none;
 }
 
+section.books ul li.book div.alert span.details strong {
+	display: inline-block;
+	width: 50px;
+}
+
 section.books ul li.book div.alert a.action, section.books ul li.book div.alert span.action {
 	border: 1px solid #999999;
 	border-radius: 7px;
@@ -130,9 +136,13 @@ section.books ul li.book div.alert a.action, section.books ul li.book div.alert 
 	vertical-align: middle;
 }
 
-section.books ul li.book div.alert span.action.renew {
+section.books ul li.book div.alert a.action.renew {
 	cursor: pointer;
 	right: 75px;
+}
+
+section.books ul li.book div.alert a.action.renew img {
+	padding: 0px;
 }
 
 section.books ul li.book div.alert a.action.edit {
@@ -140,14 +150,14 @@ section.books ul li.book div.alert a.action.edit {
 	right: 40px;
 }
 
-section.books ul li.book div.alert a.action.delete {
+section.books ul li.book div.alert a.action.deleteBook {
 	cursor: pointer;
 	right: 5px;
 }
 
-section.books ul li.book div.alert a.action img, section.books ul li.book div.alert span.action img {
+section.books ul li.book div.alert a.action img {
 	margin: 0px;
-	padding: 0px;
+	padding: 0px 4px 0px 0px;
 }
 
 section.books ul li.book div.alert span.expire {
@@ -243,4 +253,11 @@ section.purchases ul li.book span.details {
 	display: block;
 	font-size: 13px;
 	max-width: none;
+}
+
+section.purchases div.none {
+	font-weight: bolder;
+	padding: 30px 20px 45px 20px;
+	text-align: center;
+}
 }

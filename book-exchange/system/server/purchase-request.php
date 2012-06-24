@@ -8,6 +8,11 @@
 		die("You are not logged in");
 	}
 	
+//Have we been given the proper parameters?
+	if (!isset($_GET['id'])) {
+		die("What book do you want to buy?");
+	}
+	
 //SMTP logon information
 	$username = "no-reply@forwardfour.com";
 	$password = "n*O^]z%]|c44Q~3";
@@ -17,9 +22,9 @@
 	$fromName = $userData['firstName'] . " " . $userData['lastName'];
 	
 //Grab the seller's information
-	$sellerData = mysql_query("SELECT * FROM users WHERE id = (SELECT userID FROM books WHERE id = '{$_GET['id']}' AND avaliable = '1')", $connDBA);
+	$sellerData = mysql_query("SELECT * FROM users WHERE id = (SELECT userID FROM books WHERE id = '{$_GET['id']}')", $connDBA);
 	
-	if ($sellerData) {
+	if ($sellerData && mysql_num_rows($sellerData)) {
 		$seller = mysql_fetch_array($sellerData);
 		$toEmail = $seller['emailAddress1'];
 		$toName = $seller['firstName'] . " " . $seller['lastName'];
@@ -27,17 +32,23 @@
 		die("We cannot find a user for this book or the book is unavaliable");
 	}
 	
-//Grab the book information
-	$bookData = mysql_query("SELECT books.*, bookcategories.* FROM books RIGHT JOIN (bookcategories) ON books.course = bookcategories.id WHERE books.id = '{$_GET['id']}' AND avaliable = '1'", $connDBA);
+//Don't let the buyer buy from themself!
+	if ($userData['id'] == $seller['id']) {
+		die("Wait... you can't buy from yourself!");
+	}
 	
-	if ($bookData) {
+//Grab the book information
+	$now = strtotime("now");
+	$bookData = mysql_query("SELECT exchangesettings.expires, books.*, bookcategories.* FROM books RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN(exchangesettings) ON books.id WHERE books.id = '{$_GET['id']}' AND books.sold = '0' AND books.userID != '0' AND books.upload + exchangesettings.expires > {$now}", $connDBA);
+	
+	if ($bookData && mysql_num_rows($bookData)) {
 		$book = mysql_fetch_array($bookData);
 	} else {
-		die("The book does not exist");
+		die("This book does not exist");
 	}
 	
 //Generate the body of the email
-	$subject = "Purchase Request for " . $book['title'];
+	$subject = "Purchase Request for " . stripslashes($book['title']);
 	$bodyHTML = "<!DOCTYPE html>
 <html lang=\"en-US\">
 <head>
@@ -49,17 +60,17 @@
 <table border=\"0\" style=\"background: url(" . $root . "themes/public/student_government/images/ribbon.png) repeat-x; font-family: Arial, Helvetica, sans-serif; font-size: 16px; padding-top: 15px;\" width=\"100%\">
 <tr>
 <td rowspan=\"2\" style=\"padding-right: 15px;\" valign=\"top\" width=\"250\">
-<div align=\"center\"><img alt=\"" . htmlentities($book['title']) . " Cover - Please enable viewing images to see this picture\" height=\"200\" src=\"" . $book['imageURL'] . "\" style=\"max-height: 200px;\"></div>
-<h2 style=\"margin-bottom: 0px;\">" . $book['title'] . "</h2>
-<div style=\"margin-bottom: 15px;\"><span style=\"background-color: #999999; color: #FFFFFF; display: inline-block; font-size: 20px; margin: 5px 0px 5px 0px; max-width: 187px; padding: 3px 1px 2px 1px; vertical-align: top; width: auto;\"><span style=\"border: 1px solid #FFFFFF; padding: 1px 3px 1px 3px;\">\$" . $book['price'] . "</span></span></div>
-<div><span style=\"display: block; font-size: 14px; max-width: 170px; padding-top: 5px;\"><strong>ISBN:</strong> " . $book['ISBN'] . "</span></div>
-<div><span style=\"display: block; font-size: 14px; max-width: 170px; padding-top: 5px;\"><strong>Author:</strong> " . $book['author'] . "</span></div>" . (!empty($book['edition']) ? "
-<div><span style=\"display: block; font-size: 14px; max-width: 170px; padding-top: 5px;\"><strong>Edition:</strong> " . $book['edition'] . "</span></div>" : "") . "
+<div align=\"center\"><img alt=\"" . htmlentities(stripslashes($book['title'])) . " Cover - Please enable viewing images to see this picture\" height=\"200\" src=\"" . htmlentities(stripslashes($book['imageURL'])) . "\" style=\"max-height: 200px;\"></div>
+<h2 style=\"margin-bottom: 0px;\">" . stripslashes($book['title']) . "</h2>
+<div style=\"margin-bottom: 15px;\"><span style=\"background-color: #3D3D3D; border: 1px solid #FFFFFF; color: #FFFFFF; display: inline-block; font-size: 15px; margin: 5px 0px 5px 0px; max-width: 187px; padding: 4px 1px 4px 1px; vertical-align: top; white-space: no-wrap; width: auto;\"><span style=\"background: #42B6C9; border: 1px solid #FFFFFF; padding: 2px 7px 2px 7px;\">\$" . stripslashes($book['price']) . "</span></span></div>
+<div><span style=\"display: block; font-size: 14px; max-width: 240px; overflow: hidden; padding-top: 5px; text-overflow: ellipsis; white-space: nowrap;\" title=\"ISBN: " . htmlentities(stripslashes($book['ISBN'])) . "\"><strong style=\"display: inline-block; width: 55px;\">ISBN:</strong> " . stripslashes($book['ISBN']) . "</span></div>
+<div><span style=\"display: block; font-size: 14px; max-width: 240px; overflow: hidden; padding-top: 5px; text-overflow: ellipsis; white-space: nowrap;\" title=\"Author: " . htmlentities(stripslashes($book['author'])) . "\"><strong style=\"display: inline-block; width: 55px;\">Author:</strong> " . stripslashes($book['author']) . "</span></div>" . (!empty($book['edition']) ? "
+<div><span style=\"display: block; font-size: 14px; max-width: 240px; overflow: hidden; padding-top: 5px; text-overflow: ellipsis; white-space: nowrap;\" title=\"Edition: " . htmlentities(stripslashes($book['edition'])) . "\"><strong style=\"display: inline-block; width: 55px;\">Edition:</strong> " . stripslashes($book['edition']) . "</span></div>" : "") . "
 </td>
 
 <td style=\"font-size: 18px; padding-bottom: 30px;\">
-<strong>" . $userData['firstName'] . " " . $userData['lastName'] . "</strong> would like to purchase your book <strong>" . $book['title'] . "</strong>.
-<div style=\"font-size: 16px; padding-top: 5px;\">" . $userData['firstName'] . "'s email: <a href=\"mailto:" . $userData['emailAddress1'] . "\" style=\"color: #4BF; text-decoration: none;\">" . $userData['emailAddress1'] . "</a></div>
+<strong>" . stripslashes($userData['firstName']) . " " . stripslashes($userData['lastName']) . "</strong> would like to purchase your book <strong>" . stripslashes($book['title']) . "</strong>.
+<div style=\"font-size: 16px; padding-top: 5px;\">" . stripslashes($userData['firstName']) . "'s email: <a href=\"mailto:" . stripslashes($userData['emailAddress1']) . "\" style=\"color: #4BF; text-decoration: none;\">" . stripslashes($userData['emailAddress1']) . "</a></div>
 </td>
 </tr>
 
@@ -67,11 +78,11 @@
 <td class=\"content\" valign=\"top\">
 <p>Congratulations! You are just two steps away from selling your book:</p>
 <ol>
-<li>Reply to this email with a <strong>time and location</strong> to meet with " . $userData['firstName'] . " to <strong>exchange</strong> the book and funds <strong>in person</strong>.</li>
+<li>Reply to this email with a <strong>time and location</strong> to meet with " . stripslashes($userData['firstName']) . " to <strong>exchange</strong> the book and funds <strong>in person</strong>.</li>
 <li>Go and get your cash!</li>
 </ol>
 
-<div style=\"background: #FFCCCD; border: 3px solid #FF9999; margin: 30px 10% 0px 10%; padding: 7px; width: 80%;\">This book will be automatically removed from the book exchange in two days. If you choose to not sell this book to " . $userData['firstName'] . ", you may login at any time and restore this book to the exchange with one click.</div>
+<div style=\"background: #FFCCCD; border: 3px solid #FF9999; margin: 30px 10% 0px 10%; padding: 7px; width: 80%;\">This book is now considered sold and has been automatically removed from the book exchange. If you choose to not sell this book to " . stripslashes($userData['firstName']) . ", you may login at any time and restore this book to the exchange with one click under the &quot;My Account&quot; tab.</div>
 </td>
 </tr>
 
@@ -96,28 +107,30 @@
 </body>
 </html>";
 	
-	$altBody = $userData['firstName'] . " " . $userData['lastName'] . " would like to purchase your book " . $book['title'] . ".
+	$altBody = stripslashes($userData['firstName']) . " " . stripslashes($userData['lastName']) . " would like to purchase your book " . stripslashes($book['title']) . ".
+	
+" . stripslashes($userData['firstName']) . "'s email: " . stripslashes($userData['emailAddress1']) . "
 	
 |**************************************************
 |  BOOK INFORMATION
 |
-|  Title: " . $book['title'] . "
-|  Price: \$" . $book['price'] . "
-|  ISBN: " . $book['ISBN'] . "
-|  Author: " . $book['author'] . (!empty($book['edition']) ? "
-|  Edition: " . $book['edition'] . "
+|  Title:    " . stripslashes($book['title']) . "
+|  Price:     \$" . stripslashes($book['price']) . "
+|  ISBN:     " . stripslashes($book['ISBN']) . "
+|  Author:   " . stripslashes($book['author']) . (!empty($book['edition']) ? "
+|  Edition:  " . stripslashes($book['edition']) . "
 |**************************************************" : "
 |**************************************************") . "
 	
 Congratulations! You are just two steps away from selling your book:
  
- - 1. Reply to this email with a time and location to meet with " . $userData['firstName'] . " to exchange the book and funds in person.
+ - 1. Reply to this email with a time and location to meet with " . stripslashes($userData['firstName']) . " to exchange the book and funds in person.
  - 2. Go and get your cash!
  
 |**************************************************
-|  This book will be automatically removed from the book exchange in two days. If you choose to not
-|  sell this book to " . $userData['firstName'] . ", you may login at any time and restore this
-|  book to the exchange with one click.
+|  This book is now considered sold and has been automatically removed from the book exchange. If you choose
+|  to not sell this book to " . stripslashes($userData['firstName']) . ", you may login at any time and restore this
+|  book to the exchange with one click under the \"My Account\" tab.
 |**************************************************
 
 Thank you, we hope that was easy!
@@ -145,7 +158,24 @@ Thank you, we hope that was easy!
 		echo "success";
 	} catch (phpmailerException $e) {
 		echo $e->errorMessage();
+		exit;
 	} catch (Exception $e) {
 		echo $e->getMessage();
+		exit;
 	}
+	
+//Mark the book as sold
+	mysql_query("UPDATE books SET sold = '1' WHERE linkID = '{$book['linkID']}'", $connDBA);
+	
+//Log this purchase in the purchases database
+	$buyerID = $userData['id'];
+	$sellerID = $seller['id'];
+	$bookID = $_GET['id'];
+	$time = strtotime("now");
+	
+	mysql_query("INSERT INTO purchases (
+				 	id, buyerID, sellerID, bookID, time
+				 ) VALUES (
+				 	NULL, '{$buyerID}', '{$sellerID}', '{$bookID}', '{$time}'
+				 )", $connDBA);
 ?>

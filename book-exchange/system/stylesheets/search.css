@@ -179,33 +179,73 @@ aside.tools section.options form div.controls div.menuWrapper {
 	margin-right: 18px;
 }
 
-aside.tools > h2 {
+aside.tools section.categories h2 {
 	color: #006600;
 	font-weight: lighter;
 }
 
-aside.tools ul.moreListings {
+aside.tools section.categories ul.moreListings {
 	list-style: none;
 	padding-left: 10px;
 }
 
-aside.tools ul.moreListings li {
+aside.tools section.categories ul.moreListings li {
 	clear: both;
 	display: block;
 	padding-bottom: 20px;
 	overflow: auto;
 }
 
-aside.tools ul.moreListings li a {
+aside.tools section.categories ul.moreListings li a {
 	display: block;
 	width: 100%;
 }
 
-aside.tools ul.moreListings li a span.arrow {
+aside.tools section.categories ul.moreListings li a span.arrow {
 	color: #006600;
 	font: "Helvetica Narrow", "Arial Narrow", Tahoma, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	padding-left: 3px;
+}
+
+/**
+ * Profile styles
+ * ------------------------------------
+*/
+
+section.profile {
+	background: url(../images/icons/account.png) no-repeat;
+	border-left: 4px double #EDEDED;
+	background-position: 10px 15px;
+	height: 153px;
+	margin-left: 330px;
+	padding: 0px 0px 100px 150px;
+}
+
+section.profile.noSide {
+	background-position: 0px 15px;
+	border-left: none;
+	margin-left: 0px;
+}
+
+section.profile h2 {
+	color: #060;
+	font-weight: lighter;
+}
+
+section.profile span.row {
+	display: block;
+	font-size: 13px;
+	padding-bottom: 10px;
+}
+
+section.profile span.row strong {
+	display: inline-block;
+	width: 170px;
+}
+
+section.profile span.row span.none {
+	font-style: italic;
 }
 
 /**
@@ -252,6 +292,7 @@ section.results ul li.result a img {
 	display: inline;
 	float: left;
 	max-width: 100px;
+	min-width: 100px;
 	padding-right: 10px;
 }
 
@@ -267,6 +308,11 @@ section.results ul li.result span.details {
 	display: block;
 	font-size: 13px;
 	max-width: none;
+}
+
+section.results ul li.result span.details strong {
+	display: inline-block;
+	width: 55px;
 }
 
 section.results ul li.result a.buttonLink {

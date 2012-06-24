@@ -15,10 +15,6 @@ a.explore {
 	font-weight: lighter;
 }
 
-a.explore::after {
-	content: " »";
-}
-
 /**
  * Welcome page section one
  * ------------------------------------
@@ -64,9 +60,39 @@ section.welcome div.design div.mask div.sell {
 	width: 250px;
 }
 
-section.welcome div.design div.mask div.sell button {
-	margin: 27px;
-	width: 165px;
+section.welcome div.design div.mask div.sell ul {
+	list-style: none;
+	margin-left: 30px;
+	padding: 0px;
+}
+
+section.welcome div.design div.mask div.sell ul li {
+	background: url(../images/welcome/actions.png) no-repeat;
+	margin-bottom: 8px;
+	padding: 5px 0px 5px 40px;
+	text-align: left;
+}
+
+section.welcome div.design div.mask div.sell ul li.search {
+	background-position: 0px -37px;
+}
+
+section.welcome div.design div.mask div.sell ul li.browse {
+	background-position: 0px -76px;
+}
+
+section.welcome div.design div.mask div.sell ul li a {
+	color: #FFFFFF;
+	display: block;
+	font-weight: bolder;
+}
+
+section.welcome div.design div.mask div.sell ul li a:hover {
+	color: #4BF;
+}
+
+section.welcome div.design div.mask div.sell ul li a:active {
+	color: #C36;
 }
 
 section.welcome div.design div.mask span.divider {
@@ -163,7 +189,24 @@ section.screenshots {
 	padding: 25px 0px 45px 0px;
 }
 
-section.screenshots img {
+section.screenshots div.overflowHide {
+	margin: 0px auto 0px auto;
+	max-width: 1000px;
+	overflow: hidden;
+}
+
+section.screenshots div.overflowHide ul.scrollerContainer {
+	list-style: none;
+}
+
+section.screenshots div.overflowHide ul.scrollerContainer li {
+	display: inline-block;
+	max-width: 1000px;
+	padding-left: 0px;
+	width: 1000px;
+}
+
+section.screenshots div.overflowHide ul.scrollerContainer li img {
 	display: block;
 	margin: 0px auto 0px auto;
 }

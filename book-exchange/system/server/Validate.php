@@ -8,7 +8,7 @@
 */
 
 class Validate {
-	private static $redirect = " Click <a href=\"javascript:window.location = document.location.href\">here</a> to retry.";
+	private static $redirect = " Click <a href=\"javascript:window.location = document.location.pathname\">here</a> to retry.";
 	
 //The most simple form of validation, which ensures a value has been provided
 	public static function required($string, $matches = false, $sizeSmall = false, $sizeLarge = false, $sizeEquals = false, $optional = false) {

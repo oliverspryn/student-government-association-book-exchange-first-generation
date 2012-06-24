@@ -5,7 +5,7 @@
 //Generate the breadcrumb
 	$home = mysql_fetch_array(mysql_query("SELECT * FROM pages WHERE position = '1' AND `published` != '0'", $connDBA));
 	$title = unserialize($home['content' . $home['display']]);
-	$breadcrumb = "\n<li><a href=\"" . $root . "index.php?page=" . $home['id'] . "\">" . $title['title'] . "</a></li>
+	$breadcrumb = "\n<li><a href=\"" . $root . "index.php?page=" . $home['id'] . "\">" . stripslashes($title['title']) . "</a></li>
 <li><a href=\"../\">Book Exchange</a></li>
 <li>All Books Listings</li>\n";
 	
@@ -13,10 +13,13 @@
 	if (exist("bookcategories")) {
 		$categories = array();
 		$total = 0;
-		$categoryGrabber = mysql_query("SELECT bookcategories.*, COUNT(DISTINCT books.linkID) as total FROM `bookcategories` LEFT JOIN (books) ON bookcategories.id = books.course GROUP BY bookcategories.name ORDER BY name ASC", $connDBA);
+		$now = strtotime("now");
 		
-		while($category = mysql_fetch_array($categoryGrabber)) {
-			array_push($categories, $category);
+	//Count the total number of books in a category
+		$categoryGrabber = mysql_query("SELECT exchangesettings.expires, bookcategories.*, COUNT(DISTINCT books.linkID) as total FROM `bookcategories` LEFT JOIN (books) ON bookcategories.id = books.course RIGHT JOIN(exchangesettings) ON books.id WHERE books.sold = '0' AND books.userID != '0' AND books.upload + exchangesettings.expires > {$now} GROUP BY bookcategories.name ORDER BY name ASC", $connDBA);
+		
+		while ($category = mysql_fetch_array($categoryGrabber)) {
+			$categories[$category['id']] = $category['total'];
 			$total += $category['total'];
 		}
 	} else {
@@ -52,14 +55,14 @@
 			echo "
 <li>
 <a href=\"view-listing.php?id=" . $category['id'] . "\"><img src=\"../../data/book-exchange/icons/" . $category['id'] . "/icon_128.png\" /></a>
-<a href=\"view-listing.php?id=" . $category['id'] . "\" class=\"title\">" . $category['name'] . "</a>
-<span class=\"description\">" . $category['description'] . "</span>
+<a href=\"view-listing.php?id=" . $category['id'] . "\" class=\"title\">" . stripslashes($category['name']) . "</a>
+<span class=\"description\">" . stripslashes($category['description']) . "</span>
 ";
 	
 			
 			switch($category['total']) {
 				case "0" : 
-					echo "<span class=\"buttonLink\"><span>No Books Avaliable... yet</span></span>
+					echo "<a class=\"buttonLink\" href=\"view-listing.php?id=" . $category['id'] . "\"><span>No Books Avaliable... yet</span></a>
 </li>";
 					break;
 					
