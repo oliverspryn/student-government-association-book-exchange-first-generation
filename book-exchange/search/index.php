@@ -337,8 +337,8 @@
 <h2>" . stripslashes($seller['firstName']) . "'s Profile</h2>
 <span class=\"row\"><strong>Name:</strong> " . stripslashes($seller['firstName']) . " " . stripslashes($seller['lastName']) . "</a></span>
 <span class=\"row\"><strong>Email address:</strong> <a href=\"mailto:" . stripslashes($seller['emailAddress1']) . "\">" . stripslashes($seller['emailAddress1']) . "</a></span>
-<span class=\"row\"><strong>Alternate email address:</strong> " . $email2 . "</span>
-<span class=\"row\"><strong>Alternate email address:</strong> " . $email3 . "</span>
+<span class=\"row\"><strong>Alternate email:</strong> " . $email2 . "</span>
+<span class=\"row\"><strong>Alternate email:</strong> " . $email3 . "</span>
 </section>
 
 ";

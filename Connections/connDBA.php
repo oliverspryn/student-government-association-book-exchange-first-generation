@@ -89,25 +89,35 @@ ob_start();
 			$pageData = mysql_query("SELECT * FROM pages WHERE visible = 'on' AND published != '0' AND parentPage = '0' ORDER BY position ASC", $connDBA);
 			$navigation = "";
 			
-			while ($page = mysql_fetch_array($pageData)) {
-			//Extract the data from the encoded array
-				$pageInfo = unserialize($page['content' . $page['display']]);
-			 
-			//If we are visiting this page on the menu bar, then highlight it
-			//The link will be highlighted if:
-			// - the "page" URL parameter matches the URL of the page
-			// - the "page" URL parameter isn't set or is empty and we are on the home page (i.e.: within "index.php")
-				$URL = explode("/", $_SERVER['PHP_SELF']);
-				
-				if (end($URL) == "index.php" && !strstr($_SERVER['PHP_SELF'], "book-exchange")) {
-					if ((isset($_GET['page']) && $_GET['page'] && $_GET['page'] == $page['id']) || ((!isset($_GET['page']) || $_GET['page'] == "") && $page['position'] == "1" && $page['parentPage'] == "0")) {
-						$navigation .= "<li><a class=\"highlight\" href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
-				//... otherwise just show a regular link
+			while ($page = mysql_fetch_array($pageData)) {			
+				if ($page['type'] == "page") {
+				//Extract the data from the encoded array
+					$pageInfo = unserialize($page['content' . $page['display']]);
+				 
+				//If we are visiting this page on the menu bar, then highlight it
+				//The link will be highlighted if:
+				// - the "page" URL parameter matches the URL of the page
+				// - the "page" URL parameter isn't set or is empty and we are on the home page (i.e.: within "index.php")
+					$URL = explode("/", $_SERVER['PHP_SELF']);
+					
+					if (end($URL) == "index.php" && !strstr($_SERVER['PHP_SELF'], "book-exchange")) {
+						if ((isset($_GET['page']) && $_GET['page'] && $_GET['page'] == $page['id']) || ((!isset($_GET['page']) || $_GET['page'] == "") && $page['position'] == "1" && $page['parentPage'] == "0")) {
+							$navigation .= "<li><a class=\"highlight\" href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
+					//... otherwise just show a regular link
+						} else {
+							$navigation .= "<li><a href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
+						}
 					} else {
 						$navigation .= "<li><a href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
 					}
 				} else {
-					$navigation .= "<li><a href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
+					if ($page['locked'] == "1") {
+						$class = " class=\"locked\"";
+					} else {
+						$class = "";
+					}
+					
+					$navigation .= "<li><a" . $class . " href=\"" . $page['URL'] . "\">" . stripslashes($page['linkTitle']) . "</a></li>\n";
 				}
 			}
 			
@@ -140,20 +150,51 @@ ob_start();
 			while ($page = mysql_fetch_array($pageData)) {
 				$navigation .= "<li>\n<ul>\n";
 				
-			//Extract the data from the encoded array
-				$pageInfo = unserialize($page['content' . $page['display']]);
-			 
-			 //Show the top-level link
-				$navigation .= "<li><a class=\"item" . $counter . "\" href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
-				
-			//Show any sub-pages of the current parent-page
-				$subPageData = mysql_query("SELECT * FROM pages WHERE visible = 'on' AND published != '0' AND parentPage = '" . $page['id'] . "' ORDER BY subPosition ASC");
-				
-				while($subPage = mysql_fetch_array($subPageData)) {
+				if ($page['type'] == "page") {
 				//Extract the data from the encoded array
-					$subPageInfo = unserialize($subPage['content' . $subPage['display']]);
+					$pageInfo = unserialize($page['content' . $page['display']]);
+				 
+				 //Show the top-level link
+					$navigation .= "<li><a class=\"item" . $counter . "\" href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
 					
-					$navigation .= "<li><a href=\"" . $root . "index.php?page=" . $subPage['id'] . "\">" . stripslashes($subPageInfo['title']) . "</a></li>\n";
+				//Show any sub-pages of the current parent-page
+					$subPageData = mysql_query("SELECT * FROM pages WHERE visible = 'on' AND published != '0' AND parentPage = '" . $page['id'] . "' ORDER BY subPosition ASC");
+					
+					while($subPage = mysql_fetch_array($subPageData)) {
+					//Extract the data from the encoded array
+						$subPageInfo = unserialize($subPage['content' . $subPage['display']]);
+						
+						$navigation .= "<li><a href=\"" . $root . "index.php?page=" . $subPage['id'] . "\">" . stripslashes($subPageInfo['title']) . "</a></li>\n";
+					}
+				} else {
+				//Show the top-level link
+					if ($page['locked'] == "1") {
+						$class = " locked";
+					} else {
+						$class = "";
+					}
+				
+					$navigation .= "<li><a class=\"item" . $counter . $class . "\" href=\"" . $page['URL'] . "\">" . stripslashes($page['linkTitle']) . "</a></li>\n";
+					
+				//Show any sub-pages of the current parent-page
+					$subPageData = mysql_query("SELECT * FROM pages WHERE visible = 'on' AND published != '0' AND parentPage = '" . $page['id'] . "' ORDER BY subPosition ASC");
+					
+					while($subPage = mysql_fetch_array($subPageData)) {
+						if ($subPage['type'] == "page") {
+						//Extract the data from the encoded array
+							$subPageInfo = unserialize($subPage['content' . $subPage['display']]);
+							
+							$navigation .= "<li><a href=\"" . $root . "index.php?page=" . $subPage['id'] . "\">" . stripslashes($subPageInfo['title']) . "</a></li>\n";
+						} else {
+							if ($subPage['locked'] == "1") {
+								$class = " class=\"locked\"";
+							} else {
+								$class = "";
+							}
+							
+							$navigation .= "<li><a" . $class . " href=\"" . $subPage['URL'] . "\">" . stripslashes($subPage['linkTitle']) . "</a></li>\n";
+						}
+					}
 				}
 				
 				$navigation .= "</ul>\n</li>\n";
@@ -2312,62 +2353,11 @@ ob_start();
 /* End statistics tracker */
 
 //Force user to change password if required
-	if (isset($_SESSION['MM_Username'])) {
-		$userName = $_SESSION['MM_Username'];
+	if (loggedIn()) {
+		$URL = $_SERVER['PHP_SELF'];
 		
-		$userDataGrabber = mysql_query("SELECT * FROM `users` WHERE `emailAddress1` = '{$userName}'", $connDBA);
-		$userData = mysql_fetch_array($userDataGrabber);
-		$URL = $_SERVER['REQUEST_URI'];
-		
-		if ($userData['changePassword'] == "on" && !strstr($URL, "logout.php")) {
-		//Process the form
-			if (isset ($_POST['submitPassword']) && !empty($_POST['oldPassword']) && !empty($_POST['newPassword']) && !empty($_POST['confirmPassword'])) {
-				$oldPassword = encrypt($_POST['oldPassword']);
-				$newPassword = encrypt($_POST['newPassword']);
-				$confirmPassword = encrypt($_POST['confirmPassword']);
-				$passwordGrabber = mysql_query("SELECT * FROM `users` WHERE `userName` = '{$userName}' AND `passWord` = '{$oldPassword}'", $connDBA);
-				$password = mysql_fetch_array($passwordGrabber);
-				
-				if ($password && $newPassword === $confirmPassword) {
-					if ($password['passWord'] != $newPassword) {
-						mysql_query("UPDATE `users` SET `passWord` = '{$newPassword}', `changePassword` = '' WHERE `userName` = '{$userName}' AND `passWord` = '{$oldPassword}'", $connDBA);
-						
-						header("Location: " . $root . "admin/index.php");
-						exit;
-					} else {
-						header("Location: http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . "?password=identical");
-						exit;
-					}
-				} else {
-					header("Location: http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . "?password=error");
-					exit;
-				}
-			}
-			
-		//Display the content	
-			echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head>";
-			title("Change Password");
-			headers();
-			validate();
-			echo "</head><body>";
-			topPage();
-			
-			echo "<form name=\"updatePassword\" id=\"validate\" action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\" onsubmit=\"return errorsOnSubmit(this)\"><h2>Change Password</h2><p>You are required to change your password before using this site.</p>";
-			
-			if (isset($_GET['password']) && $_GET['password'] == "error") {
-				errorMessage("Either your old password is incorrect, or your new password does not match.");
-			} elseif (isset($_GET['password']) && $_GET['password'] == "identical") { 
-				errorMessage("Your old password may not be the same as your new password.");
-			} else {
-				echo "<p>&nbsp;</p>";
-			}
-			
-			echo "<blockquote><p>Current password<span class=\"require\">*</span>:</p><blockquote><input type=\"password\" name=\"oldPassword\" id=\"oldPassword\" size=\"50\" autocomplete=\"off\" class=\"validate[required]\" /></blockquote><p>New password<span class=\"require\">*</span>:</p><blockquote><input type=\"password\" name=\"newPassword\" id=\"newPassword\" size=\"50\" autocomplete=\"off\" class=\"validate[required,length[6,30]]\" /></blockquote><p>Confirm new password<span class=\"require\">*</span>:</p><blockquote><input type=\"password\" name=\"confirmPassword\" id=\"confirmPassword\" size=\"50\" autocomplete=\"off\" class=\"validate[required,length[6,30],confirm[newPassword]]\" /><p>&nbsp;</p><p></blockquote><input type=\"submit\" name=\"submitPassword\" id=\"submitPassword\" value=\"Submit\" /></p>";
-			formErrors();
-			echo "</blockquote></form>";
-			footer();
-			echo "</body></html>";
-			exit;
+		if ($userData['changePassword'] == "on" && basename($URL) != "logout.php" && basename($URL) != "reset.php") {
+			redirect($root . "reset.php");
 		}
 	}
 ?>

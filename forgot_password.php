@@ -1,74 +1,113 @@
-<?php require_once('Connections/connDBA.php'); ?>
 <?php
-	if (isset ($_SESSION['MM_Username'])) {
-		header("Location: admin/index.php");
+//Include the system's core
+	require_once("Connections/connDBA.php");
+	require_once("Connections/Validate.php");
+	require_once("Connections/PHPMailer/class.phpmailer.php");
+	
+//Don't allow access from logged in users!
+	if (loggedIn()) {
+		redirect("book-exchange");
 	}
-?>
-<?php
-//Process the form
-	if (isset($_POST['submit']) && !empty($_POST['userName']) && !empty($_POST['emailAddress'])) {
-		$userName = $_POST['userName'];
-		$emailAddress = $_POST['emailAddress'];
-		$userDataGrabber = mysql_query("SELECT * FROM `users` WHERE `userName` = '{$userName}' AND `emailAddress1` = '{$emailAddress}'", $connDBA);
-		$userData = mysql_fetch_array($userDataGrabber);
+	
+//Process the recovery request
+	if (isset($_POST['username'])) {
+		$email = mysql_real_escape_string(Validate::required($_POST['username']));
+		$rawPassword = randomValue("10");
 		
-		if ($userData) {
-			$passwordPrep = randomValue(10, "alphanum");
-			$password = encrypt($passwordPrep);
-			$siteName = query("SELECT * FROM `siteprofiles` WHERE `id` = '1'");
-			$from = prepare($siteName['siteName']) . "<no-reply@" . $_SERVER['HTTP_HOST'] . ">";
-			$header = "From: " . $from;
+	//Emulate the first level of encryption which usually is done via JavaScript
+		$hash1 = "(Cn%%fJV5J";
+		$password1 = md5($rawPassword . "_" . $hash1);
+		
+	//Perform the second level of encryption, which always occurs on the server
+		$hash2 = "+y4hn&T/'K";
+		$password2 = md5($password1 . "_" . $hash2);
+		
+	//Execute the query on the database
+		$affected = mysql_query("UPDATE users SET passWord = PASSWORD('{$password2}'), changePassword = 'on' WHERE emailAddress1 LIKE '{$email}'", $connDBA);
+		
+	//Send this user an email
+		if (mysql_affected_rows($connDBA)) {
+		//SMTP logon information
+			$username = "no-reply@forwardfour.com";
+			$password = "n*O^]z%]|c44Q~3";
 			
-			mysql_query ("UPDATE `users` SET `password` = '{$password}', `changePassword` = 'on' WHERE `userName` = '{$userName}' AND `emailAddress1` = '{$emailAddress}'", $connDBA);
-			mail($userData['firstName'] . " " . $userData['lastName'] . " <" . $userData['emailAddress1'] . ">", prepare($siteName['siteName']) . " - Password Reset", "Your password has been been set to: \"" . $passwordPrep . "\". Please login with this password, and you will be prompted to change this to a more suitable password.", $header);
-			
-			header("Location: forgot_password.php?message=processed");
-			exit;
-		} else {
-			header("Location: forgot_password.php?message=processed");
-			exit;
-		}
-	}
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+		//Generate a subject and message
+			$subject = "Password Recovery Request";
+			$bodyHTML = "<!DOCTYPE html>
+<html lang=\"en-US\">
 <head>
-<?php title("Password Recovery"); ?>
-<?php headers(); ?>
-<?php validate(); ?>
-<body<?php bodyClass(); ?>>
-<?php topPage(); ?>
-<h4><a href="index.php">Home</a> &#9658 <a href="login.php">Login</a> &#9658 Forgot Password</h4>
-<h2>Password Recovery</h2>
-<p>Enter  your user name and your primary email address to recover your password.</p>
-<?php
-//Display message updates
-	if (isset($_GET['message'])) {
-		successMessage("If the user name and email address you entered were correct, then an email has been sent to you with instructions on how to change your password. Click <a href=\"login.php\">here to login</a>.");
-	} else {
-		echo "<p>&nbsp;</p>";
-	}
-?>
-<form name="resetPassword" id="validate" action="forgot_password.php" method="post" onsubmit="return errorsOnSubmit(this)">
-<blockquote>
-<p>User name<span class="require">*</span>:</p>
-<blockquote>
-  <p>
-    <input type="text" name="userName" id="userName" size="50" autocomplete="off" class="validate[required]" />
-  </p>
-</blockquote>
-<p>Email Address<span class="require">*</span>:</p>
-<blockquote>
-  <p>
-    <input type="text" name="emailAddress" id="emailAddress" size="50" autocomplete="off" class="validate[required,custom[email]]" />
-  </p>
-</blockquote>
-  <p>
-    <input type="submit" name="submit" id="submit" value="Submit" />
-  </p>
-  <?php formErrors(); ?>
-</blockquote>
-</form>
-<?php footer(); ?>
+<meta charset=\"utf-8\">
+<title>" . $subject . "</title>
+</head>
+
+<body>
+<h2>Password Recovery Request</h2>
+<p>We have reset your password to: <strong>" . $rawPassword . "</strong></p>
+<p>Once you <a href=\"" . $root . "login\" style=\"color: #4BF; text-decoration: none;\">login</a>, you will be asked to change it to a more suitable password.</p>			
 </body>
-</html>
+</html>";
+			
+			$altBody = "PASSWORD RECOVERY REQUEST
+			
+We have reset your password to: " . $rawPassword . "
+Once you login, you will be asked to change it to a more suitable password.
+
+Login here: " . $root . "login";
+	
+		//Send a notification email
+			try {
+				$mail = new PHPMailer(true);
+				$mail->IsSMTP();
+				$mail->SMTPDebug = 0;
+				$mail->SMTPAuth = true;
+				$mail->SMTPSecure = "tls";
+				$mail->Host = "smtp.gmail.com";
+				$mail->Port = 587;
+				$mail->Username = $username;
+				$mail->Password = $password;
+				$mail->AddAddress($_POST['username']);
+				$mail->SetFrom("no-reply@forwardfour.com", "No-Reply");
+				$mail->Subject = $subject;
+				$mail->AltBody = $altBody;
+				$mail->MsgHTML($bodyHTML);
+				$mail->Send();
+			} catch (phpmailerException $e) {
+				//Oh well, ignore. Probably a bad email address
+			} catch (Exception $e) {
+				//Oh well, ignore. Probably a bad email address
+			}
+		}
+		
+	//Redirect back to the login page, without giving any signs or hints of success or failure, to protect data
+		redirect("login.php?reset=true");
+	}
+	
+//Generate the breadcrumb
+	$home = mysql_fetch_array(mysql_query("SELECT * FROM pages WHERE position = '1' AND `published` != '0'", $connDBA));
+	$title = unserialize($home['content' . $home['display']]);
+	$breadcrumb = "\n<li><a href=\"" . $root . "index.php?page=" . $home['id'] . "\">" . stripslashes($title['title']) . "</a></li>
+<li><a href=\"login.php\">Login</a></li>
+<li>Password Recovery</li>\n";
+	
+//Include the top of the page from the administration template
+	topPage("public", "Password Recovery", "" , "", "<link href=\"styles/common/login.css\" rel=\"stylesheet\" />", $breadcrumb);
+	
+	echo "<section class=\"body\">
+<h2>Password Recovery</h2>
+<p>Forgot your password? No problem, this happens all of the time. Just share your email with us and we can help.</p>
+<br>
+<form action=\"forgot_password.php\" class=\"account\" method=\"post\">
+<p>Email address:</p>
+<input autocomplete=\"off\" name=\"username\" type=\"email\"/>
+<br><br>
+<input class=\"blue\" type=\"submit\" value=\"Help!\" />
+<input onclick=\"javascript:document.location.href='login.php'\" type=\"button\" value=\"Cancel\" />
+</form>";
+
+	
+//Include the footer from the public template
+	echo "
+</section>";
+
+	footer("public");
+?>

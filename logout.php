@@ -5,6 +5,12 @@
 //Logout the user
 	session_destroy();
 	
+//Generate the breadcrumb
+	$home = mysql_fetch_array(mysql_query("SELECT * FROM pages WHERE position = '1' AND `published` != '0'", $connDBA));
+	$title = unserialize($home['content' . $home['display']]);
+	$breadcrumb = "\n<li><a href=\"" . $root . "index.php?page=" . $home['id'] . "\">" . stripslashes($title['title']) . "</a></li>
+<li>Logout</li>\n";
+	
 //Setup the page environmental parameters
 	$title = "Logout";
 	$pageType = "public";
@@ -15,7 +21,7 @@
 		$HTML = "<meta http-equiv=\"refresh\" content=\"3; url=index.php\">";
 	}
 	
-	topPage($pageType, $title, $HTML);
+	topPage($pageType, $title, "", "", $HTML, $breadcrumb);
 
 //Display a different logout message depending on the URL parameters
 	if (isset($_GET['action']) && $_GET['action'] == "relogin") {
@@ -26,7 +32,12 @@
 <p>&nbsp;</p>";
 	} else {
 		echo "<p>&nbsp;</p>
-<div align=\"center\">You have successfully logged out.</div>
+<div align=\"center\">
+You have successfully logged out.
+<br><br>
+<button class=\"blue\" onclick=\"javascript:document.location.href='index.php'\">Go Home</button>
+</div>
+
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>";

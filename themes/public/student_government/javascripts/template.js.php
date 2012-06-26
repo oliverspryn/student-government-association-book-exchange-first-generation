@@ -53,7 +53,7 @@
 		
 	//Provide search suggestions
 		$('input.search.template').autocomplete({
-			'source' : '<?php echo $root; ?>book-exchange/system/server/suggestions.php',
+			'source' : '<?php echo $root; ?>book-exchange/system/server/suggestions.php?searchBy=title&category=0',
 			'minLength' : 2,
 			'select' : function(event, ui) {
 				$(this).val(ui.item.label).parent().submit();
@@ -69,7 +69,7 @@
 				details = item.total + ' books starting at \$' + item.price;
 			}
 			
-			return $('<li />').data('item.autocomplete', item).append($('<a title=\"' + item.label + '\"></a>').html('<img src=\"' + item.image + '\" /><span class=\"title\">' + item.label + '</span><span class=\"author details\">Author: ' + item.author + '</span><span class=\"details total\">' + details + '</span>')).appendTo(ul);
+			return $('<li />').data('item.autocomplete', item).append($('<a title=\"' + item.label + '\"></a>').html('<img src=\"' + item.image + '\" /><span class=\"title\">' + item.label + '</span><span class=\"author details\">' + item.byLine + '</span><span class=\"details total\">' + details + '</span>')).appendTo(ul);
 		};
 	});
 })(jQuery);

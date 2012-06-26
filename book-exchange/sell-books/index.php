@@ -122,12 +122,18 @@
 			}
 			
 		//Determine where to redirect the user
+			if ($awaitingImage != "") {
+				$extra = "&approval=true";
+			} else {
+				$extra = "";
+			}
+			
 			if ($_POST['redirect'] == "1") {
-				redirect("../sell-books/?message=added");
+				redirect("../sell-books/?message=added" . $extra);
 			} else {
 				$id = mysql_insert_id();
 				
-				redirect("../account/?message=added#book_" . $id);
+				redirect("../account/?message=added" . $extra . "#book_" . $id);
 			}
 		} else {
 		/**
@@ -215,7 +221,13 @@
 
 //Display any needed success messages
 	if (isset($_GET['message']) && $_GET['message'] == "added") {
-		echo "<div class=\"center\"><div class=\"success\">Your book is now up for sale</div></div>
+		if (isset($_GET['approval'])) {
+			$extra = ". The book's cover must be approved before it will display.";
+		} else {
+			$extra = "";
+		}
+		
+		echo "<div class=\"center\"><div class=\"success\">Your book is now up for sale" . $extra . "</div></div>
 		
 ";
 	}

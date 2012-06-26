@@ -4,16 +4,18 @@
 	
 //Grab the book's information
 	if (isset($_GET['id'])) {
-		$bookData = mysql_query("SELECT books.*, exchangesettings.expires, bookcategories.*, users.*, books.id AS bookID, books.course AS courseID, GROUP_CONCAT(books.course) AS classIDs, GROUP_CONCAT(bookcategories.course) AS classShort, GROUP_CONCAT(bookcategories.name) AS classes, GROUP_CONCAT(books.section) AS classSec, GROUP_CONCAT(books.number) AS classNum FROM books RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (exchangesettings) ON users.id WHERE books.linkID = (SELECT linkID FROM books WHERE id = '{$_GET['id']}' LIMIT 1) GROUP BY books.linkID", $connDBA);
+		$bookData = mysql_query("SELECT books.*, exchangesettings.expires, bookcategories.*, users.*, books.id AS bookID, books.course AS courseID, GROUP_CONCAT(books.course) AS classIDs, GROUP_CONCAT(bookcategories.course) AS classShort, GROUP_CONCAT(bookcategories.name) AS classes, GROUP_CONCAT(books.section) AS classSec, GROUP_CONCAT(books.number) AS classNum FROM books RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (exchangesettings) ON users.id WHERE books.linkID = (SELECT linkID FROM books WHERE id = '{$_GET['id']}' LIMIT 1) AND books.userID != '0' GROUP BY books.linkID", $connDBA);
 		
-		if ($bookData) {
+		if ($bookData && mysql_num_rows($bookData)) {
 			$book = mysql_fetch_array($bookData);
 			$now = strtotime("now");
 			
-		//Has the book been sold or expired? If so, only the seller can view it
+		//Has the book been sold, expired, or deleted? If so, only the seller can view it, unless it is deleted
 			if (((($book['expires'] + $book['upload']) < $now) || $book['sold'] == '1') && $userData['id'] != $book['userID']) {
 				redirect("../listings");
 			}
+		} else {
+			redirect("../listings");
 		}
 	} else {
 		redirect("../listings");

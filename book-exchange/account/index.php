@@ -1,10 +1,34 @@
 <?php
 //Include the system's core
 	require_once("../../Connections/connDBA.php");
+	require_once("../system/server/Validate.php");
 	
 //Verify that the user is logged in
 	if (!loggedIn()) {
 		redirect("../../login.php?accesscheck=" . $_SERVER['REQUEST_URI'] . "&message=required");
+	}
+	
+//Update a user's profile
+	if (isset($_POST['action']) && $_POST['action'] == "profile") {
+		$id = $userData['id'];
+		$first = mysql_real_escape_string(Validate::required($_POST['first']));
+		$last = mysql_real_escape_string(Validate::required($_POST['last']));
+		$emailAddress1 = mysql_real_escape_string(Validate::email($_POST['emailAddress1']));
+		$emailAddress2 = mysql_real_escape_string(Validate::email($_POST['emailAddress2'], true));
+		$emailAddress3 = mysql_real_escape_string(Validate::email($_POST['emailAddress3'], true));
+		
+	//Check the password, did we get one?
+		if ($_POST['password'] != "") {
+			$hash = "+y4hn&T/'K";
+			$password = md5($_POST['password'] . "_" . $hash);
+			
+			mysql_query("UPDATE users SET firstName = '{$first}', lastName = '{$last}', emailAddress1 = '{$emailAddress1}', emailAddress2 = '{$emailAddress2}', emailAddress3 = '{$emailAddress3}', passWord = PASSWORD('{$password}')", $connDBA);
+		} else {
+			mysql_query("UPDATE users SET firstName = '{$first}', lastName = '{$last}', emailAddress1 = '{$emailAddress1}', emailAddress2 = '{$emailAddress2}', emailAddress3 = '{$emailAddress3}'", $connDBA);
+		}
+		
+		echo "success";
+		exit;
 	}
 	
 //Renew a book
@@ -49,6 +73,9 @@
 //Include the top of the page from the administration template
 	topPage("public", "All Book Listings", "" , "", "<link href=\"../system/stylesheets/style.css\" rel=\"stylesheet\" />
 <link href=\"../system/stylesheets/account.css\" rel=\"stylesheet\" />
+<link href=\"../../styles/jQuery/validationEngine.jquery.min.css\" rel=\"stylesheet\" />
+<script src=\"../../javascripts/jQuery/jquery.validationEngine.min.js\"></script>
+<script src=\"../../javascripts/common/md5.min.js\"></script>
 <script src=\"../system/javascripts/interface.js\"></script>", $breadcrumb);
 	echo "<section class=\"body\">
 ";
@@ -57,7 +84,13 @@
 	if (isset($_GET['message'])) {
 		switch ($_GET['message']) {
 			case "added" : 
-				echo "<div class=\"center\"><div class=\"success\">Your book is now up for sale</div></div>
+				if (isset($_GET['approval'])) {
+					$extra = ". The book's cover must be approved before it will display.";
+				} else {
+					$extra = "";
+				}
+				
+				echo "<div class=\"center\"><div class=\"success\">Your book is now up for sale" . $extra . "</div></div>
 				
 ";
 				break;
@@ -87,27 +120,27 @@
 <h2>My Profile</h2>
 <span class=\"row\">
 <strong>Name:</strong>
-" . stripslashes($userData['firstName']) . " " . stripslashes($userData['lastName']) . "
+<span class=\"firstName\">" . stripslashes($userData['firstName']) . "</span> <span class=\"lastName\">" . stripslashes($userData['lastName']) . "</span>
 </span>
 
 <span class=\"row\">
-<strong>Primary email address:</strong>
-<a href=\"mailto:" . htmlentities(stripslashes($userData['emailAddress1'])) .  "\">" . stripslashes($userData['emailAddress1']) . "</a>
+<strong>Email:</strong>
+<a class=\"emailAddress1\" href=\"mailto:" . htmlentities(stripslashes($userData['emailAddress1'])) .  "\">" . stripslashes($userData['emailAddress1']) . "</a>
 </span>
 
 ";
 	
 	if ($userData['emailAddress2'] != "") {
 		echo "<span class=\"row\">
-<strong>Secondary email address:</strong>
-<a href=\"mailto:" . htmlentities(stripslashes($userData['emailAddress2'])) .  "\">" . stripslashes($userData['emailAddress2']) . "</a>
+<strong>Alternate email:</strong>
+<a class=\"emailAddress2\" href=\"mailto:" . htmlentities(stripslashes($userData['emailAddress2'])) .  "\">" . stripslashes($userData['emailAddress2']) . "</a>
 </span>
 
 ";
 	} else {
 		echo "<span class=\"row\">
-<strong>Secondary email address:</strong>
-<span class=\"none\">None given</span>
+<strong>Alternate email:</strong>
+<a class=\"none emailAddress2\">None given</a>
 </span>
 
 ";
@@ -115,15 +148,15 @@
 	
 	if ($userData['emailAddress3'] != "") {
 		echo "<span class=\"row\">
-<strong>Tertiary email address:</strong>
-<a href=\"mailto:" . htmlentities(stripslashes($userData['emailAddress3'])) .  "\">" . stripslashes($userData['emailAddress3']) . "</a>
+<strong>Alternate email:</strong>
+<a class=\"emailAddress3\" href=\"mailto:" . htmlentities(stripslashes($userData['emailAddress3'])) .  "\">" . stripslashes($userData['emailAddress3']) . "</a>
 </span>
 
 ";
 	} else {
 		echo "<span class=\"row\">
-<strong>Tertiary email address:</strong>
-<span class=\"none\">None given</span>
+<strong>Alternate email:</strong>
+<a class=\"none emailAddress3\">None given</a>
 </span>
 
 ";

@@ -11,16 +11,17 @@
 	
 //Grab the categories from the database and count the total number of books for sale
 	if (exist("bookcategories")) {
-		$categories = array();
+		$notEmpty= array();
 		$total = 0;
 		$now = strtotime("now");
 		
 	//Count the total number of books in a category
-		$categoryGrabber = mysql_query("SELECT exchangesettings.expires, bookcategories.*, COUNT(DISTINCT books.linkID) as total FROM `bookcategories` LEFT JOIN (books) ON bookcategories.id = books.course RIGHT JOIN(exchangesettings) ON books.id WHERE books.sold = '0' AND books.userID != '0' AND books.upload + exchangesettings.expires > {$now} GROUP BY bookcategories.name ORDER BY name ASC", $connDBA);
+		$notEmptyGrabber = mysql_query("SELECT exchangesettings.expires, bookcategories.*, COUNT(DISTINCT books.linkID) as total FROM `bookcategories` LEFT JOIN (books) ON bookcategories.id = books.course RIGHT JOIN(exchangesettings) ON books.id WHERE books.sold = '0' AND books.userID != '0' AND books.upload + exchangesettings.expires > {$now} GROUP BY bookcategories.name ORDER BY name ASC", $connDBA);
+		$categoryGrabber = mysql_query("SELECT * FROM `bookcategories` ORDER BY name ASC", $connDBA);
 		
-		while ($category = mysql_fetch_array($categoryGrabber)) {
-			$categories[$category['id']] = $category['total'];
-			$total += $category['total'];
+		while ($notEmptyArray = mysql_fetch_array($notEmptyGrabber)) {
+			$notEmpty[$notEmptyArray['id']] = $notEmptyArray['total'];
+			$total += $notEmptyArray['total'];
 		}
 	} else {
 		$categories = false;
@@ -51,7 +52,7 @@
 	if (exist("bookcategories")) {
 		echo "<ul class=\"listing\">";
 		
-		foreach($categories as $category) {
+		while($category = mysql_fetch_array($categoryGrabber)) {
 			echo "
 <li>
 <a href=\"view-listing.php?id=" . $category['id'] . "\"><img src=\"../../data/book-exchange/icons/" . $category['id'] . "/icon_128.png\" /></a>
@@ -59,22 +60,21 @@
 <span class=\"description\">" . stripslashes($category['description']) . "</span>
 ";
 	
-			
-			switch($category['total']) {
-				case "0" : 
-					echo "<a class=\"buttonLink\" href=\"view-listing.php?id=" . $category['id'] . "\"><span>No Books Avaliable... yet</span></a>
+			if (isset($notEmpty[$category['id']])) {
+				switch($notEmpty[$category['id']]) {
+					case "1" : 
+						echo "<a class=\"buttonLink\" href=\"view-listing.php?id=" . $category['id'] . "\"><span>Browse 1 Book</span></a>
 </li>";
-					break;
-					
-				case "1" : 
-					echo "<a class=\"buttonLink\" href=\"view-listing.php?id=" . $category['id'] . "\"><span>Browse 1 Book</span></a>
+						break;
+						
+					default : 
+						echo "<a class=\"buttonLink\" href=\"view-listing.php?id=" . $category['id'] . "\"><span>Browse " . $notEmpty[$category['id']] . " Books</span></a>
 </li>";
-					break;
-					
-				default : 
-					echo "<a class=\"buttonLink\" href=\"view-listing.php?id=" . $category['id'] . "\"><span>Browse " . $category['total'] . " Books</span></a>
+						break;
+				}
+			} else {
+				echo "<a class=\"buttonLink\" href=\"view-listing.php?id=" . $category['id'] . "\"><span>No Books Avaliable... yet</span></a>
 </li>";
-					break;
 			}
 		}
 		

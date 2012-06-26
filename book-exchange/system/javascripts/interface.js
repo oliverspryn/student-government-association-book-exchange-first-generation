@@ -288,7 +288,7 @@ $(document).ready(function() {
 		var title = $(this).siblings('span.title, a.title').text();
 		var id = $(this).attr('data-fetch');
 		
-	//Wait... is the user logged it? The login panel will exist if not
+	//Wait... is the user logged in? The login panel will exist if not
 		if ($('section.login').length) {
 			var queryString = document.location.href.split('?');
 			
@@ -620,7 +620,160 @@ $(document).ready(function() {
 		}
 		
 		return $('<li />').data('item.autocomplete', item).append($('<a title="' + item.label + '"></a>').html('<img src="' + item.image + '" /><span class="title label">' + item.label + '</span><span class="details byLine">' + item.byLine + '</span><span class="details total">' + details + '</span>')).appendTo(ul);
-	}
+	};
+	
+/**
+ * Update a user's profile
+ * ------------------------------------
+*/
+		
+	$('button.updateProfile').click(function() {
+		$('<section class="update" title="Update Profile"></section>')
+		.html('<form action="index.php" class="updateProfile"><span class="row"><strong>First name:</strong> <input autocomplete="off" class="first noIcon validate[required]" name="first" type="text" /></span><span class="row"><strong>Last name:</strong> <input autocomplete="off" class="last noIcon validate[required]" name="last" type="text" /></span><span class="row"><strong>Email:</strong> <input autocomplete="off" class="emailAddress1 noIcon validate[required,custom[email]]" name="emailAddress1" type="text" /></span><span class="row"><strong>Alternate email:</strong> <input autocomplete="off" class="emailAddress2 noIcon validate[custom[email]]" name="emailAddress2" type="text" /></span><span class="row"><strong>Alternate email:</strong> <input autocomplete="off" class="emailAddress3 noIcon validate[custom[email]]" name="emailAddress3" type="text" /></span><br><br><span class="row notification">Leave blank to keep your current password</span><span class="row"><strong>Password:</strong> <input autocomplete="off" class="password noIcon" id="password" name="password" type="password" /></span><span class="row"><strong>Password (again):</strong> <input autocomplete="off" class="confirm noIcon validate[equals[password]]" name="confirm" type="password" /></span></form>')
+		.dialog({
+			'height' : 510,
+			'modal' : true,
+			'resizable' : false,
+			'width' : 410,
+			'create' : function() {
+			//Grab the values from the page...
+				var page = $('section.profile');
+				
+			//... and plug them into the form
+				var form = $('section.update');
+				form.find('input.first').val(page.find('span.row span.firstName').text());
+				form.find('input.last').val(page.find('span.row span.lastName').text());
+				form.find('input.emailAddress1').val(page.find('span.row a.emailAddress1').text());
+				var emailAddress2 = page.find('span.row a.emailAddress2').text();
+				var emailAddress3 = page.find('span.row a.emailAddress3').text();
+				
+				if (emailAddress2 == 'None given') {
+					form.find('input.emailAddress2').val('');
+				} else {
+					form.find('input.emailAddress2').val(emailAddress2);
+				}
+				
+				if (emailAddress3 == 'None given') {
+					form.find('input.emailAddress3').val('');
+				} else {
+					form.find('input.emailAddress3').val(emailAddress3);
+				}
+			}, 'open' : function() {
+			//Instantiate the jQuery validation engine
+				$('section.update form.updateProfile').validationEngine({
+					'relative' : true,
+					'overflownDIV' : 'section.update',
+					'promptPosition' : 'bottomLeft',
+					'autoHidePrompt' : 'true',
+					'autoHideDelay' : 7000,
+					'scroll' : false
+				});
+			}, 'buttons' : {
+				'Update' : function() {
+				//Validate the form
+					if (!$('form.updateProfile').validationEngine('validate')) {
+						return false;
+					}
+					
+					var hash = "(Cn%%fJV5J";
+					
+				//Grab all of the data from the form
+					var form = $('section.update');
+					var first = form.find('input.first').val();
+					var last = form.find('input.last').val();
+					var emailAddress1 = form.find('input.emailAddress1').val();
+					var emailAddress2 = form.find('input.emailAddress2').val();
+					var emailAddress3 = form.find('input.emailAddress3').val();
+					var password = form.find('input.password').val();
+					var confirm = form.find('input.confirm').val();
+					
+				//Are the passwords the same?
+					if (password === confirm) {
+						if (password != '') {
+							password = md5(confirm + '_' + hash);
+						} else {
+							password = '';
+						}
+					} else {
+						$('<section class="passwordUnmatch" title="Check Your Passwords"></section>')
+						.html('<p><span class="ui-icon ui-icon-alert"></span>Your password don\'t match. Try them again!</p>')
+						.dialog({
+							'height' : 220,
+							'modal' : true,
+							'resizable' : false,
+							'width' : 320,
+							'buttons' : {
+								'OK' : function() {
+									$(this).dialog('close').remove();
+								}
+							}
+						});
+						
+						return false;
+					}
+					
+				//Update the HTML page
+					var page = $('section.profile');
+					var form = $('section.update');
+					page.find('span.row span.firstName').text(form.find('input.first').attr('value'));
+					page.find('span.row span.lastName').text(form.find('input.last').attr('value'));
+					page.find('span.row a.emailAddress1').text(form.find('input.emailAddress1').attr('value'));
+					page.find('span.row a.emailAddress1').attr('href', 'mailto:' + form.find('input.emailAddress1').attr('value'));
+					
+					var emailAddress2 = form.find('input.emailAddress2').attr('value');
+					var emailAddress3 = form.find('input.emailAddress3').attr('value');
+					
+					if (emailAddress2 == '') {
+						page.find('span.row a.emailAddress2').text('None given').addClass('none').removeAttr('href');
+					} else {
+						page.find('span.row a.emailAddress2').text(emailAddress2).removeClass('none');
+						page.find('span.row a.emailAddress2').attr('href', 'mailto:' + form.find('input.emailAddress2').attr('value'));
+					}
+					
+					if (emailAddress3 == '') {
+						page.find('span.row a.emailAddress3').text('None given').addClass('none').removeAttr('href');
+					} else {
+						page.find('span.row a.emailAddress3').text(emailAddress3).removeClass('none');
+						page.find('span.row a.emailAddress3').attr('href', 'mailto:' + form.find('input.emailAddress3').attr('value'));
+					}
+					
+				//Close the dialog
+					$(this).dialog('close').remove();
+					
+				//Send the results to the server
+					$.ajax({
+						'data' : {
+							'action' : 'profile',
+							'first' : first,
+							'last' : last,
+							'emailAddress1' : emailAddress1,
+							'emailAddress2' : emailAddress2,
+							'emailAddress3' : emailAddress3,
+							'password' : password
+						}, 'type' : 'POST',
+						'url' : 'index.php',
+						'success' : function(data) {
+							$(this).dialog('close').remove();
+							
+						//Display a success message
+							if (data == 'success') {
+								var message = $('<div class="center"><div class="success">Your profile was updated</div></div>').appendTo('body');
+							} else {
+								var message = $('<div class="center"><div class="error">' + data + '</div></div>').appendTo('body');
+							}
+							
+							setTimeout(function() {
+								message.fadeOut();
+							}, 10000);
+						}
+					})
+					
+				}, 'Cancel' : function() {
+					$(this).dialog('close').remove();
+				}
+			}
+		});
+	});
 	
 /**
  * Misc

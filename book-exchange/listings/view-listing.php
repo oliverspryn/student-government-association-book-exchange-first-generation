@@ -467,12 +467,8 @@
 		$courseSpecific = "";
 		
 	//Is it just a particular section or number where we don't have any books?
-		if (isset($_GET['number'])) {
-			$courseSpecific .= " " . $_GET['number'];
-		}
-		
-		if (isset($_GET['section'])) {
-			$courseSpecific .= " " . $_GET['section'];
+		if (isset($_GET['number']) || isset($_GET['section'])) {
+			redirect("view-listing.php?id=" . $_GET['id']);
 		}
 		
 		echo "<section class=\"empty\">

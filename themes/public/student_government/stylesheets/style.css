@@ -241,6 +241,7 @@ nav.main ul.breadcrumb li a {
  */
  
 nav.main ul.exchange {
+	background: #FCFCFC;
 	font-size: 0px; /* Removes the effect of whitespace between the <li> tags */
 	list-style: none;
 	margin: 0px;

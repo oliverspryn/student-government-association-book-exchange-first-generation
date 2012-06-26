@@ -148,7 +148,7 @@ Thank you, we hope that was easy!
 		$mail->Username = $username;
 		$mail->Password = $password;
 		$mail->AddAddress($toEmail, $toName);
-		$mail->SetFrom($toEmail, $toName);
+		$mail->SetFrom($fromEamil, $fromName);
 		$mail->AddReplyTo($fromEamil, $fromName);
 		$mail->Subject = $subject;
 		$mail->AltBody = $altBody;

@@ -1,0 +1,114 @@
+.error {
+	-moz-box-shadow: 0 0 15px #FF0000;
+	-ms-box-shadow: 0 0 15px #FF0000;
+	-o-box-shadow: 0 0 15px #FF0000;
+	-webkit-box-shadow: 0 0 15px #FF0000;
+	background: #FF6666;
+	border: 1px solid #FF0000;
+	border-radius: 5px;
+	box-shadow: 0 0 15px #FF0000;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 13px;
+	font-weight: bolder;
+	margin: 0px auto 0px auto;
+	padding: 5px 25px 5px 25px;
+	position: fixed;
+	top: 45px;
+	z-index: 5;
+}
+
+.success {
+	-moz-box-shadow: 0 0 15px #003300;
+	-ms-box-shadow: 0 0 15px #003300;
+	-o-box-shadow: 0 0 15px #003300;
+	-webkit-box-shadow: 0 0 15px #003300;
+	background: #00FF66;
+	border: 1px solid #003300;
+	border-radius: 5px;
+	box-shadow: 0 0 15px #003300;
+	color: #000000;
+	display: inline-block;
+	font-size: 13px;
+	font-weight: bolder;
+	margin: 0px auto 0px auto;
+	padding: 5px 25px 5px 25px;
+	position: fixed;
+	top: 45px;
+	z-index: 5;
+}
+
+div.wrapper {
+	text-align: center;
+}
+
+/**
+ * Login form
+ * ------------------------------------
+*/
+
+div.wrapper div.login {
+	display: inline-block;
+	height: 285px;
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+	text-align: left;
+	vertical-align: top;
+	width: 250px;
+}
+
+div.wrapper div.login h2 {
+	color: #F49AC1;
+	font-size: 14px;
+	padding-left: 93px;
+}
+
+/**
+ * OR divider
+ * ------------------------------------
+*/
+
+div.wrapper span.toggle {
+	background: url(../../images/common/login_register.png) no-repeat center;
+	background-position: -120px 0;
+	display: inline-block;
+	height: 240px;
+	margin-right: 44px;
+	width: 68px;
+}
+
+/**
+ * Register form
+ * ------------------------------------
+*/
+
+div.wrapper div.register {
+	display: inline-block;
+	height: 320px;
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+	text-align: left;
+	width: 250px;
+}
+
+div.wrapper div.register h2 {
+	color: #AAD450;
+	font-size: 14px;
+	padding-left: 80px;
+}
+
+/**
+ * Forgot and reset passwords
+ * ------------------------------------
+*/
+
+form.account {
+	background: #DDDDDD;
+	border: 1px solid #3D3D3D;
+	margin: 0px auto 0px auto;
+	padding: 0px 15px 15px 15px;
+	text-align: left;
+	width: 210px;
+}
