@@ -11,7 +11,7 @@
 	
 //Process the recovery request
 	if (isset($_POST['username'])) {
-		$email = mysql_real_escape_string(Validate::required($_POST['username']));
+		$email = mssql_real_escape_string(Validate::required($_POST['username']));
 		$rawPassword = randomValue("10");
 		
 	//Emulate the first level of encryption which usually is done via JavaScript
@@ -23,10 +23,10 @@
 		$password2 = md5($password1 . "_" . $hash2);
 		
 	//Execute the query on the database
-		$affected = mysql_query("UPDATE users SET passWord = PASSWORD('{$password2}'), changePassword = 'on' WHERE emailAddress1 LIKE '{$email}'", $connDBA);
+		$affected = mssql_query("UPDATE users SET passWord = PASSWORD('{$password2}'), changePassword = 'on' WHERE emailAddress1 LIKE '{$email}'", $connDBA);
 		
 	//Send this user an email
-		if (mysql_affected_rows($connDBA)) {
+		if (mssql_affected_rows($connDBA)) {
 		//SMTP logon information
 			$username = "no-reply@forwardfour.com";
 			$password = "n*O^]z%]|c44Q~3";
@@ -83,7 +83,7 @@ Login here: " . $root . "login";
 	}
 	
 //Generate the breadcrumb
-	$home = mysql_fetch_array(mysql_query("SELECT * FROM pages WHERE position = '1' AND `published` != '0'", $connDBA));
+	$home = mssql_fetch_array(mssql_query("SELECT * FROM pages WHERE position = '1' AND published != '0'", $connDBA));
 	$title = unserialize($home['content' . $home['display']]);
 	$breadcrumb = "\n<li><a href=\"" . $root . "index.php?page=" . $home['id'] . "\">" . stripslashes($title['title']) . "</a></li>
 <li><a href=\"login.php\">Login</a></li>

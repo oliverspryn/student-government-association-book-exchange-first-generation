@@ -6,7 +6,7 @@
 	session_destroy();
 	
 //Generate the breadcrumb
-	$home = mysql_fetch_array(mysql_query("SELECT * FROM pages WHERE position = '1' AND `published` != '0'", $connDBA));
+	$home = mssql_fetch_array(mssql_query("SELECT * FROM pages WHERE position = '1' AND published != '0'", $connDBA));
 	$title = unserialize($home['content' . $home['display']]);
 	$breadcrumb = "\n<li><a href=\"" . $root . "index.php?page=" . $home['id'] . "\">" . stripslashes($title['title']) . "</a></li>
 <li>Logout</li>\n";

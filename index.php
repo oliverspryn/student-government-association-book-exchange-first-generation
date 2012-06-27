@@ -3,11 +3,11 @@
 	require_once('Connections/connDBA.php'); 
 	
 //Check to see if any pages exist
-	$settingsGrabber = mysql_query("SELECT * FROM `privileges` WHERE `id` = '1'", $connDBA);
-	$settings = mysql_fetch_array($settingsGrabber);
-	$pagesExistGrabber = mysql_query("SELECT * FROM pages WHERE position = '1' AND `published` != '0'", $connDBA);
+	$settingsGrabber = mssql_query("SELECT * FROM privileges WHERE id = '1'", $connDBA);
+	$settings = mssql_fetch_array($settingsGrabber);
+	$pagesExistGrabber = mssql_query("SELECT * FROM pages WHERE position = '1' AND published != '0'", $connDBA);
 	
-	$pagesExistArray = mysql_fetch_array($pagesExistGrabber);
+	$pagesExistArray = mssql_fetch_array($pagesExistGrabber);
 	$pagesExistResult = $pagesExistArray['position'];
 	
 	if (isset ($pagesExistResult)) {
@@ -18,8 +18,8 @@
 	
 //Block access to unpublished pages
 	if (isset ($_GET['page'])) {
-		$pageAccessGrabber = mysql_query("SELECT * FROM pages WHERE `id` = '{$_GET['page']}'");
-		$pageAccess = mysql_fetch_array($pageAccessGrabber);
+		$pageAccessGrabber = mssql_query("SELECT * FROM pages WHERE id = '{$_GET['page']}'");
+		$pageAccess = mssql_fetch_array($pageAccessGrabber);
 		
 		if ($pageAccess['published'] == "0") {
 			header("Location: index.php");
@@ -30,13 +30,13 @@
 //If no page URL variable is defined, then choose the home page
 	if (!isset ($_GET['page'])) {
 	//Grab the page data
-		$pageInfoPrep = mysql_fetch_array(mysql_query("SELECT * FROM pages WHERE position = '1' AND `published` != '0'", $connDBA));
+		$pageInfoPrep = mssql_fetch_array(mssql_query("SELECT * FROM pages WHERE position = '1' AND published != '0'", $connDBA));
 		$pageInfo = unserialize($pageInfoPrep['content' . $pageInfoPrep['display']]);
 		
 	//Hide the admin menu if an incorrect page displays		
 		if ($pagesExist == "1") {
-			$privilegesCheckGrabber = mysql_query("SELECT * FROM privileges WHERE id = '1'", $connDBA);
-			$privilegesCheck = mysql_fetch_array($privilegesCheckGrabber);
+			$privilegesCheckGrabber = mssql_query("SELECT * FROM privileges WHERE id = '1'", $connDBA);
+			$privilegesCheck = mssql_fetch_array($privilegesCheckGrabber);
 			
 			if ($pageInfoPrep['published'] == "0") {
 				$pageCheck = 0;
@@ -53,17 +53,17 @@
 	} else {		
 	//Grab the page data
 		$getPageID = $_GET['page'];
-		$pageInfoPrep = mysql_fetch_array(mysql_query("SELECT * FROM pages WHERE id = {$getPageID}", $connDBA));
+		$pageInfoPrep = mssql_fetch_array(mssql_query("SELECT * FROM pages WHERE id = {$getPageID}", $connDBA));
 		$pageInfo = unserialize($pageInfoPrep['content' . $pageInfoPrep['display']]);
 		
 	//Hide the admin menu if an incorrect page displays
-		$pageCheckGrabber = mysql_query("SELECT * FROM pages WHERE id = {$getPageID}", $connDBA);
-		$pageCheckArray = mysql_fetch_array($pageCheckGrabber);
+		$pageCheckGrabber = mssql_query("SELECT * FROM pages WHERE id = {$getPageID}", $connDBA);
+		$pageCheckArray = mssql_fetch_array($pageCheckGrabber);
 		$pageCheckResult = $pageCheckArray['position'];
 		
 		if (isset ($pageCheckResult)) {
-			$privilegesCheckGrabber = mysql_query("SELECT * FROM privileges WHERE id = '1'", $connDBA);
-			$privilegesCheck = mysql_fetch_array($privilegesCheckGrabber);
+			$privilegesCheckGrabber = mssql_query("SELECT * FROM privileges WHERE id = '1'", $connDBA);
+			$privilegesCheck = mssql_fetch_array($privilegesCheckGrabber);
 			
 			if ($pageCheckArray['published'] == "0") {
 				$pageCheck = 0;
@@ -76,8 +76,8 @@
 	}
 	
 //Grab the sidebar	
-	$sideBarCheck = mysql_query("SELECT * FROM sidebar WHERE visible = 'on' AND published != '0'", $connDBA);
-	$sideBarResult = mysql_fetch_array($sideBarCheck);
+	$sideBarCheck = mssql_query("SELECT * FROM sidebar WHERE visible LIKE 'on' AND published != '0'", $connDBA);
+	$sideBarResult = mssql_fetch_array($sideBarCheck);
 ?>
 <?php
 	if ($pageInfoPrep == 0 && $pagesExist == 0) {
@@ -98,11 +98,11 @@
 	}
 	
 //Build the dynamic breadcrumb :(
-	$breadcrumbGrabber = mysql_query("SELECT * FROM pages", $connDBA);
+	$breadcrumbGrabber = mssql_query("SELECT * FROM pages", $connDBA);
 	$pagesArray = array();
 	
 //Assign the ID of each page to its own key of the array for the algorithm after this step
-	while($breadcrumb = mysql_fetch_array($breadcrumbGrabber)) {
+	while($breadcrumb = mssql_fetch_array($breadcrumbGrabber)) {
 		$pagesArray[$breadcrumb['id']] = $breadcrumb;
 	}
 	
@@ -182,11 +182,11 @@
 	echo "<header>\n<h1 class=\"title\">" . $title . "</h1>\n</header>\n\n";
 
 //Use the layout control if the page is displaying a sidebar
-	$sideBarLocationGrabber = mysql_query("SELECT * FROM siteprofiles WHERE id = '1'", $connDBA);
-	$sideBarLocation = mysql_fetch_array($sideBarLocationGrabber);
+	$sideBarLocationGrabber = mssql_query("SELECT * FROM siteprofiles WHERE id = '1'", $connDBA);
+	$sideBarLocation = mssql_fetch_array($sideBarLocationGrabber);
 	
 	if (!isset($_GET['page']) || empty($_GET['page'])) {
-		$idPrep = query("SELECT * FROM `pages` WHERE `position` = '1'");
+		$idPrep = query("SELECT * FROM pages WHERE position = '1'");
 		$id = $idPrep['id'];
 	} else {
 		$id = $_GET['page'];
@@ -196,9 +196,9 @@
 	function hasParents() {
 		global $id;
 		
-		$parentPage = query("SELECT * FROM `pages` WHERE `id` = '{$id}'");
+		$parentPage = query("SELECT * FROM pages WHERE id = '{$id}'");
 		
-		if (query("SELECT * FROM `pages` WHERE `id` = '{$parentPage['parentPage']}' AND `visible` = 'on' AND `published` != '0'")) {
+		if (query("SELECT * FROM pages WHERE id = '{$parentPage['parentPage']}' AND visible LIKE 'on' AND published != '0'")) {
 			return true;
 		} else {
 			return false;
@@ -208,7 +208,7 @@
 	function hasChildren() {
 		global $id;
 		
-		if (query("SELECT * FROM `pages` WHERE `parentPage` = '{$id}' AND `visible` = 'on' AND `published` != '0'")) {
+		if (query("SELECT * FROM pages WHERE parentPage = '{$id}' AND visible LIKE 'on' AND published != '0'")) {
 			return true;
 		} else {
 			return false;
@@ -232,7 +232,7 @@
 	
 //Display the sidebar	
 	if ($sideBarResult || hasChildren() || hasParents() && $pageInfoPrep !== 0 && $pagesExist == 1) {
-		$sideBarCheck = mysql_query("SELECT * FROM sidebar WHERE visible = 'on' AND published != '0' ORDER BY `position` ASC", $connDBA);
+		$sideBarCheck = mssql_query("SELECT * FROM sidebar WHERE visible LIKE 'on' AND published != '0' ORDER BY position ASC", $connDBA);
 		
 		echo "\n<aside class=\"sidebar ";
 		
@@ -247,19 +247,19 @@
 		if (hasChildren() || hasParents() && $pageInfoPrep !== 0 && $pagesExist == 1) {			
 			echo "<section class=\"menu\">\n<ul>\n";
 			
-			$pagesGrabber = query("SELECT * FROM `pages` WHERE `id` = '{$id}'");
-			$topLevel = query("SELECT * FROM `pages` WHERE `id` = '{$pagesGrabber['parentPage']}'");
-			$parentLevel = query("SELECT * FROM `pages` WHERE `parentPage` = '{$pagesGrabber['parentPage']}'");
-			$childPagesGrabber = query("SELECT * FROM `pages` WHERE `parentPage` = '{$pagesGrabber['id']}' AND `visible` = 'on' AND `published` != '0' ORDER BY `subPosition` ASC", "raw");
+			$pagesGrabber = query("SELECT * FROM pages WHERE id = '{$id}'");
+			$topLevel = query("SELECT * FROM pages WHERE id = '{$pagesGrabber['parentPage']}'");
+			$parentLevel = query("SELECT * FROM pages WHERE parentPage = '{$pagesGrabber['parentPage']}'");
+			$childPagesGrabber = query("SELECT * FROM pages WHERE parentPage = '{$pagesGrabber['id']}' AND visible LIKE 'on' AND published != '0' ORDER BY subPosition ASC", "raw");
 			
-			if ($pagesGrabber['parentPage'] !== "0") {
+			if ($pagesGrabber['parentPage'] != "0") {
 				$topTitle = unserialize($topLevel['content' . $topLevel['display']]);
 				
 				echo "<li class=\"up\"><a href=\"index.php?page=" . $pagesGrabber['parentPage'] . "\">Back up to &quot;" . prepare($topTitle['title']) . "&quot;</a></li>\n";
 			}
 			
-			if (query("SELECT * FROM `pages` WHERE `parentPage` = '{$pagesGrabber['id']}' AND `visible` = 'on' AND `published` != '0'")) {
-				while ($childPages = mysql_fetch_array($childPagesGrabber)) {
+			if (query("SELECT * FROM pages WHERE parentPage = '{$pagesGrabber['id']}' AND visible LIKE 'on' AND published != '0'")) {
+				while ($childPages = mssql_fetch_array($childPagesGrabber)) {
 					$childTitle = unserialize($childPages['content' . $childPages['display']]);
 					
 					if ($id == $childPages['id']) {
@@ -275,7 +275,7 @@
 		
 		$counter = 1;
 		
-		while ($sideBarPrep = mysql_fetch_array($sideBarCheck)) {
+		while ($sideBarPrep = mssql_fetch_array($sideBarCheck)) {
 			$sideBar = unserialize($sideBarPrep['content' . $sideBarPrep['display']]);
 						
 			if (!isset($_SESSION['MM_Username']) || (isset($_SESSION['MM_Username']) && privileges("editSideBar") != "true")) {

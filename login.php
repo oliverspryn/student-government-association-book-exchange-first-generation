@@ -18,11 +18,11 @@
 	if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['action']) && $_POST['action'] == "login") {
 	//Can this user log in, or have they maxed out their login attempts?
 		$yesterday = strtotime("-1 day");
-		$computerName = mysql_real_escape_string(gethostbyaddr($_SERVER['REMOTE_ADDR']));
-		$loginCheck = mysql_query("SELECT failedlogins.*, siteprofiles.failedLogins AS max, COUNT(failedlogins.id) AS total FROM failedlogins RIGHT JOIN (siteprofiles) ON failedlogins WHERE computerName = '{$computerName}' AND timeStamp > '{$yesterday}' GROUP BY computerName", $connDBA);
+		$computerName = mssql_real_escape_string(gethostbyaddr($_SERVER['REMOTE_ADDR']));
+		$loginCheck = mssql_query("SELECT failedlogins.*, siteprofiles.failedLogins AS max, COUNT(failedlogins.id) AS total FROM failedlogins RIGHT JOIN (siteprofiles) ON failedlogins WHERE computerName = '{$computerName}' AND timeStamp > '{$yesterday}' GROUP BY computerName", $connDBA);
 		
-		if ($loginCheck && mysql_num_rows($loginCheck)) {
-			$loginTries = mysql_fetch_assoc($loginCheck);
+		if ($loginCheck && mssql_num_rows($loginCheck)) {
+			$loginTries = mssql_fetch_assoc($loginCheck);
 			$failed = $loginTries['total'];
 			$total = $loginTries['max'];
 			
@@ -30,7 +30,7 @@
 				redirect("login.php?expired=true");
 			}
 		} else {
-			$totalGrabber = mysql_fetch_assoc(mysql_query("SELECT failedLogins FROM siteprofiles WHERE id = '1'", $connDBA));
+			$totalGrabber = mssql_fetch_assoc(mssql_query("SELECT failedLogins FROM siteprofiles WHERE id = '1'", $connDBA));
 			
 			$failed = "0";
 			$total = $totalGrabber['failedLogins'];
@@ -38,14 +38,14 @@
 		
 	//Process the login
 		$hash = "+y4hn&T/'K";
-		$email = mysql_real_escape_string(Validate::required($_POST['username']));
+		$email = mssql_real_escape_string(Validate::required($_POST['username']));
 		$password = md5(Validate::required($_POST['password']) . "_" . $hash);
 		
 	//Does a user with this username/password combination exist?
-		$check = mysql_query("SELECT * FROM users WHERE emailAddress1 LIKE '{$email}' AND passWord LIKE PASSWORD('{$password}')", $connDBA);
+		$check = mssql_query("SELECT * FROM users WHERE emailAddress1 LIKE '{$email}' AND passWord LIKE PASSWORD('{$password}')", $connDBA);
 		
-		if ($check && mysql_num_rows($check) == 1) {
-			$userData = mysql_fetch_assoc($check);
+		if ($check && mssql_num_rows($check) == 1) {
+			$userData = mssql_fetch_assoc($check);
 			
 		//Did the user activate his or her account?
 			if ($userData['activation'] != "") {
@@ -75,7 +75,7 @@
 			$timestamp = strtotime("now");
 			$failed++;
 			
-			mysql_query("INSERT INTO failedlogins (
+			mssql_query("INSERT INTO failedlogins (
 						 	id, timeStamp, computerName, userName
 						 ) VALUES (
 						 	NULL, '{$timestamp}', '{$computerName}', '{$email}'
@@ -101,24 +101,24 @@
 		$hash = "+y4hn&T/'K";
 		$activation = randomValue("15");
 		$name = explode(" ", $_POST['name']);
-		$firstName = mysql_real_escape_string(Validate::required($name[0]));
-		$lastName = mysql_real_escape_string(Validate::required($name[1]));
-		$email = mysql_real_escape_string(Validate::isEmail($_POST['username']));
+		$firstName = mssql_real_escape_string(Validate::required($name[0]));
+		$lastName = mssql_real_escape_string(Validate::required($name[1]));
+		$email = mssql_real_escape_string(Validate::isEmail($_POST['username']));
 		$password = md5(Validate::required($_POST['password']) . "_" . $hash);
 		
 	//Is this email from the gcc.edu email domain?
 		$emailSplit = explode("@", $email);
 		
 	//Has the email already been used?
-		$usedCheck = mysql_query("SELECT * FROM users WHERE emailAddress1 = '{$email}'", $connDBA);
+		$usedCheck = mssql_query("SELECT * FROM users WHERE emailAddress1 = '{$email}'", $connDBA);
 		
-		if ($usedCheck && mysql_num_rows($usedCheck) != 0) {
+		if ($usedCheck && mssql_num_rows($usedCheck) != 0) {
 			redirect("login.php?used=true");
 		}
 		
 		if ($emailSplit[1] == "gcc.edu") {
 		//Add the user to the database
-			mysql_query("INSERT INTO users (
+			mssql_query("INSERT INTO users (
 						 	id, active, activation, firstName, lastName, passWord, changePassword, emailAddress1, emailAddress2, emailAddress3, role
 						 ) VALUES (
 						 	NULL, '1000000000', '{$activation}', '{$firstName}', '{$lastName}', PASSWORD('{$password}'), '', '{$email}', '', '', 'User'
@@ -189,7 +189,7 @@ Happy selling!
 	}
 	
 //Generate the breadcrumb
-	$home = mysql_fetch_array(mysql_query("SELECT * FROM pages WHERE position = '1' AND `published` != '0'", $connDBA));
+	$home = mssql_fetch_array(mssql_query("SELECT * FROM pages WHERE position = '1' AND published != '0'", $connDBA));
 	$title = unserialize($home['content' . $home['display']]);
 	$breadcrumb = "\n<li><a href=\"" . $root . "index.php?page=" . $home['id'] . "\">" . stripslashes($title['title']) . "</a></li>
 <li>Login</li>\n";
