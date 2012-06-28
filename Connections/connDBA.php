@@ -5,31 +5,30 @@ ob_start();
 
 /* Begin core functions */
 	//Root address for entire site
-	$root = "http://" . $_SERVER['HTTP_HOST'] . "/orgs/sga/dev/";
+	$root = "http://" . $_SERVER['HTTP_HOST'] . "/SGA/";
 	$strippedRoot = str_replace("http://" . $_SERVER['HTTP_HOST'], "", $root);
 	$dirRoot = str_replace("Connections\connDBA.php", "", __FILE__);
 
 	//Database connection
-	//$databaseName = "sgabookx";
-	//$connDBA = mssql_connect("gecrc.gcc.edu", "sgabooku", "sgabookp");
-	//$dbSelect = mssql_select_db($databaseName, $connDBA);
-	$connDBA = odbc_connect("Driver={SQL Server};Server=gecrc.gcc.edu;Database=sgabookx;", "sgabooku", "sgabookp");
+	$databaseName = "SGA";
+	$connDBA = mysql_connect("localhost", "root", "Oliver99");
+	$dbSelect = mysql_select_db($databaseName, $connDBA);
 	
 	//Define time zone
-	$timeZoneGrabber = odbc_exec($connDBA, "SELECT * FROM siteprofiles WHERE id = '1'");
-	$timeZone = odbc_fetch_array($timeZoneGrabber);
+	$timeZoneGrabber = mysql_query("SELECT * FROM `siteprofiles` WHERE `id` = '1'", $connDBA);
+	$timeZone = mysql_fetch_array($timeZoneGrabber);
 	date_default_timezone_set($timeZone['timeZone']);
 	
 	//Grab the site's data
-	$siteInfoGrabber = odbc_exec($connDBA, "SELECT * FROM siteprofiles WHERE id = '1'");
-	$siteInfo = odbc_fetch_array($siteInfoGrabber);
+	$siteInfoGrabber = mysql_query("SELECT * FROM `siteprofiles` WHERE `id` = '1'", $connDBA);
+	$siteInfo = mysql_fetch_array($siteInfoGrabber);
 	
 	//Grab the user's data
 	function userData() {
 		global $connDBA;
 		
-		$userInfoGrabber = odbc_exec($connDBA, "SELECT * FROM users WHERE emailAddress1 = '{$_SESSION['MM_Username']}'");
-		$userInfo = odbc_fetch_array($userInfoGrabber);
+		$userInfoGrabber = mysql_query("SELECT * FROM `users` WHERE `emailAddress1` = '{$_SESSION['MM_Username']}'", $connDBA);
+		$userInfo = mysql_fetch_array($userInfoGrabber);
 		return $userInfo;
 	}
 	
@@ -87,10 +86,10 @@ ob_start();
 	//Include the theme intended for the top of a public webpage
 		if ($type == "public") {
 		//Generate the navigation bar
-			$pageData = odbc_exec($connDBA, "SELECT * FROM pages WHERE visible LIKE 'on' AND published != '0' AND parentPage = '0' ORDER BY position ASC");
+			$pageData = mysql_query("SELECT * FROM pages WHERE visible = 'on' AND published != '0' AND parentPage = '0' ORDER BY position ASC", $connDBA);
 			$navigation = "";
 			
-			while ($page = odbc_fetch_array($pageData)) {			
+			while ($page = mysql_fetch_array($pageData)) {			
 				if ($page['type'] == "page") {
 				//Extract the data from the encoded array
 					$pageInfo = unserialize($page['content' . $page['display']]);
@@ -144,11 +143,11 @@ ob_start();
 	//Include the theme intended for the bottom of a public webpage
 		if ($type == "public") {
 		//Generate the navigation bar
-			$pageData = odbc_exec($connDBA, "SELECT * FROM pages WHERE visible LIKE 'on' AND published != '0' AND parentPage = '0' ORDER BY position ASC");
+			$pageData = mysql_query("SELECT * FROM pages WHERE visible = 'on' AND published != '0' AND parentPage = '0' ORDER BY position ASC", $connDBA);
 			$counter = 1;
 			$navigation = "<ul>\n";
 			
-			while ($page = odbc_fetch_array($pageData)) {
+			while ($page = mysql_fetch_array($pageData)) {
 				$navigation .= "<li>\n<ul>\n";
 				
 				if ($page['type'] == "page") {
@@ -159,9 +158,9 @@ ob_start();
 					$navigation .= "<li><a class=\"item" . $counter . "\" href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
 					
 				//Show any sub-pages of the current parent-page
-					$subPageData = odbc_exec($connDBA, "SELECT * FROM pages WHERE visible LIKE 'on' AND published != '0' AND parentPage = '" . $page['id'] . "' ORDER BY subPosition ASC");
+					$subPageData = mysql_query("SELECT * FROM pages WHERE visible = 'on' AND published != '0' AND parentPage = '" . $page['id'] . "' ORDER BY subPosition ASC");
 					
-					while($subPage = odbc_fetch_array($subPageData)) {
+					while($subPage = mysql_fetch_array($subPageData)) {
 					//Extract the data from the encoded array
 						$subPageInfo = unserialize($subPage['content' . $subPage['display']]);
 						
@@ -178,9 +177,9 @@ ob_start();
 					$navigation .= "<li><a class=\"item" . $counter . $class . "\" href=\"" . $page['URL'] . "\">" . stripslashes($page['linkTitle']) . "</a></li>\n";
 					
 				//Show any sub-pages of the current parent-page
-					$subPageData = odbc_exec($connDBA, "SELECT * FROM pages WHERE visible LIKE 'on' AND published != '0' AND parentPage = '" . $page['id'] . "' ORDER BY subPosition ASC");
+					$subPageData = mysql_query("SELECT * FROM pages WHERE visible = 'on' AND published != '0' AND parentPage = '" . $page['id'] . "' ORDER BY subPosition ASC");
 					
-					while($subPage = odbc_fetch_array($subPageData)) {
+					while($subPage = mysql_fetch_array($subPageData)) {
 						if ($subPage['type'] == "page") {
 						//Extract the data from the encoded array
 							$subPageInfo = unserialize($subPage['content' . $subPage['display']]);
@@ -215,8 +214,8 @@ ob_start();
 /* Begin login management functions */
 //A function to encrypt a string
 	function encrypt($string) {
-		$search = str_split(" ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890~!@#$%^&*()-_=+[{]}|;:',<.>/?\\\"");
-		$replace = str_split(" B)3Z/~8tr;y%oJ{X(Mx}2kDc=7<AaSCzNh&5n\"[Il!@gRP]\\$mwb?#4p*0eK6QLHdEv^,Uj:-|9O'qsufY>1iFTGVW.+_");
+		$search = str_split(" ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890`~!@#$%^&*()-_=+[{]}|;:',<.>/?\\\"");
+		$replace = str_split(" B)3Z/~8tr;`y%oJ{X(Mx}2kDc=7<AaSCzNh&5n\"[Il!@gRP]\\$mwb?#4p*0eK6QLHdEv^,Uj:-|9O'qsufY>1iFTGVW.+_");
 		$encrypt = "";
 		
 		foreach(str_split($string) as $segement) {
@@ -233,8 +232,8 @@ ob_start();
 	
 //A function to decrypt a string
 	function decrypt($string) {
-		$search = str_split(" B)3Z/~8tr;y%oJ{X(Mx}2kDc=7<AaSCzNh&5n\"[Il!@gRP]\\$mwb?#4p*0eK6QLHdEv^,Uj:-|9O'qsufY>1iFTGVW.+_");
-		$replace = str_split(" ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890~!@#$%^&*()-_=+[{]}|;:',<.>/?\\\"");
+		$search = str_split(" B)3Z/~8tr;`y%oJ{X(Mx}2kDc=7<AaSCzNh&5n\"[Il!@gRP]\\$mwb?#4p*0eK6QLHdEv^,Uj:-|9O'qsufY>1iFTGVW.+_");
+		$replace = str_split(" ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890`~!@#$%^&*()-_=+[{]}|;:',<.>/?\\\"");
 		$decrypt = "";
 		
 		foreach(str_split(gzinflate(base64_decode($string))) as $segement) {
@@ -268,7 +267,7 @@ ob_start();
 			if (!function_exists("GetSQLValueString")) {
 				function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") {
 		  			$theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-					$theValue = function_exists("mssql_real_escape_string") ? mssql_real_escape_string($theValue) : mssql_escape_string($theValue);
+					$theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
 		
 					switch ($theType) {
 					  case "text" : $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL"; break;    
@@ -290,13 +289,13 @@ ob_start();
 			}
 			
 			if (isset($_POST['username'])) {
-				$loginUsername=mssql_real_escape_string($_POST['username']);
-				$password=mssql_real_escape_string(encrypt($_POST['password']));
+				$loginUsername=mysql_real_escape_string($_POST['username']);
+				$password=mysql_real_escape_string(encrypt($_POST['password']));
 				$MM_fldUserAuthorization = "role";
 				
-				$userRoleGrabber = mssql_query("SELECT * FROM users WHERE emailAddress1 = '{$loginUsername}' AND passWord = '{$password}'");
+				$userRoleGrabber = mysql_query("SELECT * FROM `users` WHERE `emailAddress1` = '{$loginUsername}' AND `passWord` = '{$password}'");
 				
-				if ($userRole = mssql_fetch_array($userRoleGrabber)) {
+				if ($userRole = mysql_fetch_array($userRoleGrabber)) {
 					$success = "";
 					$failure = "";
 					
@@ -315,11 +314,11 @@ ob_start();
 					$IPAddress = $_SERVER['REMOTE_ADDR'];
 					$timeStamp = strtotime("-1 day");
 					
-					if (mssql_query("SELECT * FROM failedlogins WHERE IPAddress = '{$IPAddress}' AND timeStamp > '{$timeStamp}'", $connDBA)) {
-						$numberPrep = mssql_query("SELECT * FROM failedlogins WHERE IPAddress = '{$IPAddress}' AND timeStamp > '{$timeStamp}'", $connDBA);
-						$number = mssql_num_rows($numberPrep);
-						$secuirtyGrabber = mssql_query("SELECT * FROM siteprofiles WHERE id = '1'", $connDBA);
-						$secuirty = mssql_fetch_array($secuirtyGrabber);
+					if (mysql_query("SELECT * FROM `failedlogins` WHERE `IPAddress` = '{$IPAddress}' AND `timeStamp` > '{$timeStamp}'", $connDBA)) {
+						$numberPrep = mysql_query("SELECT * FROM `failedlogins` WHERE `IPAddress` = '{$IPAddress}' AND `timeStamp` > '{$timeStamp}'", $connDBA);
+						$number = mysql_num_rows($numberPrep);
+						$secuirtyGrabber = mysql_query("SELECT * FROM `siteprofiles` WHERE `id` = '1'", $connDBA);
+						$secuirty = mysql_fetch_array($secuirtyGrabber);
 						
 						if (intval($secuirty['failedLogins']) <= $number) {
 							if (isset($_GET['accesscheck'])) {
@@ -335,8 +334,8 @@ ob_start();
 					$timeStamp = strtotime("now");
 					$IPAddress = $_SERVER['REMOTE_ADDR'];
 					
-					mssql_query("INSERT INTO failedlogins (
-								id, timeStamp, IPAddress, userName
+					mysql_query("INSERT INTO `failedlogins` (
+								`id`, `timeStamp`, `IPAddress`, `userName`
 								) VALUES (
 								NULL, '{$timeStamp}', '{$IPAddress}', '{$loginUsername}'
 								)", $connDBA);
@@ -344,11 +343,11 @@ ob_start();
 					$IPAddress = $_SERVER['REMOTE_ADDR'];
 					$timeStamp = strtotime("-1 day");
 					
-					if (mssql_query("SELECT * FROM failedlogins WHERE IPAddress = '{$IPAddress}' AND timeStamp > '{$timeStamp}'", $connDBA)) {
-						$numberPrep = mssql_query("SELECT * FROM failedlogins WHERE IPAddress = '{$IPAddress}' AND timeStamp > '{$timeStamp}'", $connDBA);
-						$number = mssql_num_rows($numberPrep);
-						$secuirtyGrabber = mssql_query("SELECT * FROM siteprofiles WHERE id = '1'", $connDBA);
-						$secuirty = mssql_fetch_array($secuirtyGrabber);
+					if (mysql_query("SELECT * FROM `failedlogins` WHERE `IPAddress` = '{$IPAddress}' AND `timeStamp` > '{$timeStamp}'", $connDBA)) {
+						$numberPrep = mysql_query("SELECT * FROM `failedlogins` WHERE `IPAddress` = '{$IPAddress}' AND `timeStamp` > '{$timeStamp}'", $connDBA);
+						$number = mysql_num_rows($numberPrep);
+						$secuirtyGrabber = mysql_query("SELECT * FROM `siteprofiles` WHERE `id` = '1'", $connDBA);
+						$secuirty = mysql_fetch_array($secuirtyGrabber);
 						
 						if (intval($secuirty['failedLogins']) <= $number) {
 							if (isset($_GET['accesscheck'])) {
@@ -375,21 +374,21 @@ ob_start();
 				$LoginRS__query=sprintf("SELECT emailAddress1, passWord, role FROM users WHERE emailAddress1=%s AND passWord=%s",
 				GetSQLValueString($loginUsername, "text"), GetSQLValueString($password, "text")); 
 				 
-				$LoginRS = mssql_query($LoginRS__query, $connDBA) or die(mssql_error());
-				$loginFoundUser = mssql_num_rows($LoginRS);
+				$LoginRS = mysql_query($LoginRS__query, $connDBA) or die(mysql_error());
+				$loginFoundUser = mysql_num_rows($LoginRS);
 				
 				if ($loginFoundUser) {
-					$loginStrGroup  = mssql_result($LoginRS,0,'role');
+					$loginStrGroup  = mysql_result($LoginRS,0,'role');
 					
 					$_SESSION['MM_Username'] = $loginUsername;
 					$_SESSION['MM_UserGroup'] = $loginStrGroup;	
 					
-					$userIDGrabber = mssql_query("SELECT * FROM users WHERE emailAddress1 = '{$loginUsername}' AND passWord = '{$password}' LIMIT 1");
-					$userID = mssql_fetch_array($userIDGrabber);
+					$userIDGrabber = mysql_query("SELECT * FROM `users` WHERE `emailAddress1` = '{$loginUsername}' AND `passWord` = '{$password}' LIMIT 1");
+					$userID = mysql_fetch_array($userIDGrabber);
 					setcookie("userStatus", $userID['sysID'], time()+1000000000); 
 					
 					$cookie = $userID['sysID'];
-					mssql_query("UPDATE users SET active = '1' WHERE sysID = '{$cookie}'", $connDBA);
+					mysql_query("UPDATE `users` SET `active` = '1' WHERE `sysID` = '{$cookie}'", $connDBA);
 					
 			  
 				  if (isset($_SESSION['PrevUrl']) && false) {
@@ -684,14 +683,14 @@ ob_start();
 			$return[0] = $id;
 			$return[1] = $message;
 		
-			if (!query("SELECT * FROM {$table} WHERE {$column} = '{$value}'", "raw")) {
+			if (!query("SELECT * FROM `{$table}` WHERE `{$column}` = '{$value}'", "raw")) {
 				$return[2] = "true";
 				echo "{\"jsonValidateReturn\":" . json_encode($return) . "}";
 			} else {
 				$userInfo = userData();
 				
 				if (isset($_GET['id'])) {
-					$data = query("SELECT * FROM {$table} WHERE id = '{$_GET['id']}'");
+					$data = query("SELECT * FROM `{$table}` WHERE `id` = '{$_GET['id']}'");
 					
 					if ($data[$column] === $value) {
 						$return[2] = "true";
@@ -702,7 +701,7 @@ ob_start();
 					}
 				} else {
 					if ($table == "organizations" && !isset($_GET['id']) && $userInfo['organization'] != "0") {
-						$data = query("SELECT * FROM {$table} WHERE id = '{$userInfo['organization']}'");
+						$data = query("SELECT * FROM `{$table}` WHERE `id` = '{$userInfo['organization']}'");
 						
 						if ($data[$column] === $value) {
 							$return[2] = "true";
@@ -1026,32 +1025,32 @@ ob_start();
 		}
 	}
 	
-	//Alias of mssql_real_escape_string
+	//Alias of mysql_real_escape_string
 	function escape($string) {
 		if (is_string($string)) {
-			return mssql_real_escape_string($string);
+			return mysql_real_escape_string($string);
 		} else {
 			errorMessage("The provided variable was not a string.");
 		}
 	}
 	
-	//Run a mssql_query
+	//Run a mysql_query
 	function query($query, $returnType = false, $showError = true) {
 		global $connDBA;
 		
-		$action = odbc_exec($connDBA, $query);
+		$action = mysql_query($query, $connDBA);
 		
 		if (!$action) {
 			if ($showError == true) {
 				$error = debug_backtrace();
-				die(errorMessage("There is an error with your query: " . $query . "<br /><br />" . odbc_errormsg() . "<br /><br />Error on line: " . $error['0']['line'] . "<br />Error in file: " . $error['0']['file']));
+				die(errorMessage("There is an error with your query: " . $query . "<br /><br />" . mysql_error() . "<br /><br />Error on line: " . $error['0']['line'] . "<br />Error in file: " . $error['0']['file']));
 			} else {
 				return false;
 			}
 		} else {
 			if (!strstr($query, "INSERT INTO") && !strstr($query, "UPDATE") && !strstr($query, "SET") && !strstr($query, "DELETE FROM") && !strstr($query, "CREATE TABLE") && !strstr($query, "ALTER TABLE")) {
 				if ($returnType == false || $returnType == "array") {
-					$result = odbc_fetch_array($action);
+					$result = mysql_fetch_array($action);
 					
 					if (is_array($result) && !empty($result)) {
 						array_merge_recursive($result);
@@ -1069,8 +1068,8 @@ ob_start();
 					unset($query, $action, $result);
 					exit;
 				} elseif ($returnType == "raw") {
-					$actionTest = odbc_exec($connDBA, $query);
-					$result = odbc_fetch_array($actionTest);
+					$actionTest = mysql_query($query, $connDBA);
+					$result = mysql_fetch_array($actionTest);
 					
 					if ($result) {
 						return $action;
@@ -1081,14 +1080,14 @@ ob_start();
 					unset($query, $action, $result);
 					exit;
 				} elseif ($returnType == "num") {
-					$result = odbc_num_rows($action);
+					$result = mysql_num_rows($action);
 					return $result;
 					unset($query, $action, $result);
 					exit;
 				} elseif ($returnType == "selected") {
 					$return = array();
 					
-					while ($result = odbc_fetch_array($action)) {
+					while ($result = mysql_fetch_array($action)) {
 						array_push($return, $result);
 					} 
 					
@@ -1096,7 +1095,7 @@ ob_start();
 					unset($query, $action, $result);
 					exit;
 				} elseif ($returnType == "assoc") {
-					$result = odbc_fetch_array($action);
+					$result = mysql_fetch_assoc($action);
 					
 					if (is_array($result) && !empty($result)) {
 						array_merge_recursive($result);
@@ -1123,20 +1122,20 @@ ob_start();
 		global $connDBA;
 		
 		if ($column == true) {
-			$additionalCheck = " WHERE {$column} = '{$value}'";
+			$additionalCheck = " WHERE `{$column}` = '{$value}'";
 		} else {
 			$additionalCheck = "";
 		}
 		
-		$itemCheckGrabber = odbc_exec($connDBA, "SELECT * FROM {$table}{$additionalCheck}");
+		$itemCheckGrabber = mysql_query("SELECT * FROM `{$table}`{$additionalCheck}", $connDBA);
 		
 		if ($itemCheckGrabber) {
-			$itemCheck = odbc_num_rows($itemCheckGrabber);
+			$itemCheck = mysql_num_rows($itemCheckGrabber);
 			
 			if ($itemCheck >= 1) {
-				$itemGrabber = odbc_exec($connDBA, "SELECT * FROM {$table}{$additionalCheck}");
+				$itemGrabber = mysql_query("SELECT * FROM `{$table}`{$additionalCheck}", $connDBA);
 				
-				$item = odbc_fetch_array($itemGrabber);
+				$item = mysql_fetch_array($itemGrabber);
 				
 				return $item;
 			} else {
@@ -1158,7 +1157,7 @@ ob_start();
 		}
 		
 		if ($whereColumn == true && $whereValue == true) {
-			$where = " WHERE {$whereColumn} = '{$whereValue}' ";
+			$where = " WHERE `{$whereColumn}` = '{$whereValue}' ";
 		} else {
 			$where = "";
 		}
@@ -1166,7 +1165,7 @@ ob_start();
 		$lastItemGrabber = query("SELECT * FROM {$table}{$where} ORDER BY {$column} DESC", "raw", false);
 		
 		if ($lastItemGrabber) {
-			$lastItem = mssql_fetch_array($lastItemGrabber);
+			$lastItem = mysql_fetch_array($lastItemGrabber);
 			return $lastItem[$column] + 1;
 		} else {
 			return "1";
@@ -1230,7 +1229,7 @@ ob_start();
 	
 	//Check to see if a column exists
 	function columnExists($table, $column, $id, $empty = false) {
-		$query = query("SELECT * FROM {$table} WHERE id = '{$id}'");
+		$query = query("SELECT * FROM `{$table}` WHERE `id` = '{$id}'");
 		
 		if (array_key_exists($column, $query)) {
 			if ($empty == true) {				
@@ -1247,9 +1246,9 @@ ob_start();
 		}
 	}
 	
-	//Generate the next avaliable comlum for mssql
+	//Generate the next avaliable comlum for MySQL
 	function nextLog($table, $id) {
-		$query = query("SELECT * FROM {$table} WHERE id = '{$id}'", "assoc");
+		$query = query("SELECT * FROM `{$table}` WHERE `id` = '{$id}'", "assoc");
 		unset($query['id'], $query['position'], $query['parentPage'], $query['subPosition'], $query['visible'], $query['published'], $query['display'], $query['name'], $query['date'], $query['comment'], $query['type']);
 		
 		for($count = 1; $count <= sizeof($query); $count ++) {
@@ -1288,7 +1287,7 @@ ob_start();
 					$parentPage = $_POST['parentPage'];
 					
 					if ($parentPage !== "0") {
-						$lastSubPositionGrabber = query("SELECT * FROM pages WHERE parentPage = '{$parentPage}' ORDER BY subPosition DESC LIMIT 1", false, false);
+						$lastSubPositionGrabber = query("SELECT * FROM `pages` WHERE `parentPage` = '{$parentPage}' ORDER BY `subPosition` DESC LIMIT 1", false, false);
 						
 						if ($lastSubPositionGrabber) {
 							$lastSubPosition = sprintf($lastSubPositionGrabber['subPosition'] + 1);
@@ -1303,9 +1302,9 @@ ob_start();
 						$position = "0";
 					}
 					
-					$additionalColumn = ", name, date, comment";
+					$additionalColumn = ", `name`, `date`, `comment`";
 					$additionalValue = ", '', '', ''";
-					$hierarchyColumn = " parentPage, subPosition,";
+					$hierarchyColumn = " `parentPage`, `subPosition`,";
 					$hierarchyValue = " '{$parentPage}', '{$lastSubPosition}',";
 				} else {
 					$additionalColumn = "";
@@ -1316,7 +1315,7 @@ ob_start();
 				
 				if ($tableName == "sidebar") {
 					$type = $_POST['type'];
-					$typeColumn = " type,";
+					$typeColumn = " `type`,";
 					$typeValue = " '{$type}',";
 				} else {
 					$typeColumn = "";
@@ -1324,7 +1323,7 @@ ob_start();
 				}
 				
 				if ($tableName != "staffpages") {
-					$visibleColumn = " visible,";
+					$visibleColumn = " `visible`,";
 					$visibleValue = " 'on',";
 				} else {
 					$visibleColumn = "";
@@ -1333,8 +1332,8 @@ ob_start();
 				
 				$contentBundle = escape(serialize(array("title" => $title, "content" => $content, "comments" => $comments, "message" => "", "user" => $user, "time" => $time, "changes" => "1")));
 				
-				query("INSERT INTO {$tableName} (
-						  id, position,{$visibleColumn}{$typeColumn}{$hierarchyColumn} published, display, content1{$additionalColumn}
+				query("INSERT INTO `{$tableName}` (
+						  `id`, `position`,{$visibleColumn}{$typeColumn}{$hierarchyColumn} `published`, `display`, `content1`{$additionalColumn}
 					  ) VALUES (
 						  NULL, '{$position}',{$visibleValue}{$typeValue}{$hierarchyValue} '{$published}', '1', '{$contentBundle}'{$additionalValue}
 					  )");
@@ -1346,12 +1345,12 @@ ob_start();
 				}
 			} else {				
 				$id = $_GET['id'];
-				$pageDataPrep = query("SELECT * FROM {$tableName} WHERE id = '{$id}' LIMIT 1");
+				$pageDataPrep = query("SELECT * FROM `{$tableName}` WHERE `id` = '{$id}' LIMIT 1");
 				$nextLog = nextLog($tableName, $id);
 				
 				if ($pageDataPrep['published'] != "0") {
 					if (!columnExists($tableName, $nextLog, $id)) {
-						query("ALTER TABLE {$tableName} ADD {$nextLog} LONGTEXT NOT NULL");
+						query("ALTER TABLE `{$tableName}` ADD `{$nextLog}` LONGTEXT NOT NULL");
 					}
 					
 					if (columnExists($tableName, $nextLog, $id) && empty($pageDataPrep['content' . sprintf($pageDataPrep['display'] + 1)])) {
@@ -1368,7 +1367,7 @@ ob_start();
 			//Sidebar only, if the type of sidebar hasn't changed
 				if ($tableName == "sidebar") {
 					$type = $_POST['type'];
-					$typeUpdate = " type = '{$type}',";
+					$typeUpdate = " `type` = '{$type}',";
 				} else {
 					$typeUpdate = "";
 				}
@@ -1376,14 +1375,14 @@ ob_start();
 			//Check to see if the parent page has changed
 				if ($tableName == "pages") {					
 					$parentPage = $_POST['parentPage'];
-					$oldData = query("SELECT * FROM {$tableName} WHERE id = '{$id}'");
+					$oldData = query("SELECT * FROM `{$tableName}` WHERE `id` = '{$id}'");
 					
 					if ($parentPage !== $oldData['parentPage']) {
-						query("UPDATE {$tableName} SET subPosition = subPosition-1 WHERE parentPage = '{$oldData['parentPage']}' AND position = '0'");
+						query("UPDATE `{$tableName}` SET `subPosition` = subPosition-1 WHERE `parentPage` = '{$oldData['parentPage']}' AND `position` = '0'");
 						
 						if ($oldData['parentPage'] == "0") {
-							query("UPDATE {$tableName} SET position = '0' WHERE id = '{$id}'");
-							query("UPDATE {$tableName} SET position = position-1 WHERE position > '{$oldData['position']}' AND parentPage = '0'");
+							query("UPDATE `{$tableName}` SET `position` = '0' WHERE `id` = '{$id}'");
+							query("UPDATE `{$tableName}` SET `position` = position-1 WHERE `position` > '{$oldData['position']}' AND `parentPage` = '0'");
 						}
 						
 						if ($parentPage == "0") {
@@ -1392,7 +1391,7 @@ ob_start();
 							$criteria = "subPosition";
 						}
 						
-						$lastPositionGrabber = query("SELECT * FROM pages WHERE parentPage = '{$parentPage}' ORDER BY {$criteria} DESC LIMIT 1", false, false);
+						$lastPositionGrabber = query("SELECT * FROM `pages` WHERE `parentPage` = '{$parentPage}' ORDER BY `{$criteria}` DESC LIMIT 1", false, false);
 						
 						if ($lastPositionGrabber) {
 							$lastPosition = sprintf($lastPositionGrabber[$criteria] + 1);
@@ -1400,7 +1399,7 @@ ob_start();
 							$lastPosition = "1";
 						}
 						
-						$hierarchyUpdate = " parentPage = '{$parentPage}', {$criteria} = '{$lastPosition}',";
+						$hierarchyUpdate = " `parentPage` = '{$parentPage}', `{$criteria}` = '{$lastPosition}',";
 					} else {
 						$hierarchyUpdate = "";
 					}
@@ -1424,7 +1423,7 @@ ob_start();
 				
 			//No changes were made, then simply log the update
 				if (prepare($pageData['title']) === prepare($_POST['title']) && prepare($pageData['content']) === prepare($_POST['content']) && $oldComments === $newComments) {
-					$oldCommentsPrep = query("SELECT * FROM {$tableName} WHERE id = '{$id}' LIMIT 1");
+					$oldCommentsPrep = query("SELECT * FROM `{$tableName}` WHERE `id` = '{$id}' LIMIT 1");
 					$oldComments = unserialize($oldCommentsPrep['content' . $oldCommentsPrep['display']]);
 					
 					if (privileges("publish" . $privilegeType) == "true") {
@@ -1477,15 +1476,15 @@ ob_start();
 					
 				//Remove the old rejection message
 					if ($pageDataPrep['published'] == "1" || $pageDataPrep['published'] == "0") {
-						$remove = query("SELECT * FROM {$tableName} WHERE id = '{$id}'");
+						$remove = query("SELECT * FROM `{$tableName}` WHERE `id` = '{$id}'");
 						$refreshColumn = "content" . $remove['display'];
 						$refreshContentPrep = unserialize($remove['content' . $remove['display']]);
 						$refreshContent =  escape(serialize(array("title" => $refreshContentPrep['title'], "content" => $refreshContentPrep['content'], "comments" => $refreshContentPrep['comments'], "message" => "", "user" => $refreshContentPrep['user'], "time" => $refreshContentPrep['time'], "changes" => $refreshContentPrep['changes'])));
-						query("UPDATE {$tableName} SET {$refreshColumn} = '{$refreshContent}' WHERE id = '{$id}'");
+						query("UPDATE `{$tableName}` SET `{$refreshColumn}` = '{$refreshContent}' WHERE `id` = '{$id}'");
 					}
 				}
 				
-				query("UPDATE {$tableName} SET{$hierarchyUpdate} published = '{$published}',{$typeUpdate} display = '{$display}', {$column} = '{$contentBundle}' WHERE id = '{$id}'");
+				query("UPDATE `{$tableName}` SET{$hierarchyUpdate} `published` = '{$published}',{$typeUpdate} `display` = '{$display}', `{$column}` = '{$contentBundle}' WHERE `id` = '{$id}'");
 				
 				redirect($redirect);
 			}
@@ -1498,8 +1497,8 @@ ob_start();
 		global $root;
 		
 		$privileges = $_SESSION['MM_UserGroup'];
-		$privilegesCheckGrabber = mssql_query("SELECT {$checkType} FROM privileges WHERE id = '1'", $connDBA);
-		$privilegesCheck = mssql_fetch_array($privilegesCheckGrabber);
+		$privilegesCheckGrabber = mysql_query("SELECT {$checkType} FROM `privileges` WHERE `id` = '1'", $connDBA);
+		$privilegesCheck = mysql_fetch_array($privilegesCheckGrabber);
 		
 		if ($global == "false") {
 			if (($privilegesCheck[$checkType] == "1" || $_SESSION['MM_UserGroup'] == "Administrator") || ($privilegesCheck[$checkType] == "1" && $_SESSION['MM_UserGroup'] == "Administrator")) {
@@ -1530,7 +1529,7 @@ ob_start();
 			$id = $_GET['id'];
 			
 			if (exist($tableName, "id", $id)) {
-				$item = query("SELECT * FROM {$tableName} WHERE id = '{$id}'");
+				$item = query("SELECT * FROM `{$tableName}` WHERE `id` = '{$id}'");
 				$message = unserialize($item['content' . $item['display']]);
 				$published = $item['published'];
 			
@@ -1587,14 +1586,14 @@ ob_start();
 				$currentPosition = $_GET['currentPosition'];
 			    
 				if ($table == "pages") {
-					$itemData = query("SELECT * FROM {$table} WHERE id = '{$id}'");
+					$itemData = query("SELECT * FROM `{$table}` WHERE `id` = '{$id}'");
 					
 					if ($itemData['parentPage'] == "0") {
 						$position = "position";
-						$parentPage = " parentPage = '0' AND";
+						$parentPage = " `parentPage` = '0' AND";
 					} else {
 						$position = "subPosition";
-						$parentPage = " parentPage = '{$itemData['parentPage']}' AND";
+						$parentPage = " `parentPage` = '{$itemData['parentPage']}' AND";
 						$redirect .= "?category=" . $itemData['parentPage'];
 					}
 				} else {
@@ -1603,11 +1602,11 @@ ob_start();
 				}
 				
 				if ($currentPosition > $newPosition) {
-					mssql_query("UPDATE {$table} SET {$position} = {$position} + 1 WHERE{$parentPage} {$position} >= '{$newPosition}' AND {$position} <= '{$currentPosition}'", $connDBA);
-					mssql_query ("UPDATE {$table} SET {$position} = '{$newPosition}' WHERE id = '{$id}'", $connDBA);
+					mysql_query("UPDATE {$table} SET {$position} = {$position} + 1 WHERE{$parentPage} {$position} >= '{$newPosition}' AND {$position} <= '{$currentPosition}'", $connDBA);
+					mysql_query ("UPDATE {$table} SET {$position} = '{$newPosition}' WHERE id = '{$id}'", $connDBA);
 				} elseif ($currentPosition < $newPosition) {
-					mssql_query("UPDATE {$table} SET {$position} = {$position} - 1 WHERE{$parentPage} {$position} <= '{$newPosition}' AND {$position} >= '{$currentPosition}'", $connDBA);
-					mssql_query("UPDATE {$table} SET {$position} = '{$newPosition}' WHERE id = '{$id}'", $connDBA);
+					mysql_query("UPDATE {$table} SET {$position} = {$position} - 1 WHERE{$parentPage} {$position} <= '{$newPosition}' AND {$position} >= '{$currentPosition}'", $connDBA);
+					mysql_query("UPDATE {$table} SET {$position} = '{$newPosition}' WHERE id = '{$id}'", $connDBA);
 				}
 				
 				header ("Location: " . $redirect);
@@ -1627,7 +1626,7 @@ ob_start();
 					$option = $_POST['option'];
 				}
 				
-				query("UPDATE {$table} SET visible LIKE '{$option}' WHERE id = '{$id}'");
+				query("UPDATE `{$table}` SET `visible` = '{$option}' WHERE id = '{$id}'");
 				
 				if (isset($_POST['redirect'])) {
 					redirect($requestedRedirect . "?page=" . $id);
@@ -1646,7 +1645,7 @@ ob_start();
 					redirect($redirect);
 				} else {
 					$deleteItem = $_GET['id'];
-					$itemPositionPrep = query("SELECT * FROM {$table} WHERE id = '{$deleteItem}'");
+					$itemPositionPrep = query("SELECT * FROM `{$table}` WHERE `id` = '{$deleteItem}'");
 					$itemPosition = $itemPositionPrep['position'];
 					
 					if ($table == "pages" && exist($table, "parentPage", $id)) {
@@ -1655,13 +1654,13 @@ ob_start();
 						$redirect .= "?category=" . $parentPage;
 							
 						if ($itemSubPosition !== "0") {					
-							query("UPDATE {$table} SET subPosition = subPosition-1 WHERE subPosition > '{$itemSubPosition}'");
+							query("UPDATE `{$table}` SET `subPosition` = subPosition-1 WHERE `subPosition` > '{$itemSubPosition}'");
 						}
 						  
 						//Check it see if the current page is a child of the parent
 						function isChild($input) {
 							if (exist("pages", "id", $input)) {						
-								$childCheck = query("SELECT * FROM pages WHERE id = '{$input}'");
+								$childCheck = query("SELECT * FROM `pages` WHERE `id` = '{$input}'");
 								
 								if ($childCheck['id'] == $_GET['id']) {
 									return true;
@@ -1676,14 +1675,14 @@ ob_start();
 						//Recursively loop through the pages
 						function pagesDirectory($level, &$delete) {
 							if ($level == "0") {
-								$pagesGrabber = query("SELECT * FROM pages WHERE parentPage = '{$level}'", "raw");
+								$pagesGrabber = query("SELECT * FROM `pages` WHERE `parentPage` = '{$level}'", "raw");
 							} else {
-								$pagesGrabber = query("SELECT * FROM pages WHERE parentPage = '{$level}'", "raw");
+								$pagesGrabber = query("SELECT * FROM `pages` WHERE `parentPage` = '{$level}'", "raw");
 							}
 							
-							while ($pages = mssql_fetch_array($pagesGrabber)) {
+							while ($pages = mysql_fetch_array($pagesGrabber)) {
 								if (isset($_GET['id'])) {
-								   $parentPage = query("SELECT * FROM pages WHERE id = '{$_GET['id']}'");
+								   $parentPage = query("SELECT * FROM `pages` WHERE `id` = '{$_GET['id']}'");
 								}
 								
 								if (isset($_GET['id']) && isChild($pages['parentPage'])) {
@@ -1699,19 +1698,19 @@ ob_start();
 						pagesDirectory($parentPage, $delete);
 						
 						foreach($delete as $deletePage) {
-							query("DELETE FROM pages WHERE id = '{$deletePage}'");
-							query("DELETE FROM pagehits WHERE page = {$deletePage}");
+							query("DELETE FROM `pages` WHERE `id` = '{$deletePage}'");
+							query("DELETE FROM `pagehits` WHERE `page` = {$deletePage}");
 						}
 					}
 					
 					if ($itemPosition !== "0") {
-						query("UPDATE {$table} SET position = position-1 WHERE position > '{$itemPosition}'");
+						query("UPDATE `{$table}` SET `position` = position-1 WHERE `position` > '{$itemPosition}'");
 					}
 					
-					query("DELETE FROM {$table} WHERE id = {$deleteItem}");
+					query("DELETE FROM `{$table}` WHERE `id` = {$deleteItem}");
 					
 					if ($table == "pages") {
-						query("DELETE FROM pagehits WHERE page = {$deleteItem}");
+						query("DELETE FROM `pagehits` WHERE `page` = {$deleteItem}");
 					}
 					
 					redirect($redirect);
@@ -1734,7 +1733,7 @@ ob_start();
 		//Grab the item data
 		if (isset($_GET['id'])) {
 			if (exist($table, "id", $_GET['id'])) {
-				$itemData = query("SELECT * FROM {$table} WHERE id = '{$_GET['id']}'");
+				$itemData = query("SELECT * FROM `{$table}` WHERE `id` = '{$_GET['id']}'");
 				$oldData = unserialize($itemData['content' . $itemData['display']]);
 				$newData = unserialize($itemData['content' . sprintf($itemData['display'] + 1)]);
 				
@@ -1756,17 +1755,17 @@ ob_start();
 				$display = "1";
 			}
 			
-			query("UPDATE {$table} SET published = '2', display = '{$display}' WHERE id = '{$_GET['id']}'");
+			query("UPDATE `{$table}` SET `published` = '2', `display` = '{$display}' WHERE `id` = '{$_GET['id']}'");
 			die("<script type=\"text/javascript\">window.opener.location.reload(); window.close();</script>");
 		}
 		
 		if (isset($_POST['submit']) && !empty($_POST['comments'])) {
-			$dataGrabberPrep = query("SELECT * FROM {$table} WHERE id = '{$_GET['id']}'");
+			$dataGrabberPrep = query("SELECT * FROM `{$table}` WHERE `id` = '{$_GET['id']}'");
 			$dataGrabber = unserialize($dataGrabberPrep['content' . $dataGrabberPrep['display']]);
 			$comments = $_POST['comments'];
 			$contentBundle = escape(serialize(array("title" => $dataGrabber['title'], "content" => $dataGrabber['content'], "comments" => $dataGrabber['comments'], "message" => $comments, "user" => $dataGrabber['user'], "time" => $dataGrabber['time'], "changes" => $dataGrabber['changes'])));
 			
-			query("UPDATE {$table} SET content{$dataGrabberPrep['display']} = '{$contentBundle}' WHERE id = '{$_GET['id']}'");
+			query("UPDATE `{$table}` SET `content{$dataGrabberPrep['display']}` = '{$contentBundle}' WHERE `id` = '{$_GET['id']}'");
 			die("<script type=\"text/javascript\">window.opener.location.reload(); window.close();</script>");
 		}
 		
@@ -1797,7 +1796,7 @@ ob_start();
 			}
 			
 			if (exist("users", "id", $inputData['user'])) {
-				$userInfo = query("SELECT * FROM users WHERE id = '{$inputData['user']}'");
+				$userInfo = query("SELECT * FROM `users` WHERE `id` = '{$inputData['user']}'");
 				$user = prepare(ucfirst($userInfo['firstName']) . " " . ucfirst($userInfo['lastName'])) . " ";
 			} else {
 				$user = "An unknown user ";
@@ -1871,7 +1870,7 @@ ob_start();
 			}
 			
 			if (exist("users", "id", $oldData['user'])) {
-				$userInfo = query("SELECT * FROM users WHERE id = '{$oldData['user']}'");
+				$userInfo = query("SELECT * FROM `users` WHERE `id` = '{$oldData['user']}'");
 				$user = prepare(ucfirst($userInfo['firstName']) . " " . ucfirst($userInfo['lastName'])) . " ";
 			} else {
 				$user = "An unknown user ";
@@ -1901,7 +1900,7 @@ ob_start();
 		//Grab the item data
 		if (isset($_GET['id'])) {
 			if (exist($table, "id", $_GET['id'])) {
-				$itemData = query("SELECT * FROM {$table} WHERE id = '{$_GET['id']}'");
+				$itemData = query("SELECT * FROM `{$table}` WHERE `id` = '{$_GET['id']}'");
 				$oldData = unserialize($itemData['content' . $itemData['display']]);
 				$newData = unserialize($itemData['content' . sprintf($itemData['display'] + 1)]);
 			} else {
@@ -1914,7 +1913,7 @@ ob_start();
 		//Process the form
 		if (isset($_GET['history']) && isset($_GET['revert']) && $_GET['revert'] == "true") {
 			if (array_key_exists("content" . $_GET['history'], $itemData) && !empty($itemData["content" . $_GET['history']]) && $_GET['revert'] != $itemData['display']) {
-				$revertDataPrep = query("SELECT * FROM {$table} WHERE id = '{$_GET['id']}'");
+				$revertDataPrep = query("SELECT * FROM `{$table}` WHERE `id` = '{$_GET['id']}'");
 				$revertData = unserialize($revertDataPrep["content" . $_GET['history']]);
 				$userData = userData();
 				$time = strtotime("now");
@@ -1925,10 +1924,10 @@ ob_start();
 				$display = ereg_replace("[^0-9]", "", $nextLog);
 					
 				if (!columnExists($table, $nextLog, $_GET['id'])) {
-					query("ALTER TABLE {$table} ADD {$nextLog} LONGTEXT NOT NULL");
+					query("ALTER TABLE `{$table}` ADD `{$nextLog}` LONGTEXT NOT NULL");
 				}
 				
-				query("UPDATE {$table} SET published = '2', display = '{$display}', {$nextLog} = '{$contentBundle}' WHERE id = '{$_GET['id']}'");
+				query("UPDATE `{$table}` SET `published` = '2', `display` = '{$display}', `{$nextLog}` = '{$contentBundle}' WHERE `id` = '{$_GET['id']}'");
 				die("<script type=\"text/javascript\">window.opener.location.reload(); window.close();</script>");
 			} else {
 				redirect($_SERVER['PHP_SELF'] . "?id=" . $_GET['id']);
@@ -1938,24 +1937,24 @@ ob_start();
 		//Clean-up old records
 		if (isset($_GET['id']) && isset($_GET['cleanUp']) && $_GET['cleanUp'] == "true") {
 			if (exist($table, "id", $_GET['id'])) {
-				$recordBuilder = query("SELECT * FROM {$table} WHERE id = '{$_GET['id']}'");
+				$recordBuilder = query("SELECT * FROM `{$table}` WHERE `id` = '{$_GET['id']}'");
 				$currentRecord = escape($recordBuilder['content' . $recordBuilder['display']]);
-				$updateSQL = "UPDATE {$table} SET content1 = '{$currentRecord}'";
+				$updateSQL = "UPDATE `{$table}` SET `content1` = '{$currentRecord}'";
 				$start = 1;
 				$end = $recordBuilder['display'];
 				
 				if (!empty($recordBuilder['content' . sprintf($recordBuilder['display'] + 1)])) {
 					$nextRecord = escape($recordBuilder['content' . sprintf($recordBuilder['display'] + 1)]);
-					$updateSQL .= ", content2 = '{$nextRecord}'";
+					$updateSQL .= ", `content2` = '{$nextRecord}'";
 					$start = 2;
 					$end = sprintf($recordBuilder['display'] + 1);
 				}
 				
 				for($count = sprintf($start + 1); $count <= $end; $count++) {
-					$updateSQL .= ", content{$count} = ''";
+					$updateSQL .= ", `content{$count}` = ''";
 				}
 				
-				$updateSQL .= ", display = '1' WHERE id = '{$_GET['id']}'";
+				$updateSQL .= ", `display` = '1' WHERE `id` = '{$_GET['id']}'";
 				
 				query($updateSQL);
 				redirect($_SERVER['PHP_SELF'] . "?id=" . $_GET['id']);
@@ -2018,7 +2017,7 @@ ob_start();
 					}
 					
 					if (exist("users", "id", $item['user'])) {
-						$userInfo = query("SELECT * FROM users WHERE id = '{$item['user']}'");
+						$userInfo = query("SELECT * FROM `users` WHERE `id` = '{$item['user']}'");
 						$user = prepare(ucfirst($userInfo['firstName']) . " " . ucfirst($userInfo['lastName']));
 					} else {
 						$user = "Unknown";
@@ -2073,7 +2072,7 @@ ob_start();
 				}
 				
 				if (exist("users", "id", $item['user'])) {
-					$userInfo = query("SELECT * FROM users WHERE id = '{$item['user']}'");
+					$userInfo = query("SELECT * FROM `users` WHERE `id` = '{$item['user']}'");
 					$user = prepare(ucfirst($userInfo['firstName']) . " " . ucfirst($userInfo['lastName'])) . " ";
 				} else {
 					$user = "An unknown user ";
@@ -2146,12 +2145,12 @@ ob_start();
 			echo "\"><input type=\"hidden\" name=\"action\" value=\"modifySettings\"><select name=\"position\" onchange=\"this.form.submit();\">";
 			
 			if ($table != "pages") {
-				$itemCount = query("SELECT * FROM {$table}", "num");
+				$itemCount = query("SELECT * FROM `{$table}`", "num");
 			} else {
 				if (isset($_GET['category']) && exist("pages", "parentPage", $_GET['category'])) {
-					$itemCount = query("SELECT * FROM {$table} WHERE parentPage = '{$_GET['category']}'", "num");
+					$itemCount = query("SELECT * FROM `{$table}` WHERE `parentPage` = '{$_GET['category']}'", "num");
 				} else {
-					$itemCount = query("SELECT * FROM {$table} WHERE parentPage = '0'", "num");
+					$itemCount = query("SELECT * FROM `{$table}` WHERE `parentPage` = '0'", "num");
 				}
 			}
 			
@@ -2297,7 +2296,7 @@ ob_start();
 			$userName = $_SESSION['MM_Username'];
 			
 			$activityTimestamp = time();
-			mssql_query("UPDATE users SET active = '{$activityTimestamp}' WHERE userName = '{$userName}'", $connDBA);
+			mysql_query("UPDATE `users` SET `active` = '{$activityTimestamp}' WHERE `userName` = '{$userName}' LIMIT 1", $connDBA);
 		}
 	}
 	
@@ -2310,40 +2309,40 @@ ob_start();
 			$date = date("M-d-Y");
 			
 			if (exist("dailyhits", "date", $date)) {
-				odbc_exec($connDBA, "UPDATE dailyhits SET hits = hits+1 WHERE date = '{$date}'");
+				mysql_query("UPDATE `dailyhits` SET `hits` = `hits`+1 WHERE `date` = '{$date}' LIMIT 1", $connDBA);
 			} else {
-				odbc_exec($connDBA, "INSERT INTO dailyhits (
-							date, hits
+				mysql_query("INSERT INTO `dailyhits` (
+							`id`, `date`, `hits`
 							) VALUES (
-							'{$date}', '1'
-							)");
+							NULL, '{$date}', '1'
+							)", $connDBA);
 			}
 			
 			if ($publicSpace == "true") {
 				if (isset($_GET['page'])) {
 					$page = $_GET['page'];
 				} else {
-					$pageDataGrabber = odbc_exec($connDBA, "SELECT TOP 1 * FROM pages WHERE position = '1'");
+					$pageDataGrabber = mysql_query("SELECT * FROM `pages` WHERE `position` = '1' LIMIT 1", $connDBA);
 					
-					if ($pageData = odbc_fetch_array($pageDataGrabber)) {
+					if ($pageData = mysql_fetch_array($pageDataGrabber)) {
 						$page = $pageData['id'];
 					}
 				}
 				
 				if (isset($page)) {
-					$settings = query("SELECT * FROM privileges");
-					$pagePublished = query("SELECT TOP 1 * FROM pages WHERE id = '{$page}'");
+					$settings = query("SELECT * FROM `privileges`");
+					$pagePublished = query("SELECT * FROM `pages` WHERE `id` = '{$page}' LIMIT 1");
 					
 					if ($pagePublished['published'] != "0") {
 						if (exist("pages", "id", $page)) {
 							if (exist("pagehits", "page", $page)) {
-								odbc_exec($connDBA, "UPDATE pagehits SET hits = hits+1 WHERE page = '{$page}'");
+								mysql_query("UPDATE `pagehits` SET `hits` = `hits`+1 WHERE `page` = '{$page}' LIMIT 1", $connDBA);
 							} else {
-								odbc_exec($connDBA, "INSERT INTO pagehits (
-											page, hits
+								mysql_query("INSERT INTO `pagehits` (
+											`id`, `page`, `hits`
 											) VALUES (
-											'{$page}', '1'
-											)");
+											NULL, '{$page}', '1'
+											)", $connDBA);
 							}
 						}
 					}

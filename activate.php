@@ -5,12 +5,11 @@
 
 //Activate a user's account
 	if (!loggedIn() && isset($_GET['id']) && isset($_GET['email'])) {
-		$id = Validate::required($_GET['id'], false, false, false, 15);
-		$email = Validate::isEmail(urldecode($_GET['email']));
-		$statement = odbc_prepare($connDBA, "UPDATE users SET activation = '' WHERE activation LIKE ? AND emailAddress1 LIKE ?");
-		$activateCheck = odbc_exec($statement, array($id, $email));
+		$id = mysql_real_escape_string(Validate::required($_GET['id'], false, false, false, 15));
+		$email = mysql_real_escape_string(Validate::isEmail(urldecode($_GET['email'])));
+		$activateCheck = mysql_query("UPDATE users SET activation = '' WHERE activation LIKE '{$id}' AND emailAddress1 LIKE '{$email}'", $connDBA);
 		
-		if ($activateCheck && odbc_num_rows($statement) != 0) {
+		if ($activateCheck && mysql_affected_rows($connDBA) != 0) {
 			redirect("login.php?activated=true");
 		} else {
 			redirect("login.php?activated=false");
