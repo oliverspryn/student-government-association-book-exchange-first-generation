@@ -11,7 +11,7 @@
 	
 //Process the recovery request
 	if (isset($_POST['username'])) {
-		$email = mssql_real_escape_string(Validate::required($_POST['username']));
+		$email = Validate::required($_POST['username']);
 		$rawPassword = randomValue("10");
 		
 	//Emulate the first level of encryption which usually is done via JavaScript
@@ -23,10 +23,11 @@
 		$password2 = md5($password1 . "_" . $hash2);
 		
 	//Execute the query on the database
-		$affected = mssql_query("UPDATE users SET passWord = PASSWORD('{$password2}'), changePassword = 'on' WHERE emailAddress1 LIKE '{$email}'", $connDBA);
+		$statement = odbc_prepare($connDBA, "UPDATE users SET passWord = ?, changePassword = 'on' WHERE emailAddress1 LIKE ?");
+		$affected = odbc_execute($statement, array($password2, $email));
 		
 	//Send this user an email
-		if (mssql_affected_rows($connDBA)) {
+		if (odbc_num_rows($statement)) {
 		//SMTP logon information
 			$username = "no-reply@forwardfour.com";
 			$password = "n*O^]z%]|c44Q~3";
@@ -43,7 +44,7 @@
 <body>
 <h2>Password Recovery Request</h2>
 <p>We have reset your password to: <strong>" . $rawPassword . "</strong></p>
-<p>Once you <a href=\"" . $root . "login\" style=\"color: #4BF; text-decoration: none;\">login</a>, you will be asked to change it to a more suitable password.</p>			
+<p>Once you <a href=\"" . $root . "login.php\" style=\"color: #4BF; text-decoration: none;\">login</a>, you will be asked to change it to a more suitable password.</p>			
 </body>
 </html>";
 			
@@ -52,19 +53,19 @@
 We have reset your password to: " . $rawPassword . "
 Once you login, you will be asked to change it to a more suitable password.
 
-Login here: " . $root . "login";
+Login here: " . $root . "login.php";
 	
 		//Send a notification email
 			try {
 				$mail = new PHPMailer(true);
-				$mail->IsSMTP();
+				/*$mail->IsSMTP();
 				$mail->SMTPDebug = 0;
 				$mail->SMTPAuth = true;
 				$mail->SMTPSecure = "tls";
 				$mail->Host = "smtp.gmail.com";
 				$mail->Port = 587;
 				$mail->Username = $username;
-				$mail->Password = $password;
+				$mail->Password = $password;*/
 				$mail->AddAddress($_POST['username']);
 				$mail->SetFrom("no-reply@forwardfour.com", "No-Reply");
 				$mail->Subject = $subject;
@@ -83,7 +84,7 @@ Login here: " . $root . "login";
 	}
 	
 //Generate the breadcrumb
-	$home = mssql_fetch_array(mssql_query("SELECT * FROM pages WHERE position = '1' AND published != '0'", $connDBA));
+	$home = odbc_fetch_array(odbc_exec($connDBA, "SELECT * FROM pages WHERE position = '1' AND published != '0'"));
 	$title = unserialize($home['content' . $home['display']]);
 	$breadcrumb = "\n<li><a href=\"" . $root . "index.php?page=" . $home['id'] . "\">" . stripslashes($title['title']) . "</a></li>
 <li><a href=\"login.php\">Login</a></li>

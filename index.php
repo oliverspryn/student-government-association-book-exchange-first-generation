@@ -3,11 +3,11 @@
 	require_once('Connections/connDBA.php'); 
 	
 //Check to see if any pages exist
-	$settingsGrabber = mssql_query("SELECT * FROM privileges WHERE id = '1'", $connDBA);
-	$settings = mssql_fetch_array($settingsGrabber);
-	$pagesExistGrabber = mssql_query("SELECT * FROM pages WHERE position = '1' AND published != '0'", $connDBA);
+	$settingsGrabber = odbc_exec($connDBA, "SELECT * FROM privileges WHERE id = '1'");
+	$settings = odbc_fetch_array($settingsGrabber);
+	$pagesExistGrabber = odbc_exec($connDBA, "SELECT * FROM pages WHERE position = '1' AND published != '0'");
 	
-	$pagesExistArray = mssql_fetch_array($pagesExistGrabber);
+	$pagesExistArray = odbc_fetch_array($pagesExistGrabber);
 	$pagesExistResult = $pagesExistArray['position'];
 	
 	if (isset ($pagesExistResult)) {
@@ -18,8 +18,8 @@
 	
 //Block access to unpublished pages
 	if (isset ($_GET['page'])) {
-		$pageAccessGrabber = mssql_query("SELECT * FROM pages WHERE id = '{$_GET['page']}'");
-		$pageAccess = mssql_fetch_array($pageAccessGrabber);
+		$pageAccessGrabber = odbc_exec($connDBA, "SELECT * FROM pages WHERE id = '{$_GET['page']}'");
+		$pageAccess = odbc_fetch_array($pageAccessGrabber);
 		
 		if ($pageAccess['published'] == "0") {
 			header("Location: index.php");
@@ -30,13 +30,13 @@
 //If no page URL variable is defined, then choose the home page
 	if (!isset ($_GET['page'])) {
 	//Grab the page data
-		$pageInfoPrep = mssql_fetch_array(mssql_query("SELECT * FROM pages WHERE position = '1' AND published != '0'", $connDBA));
+		$pageInfoPrep = odbc_fetch_array(odbc_exec($connDBA, "SELECT * FROM pages WHERE position = '1' AND published != '0'"));
 		$pageInfo = unserialize($pageInfoPrep['content' . $pageInfoPrep['display']]);
 		
 	//Hide the admin menu if an incorrect page displays		
 		if ($pagesExist == "1") {
-			$privilegesCheckGrabber = mssql_query("SELECT * FROM privileges WHERE id = '1'", $connDBA);
-			$privilegesCheck = mssql_fetch_array($privilegesCheckGrabber);
+			$privilegesCheckGrabber = odbc_exec($connDBA, "SELECT * FROM privileges WHERE id = '1'");
+			$privilegesCheck = odbc_fetch_array($privilegesCheckGrabber);
 			
 			if ($pageInfoPrep['published'] == "0") {
 				$pageCheck = 0;
@@ -53,17 +53,17 @@
 	} else {		
 	//Grab the page data
 		$getPageID = $_GET['page'];
-		$pageInfoPrep = mssql_fetch_array(mssql_query("SELECT * FROM pages WHERE id = {$getPageID}", $connDBA));
+		$pageInfoPrep = odbc_fetch_array(odbc_exec($connDBA, "SELECT * FROM pages WHERE id = {$getPageID}"));
 		$pageInfo = unserialize($pageInfoPrep['content' . $pageInfoPrep['display']]);
 		
 	//Hide the admin menu if an incorrect page displays
-		$pageCheckGrabber = mssql_query("SELECT * FROM pages WHERE id = {$getPageID}", $connDBA);
-		$pageCheckArray = mssql_fetch_array($pageCheckGrabber);
+		$pageCheckGrabber = odbc_exec($connDBA, "SELECT * FROM pages WHERE id = {$getPageID}");
+		$pageCheckArray = odbc_fetch_array($pageCheckGrabber);
 		$pageCheckResult = $pageCheckArray['position'];
 		
 		if (isset ($pageCheckResult)) {
-			$privilegesCheckGrabber = mssql_query("SELECT * FROM privileges WHERE id = '1'", $connDBA);
-			$privilegesCheck = mssql_fetch_array($privilegesCheckGrabber);
+			$privilegesCheckGrabber = odbc_exec($connDBA, "SELECT * FROM privileges WHERE id = '1'");
+			$privilegesCheck = odbc_fetch_array($privilegesCheckGrabber);
 			
 			if ($pageCheckArray['published'] == "0") {
 				$pageCheck = 0;
@@ -76,8 +76,8 @@
 	}
 	
 //Grab the sidebar	
-	$sideBarCheck = mssql_query("SELECT * FROM sidebar WHERE visible LIKE 'on' AND published != '0'", $connDBA);
-	$sideBarResult = mssql_fetch_array($sideBarCheck);
+	$sideBarCheck = odbc_exec($connDBA, "SELECT * FROM sidebar WHERE visible LIKE 'on' AND published != '0'");
+	$sideBarResult = odbc_fetch_array($sideBarCheck);
 ?>
 <?php
 	if ($pageInfoPrep == 0 && $pagesExist == 0) {
@@ -98,11 +98,11 @@
 	}
 	
 //Build the dynamic breadcrumb :(
-	$breadcrumbGrabber = mssql_query("SELECT * FROM pages", $connDBA);
+	$breadcrumbGrabber = odbc_exec($connDBA, "SELECT * FROM pages");
 	$pagesArray = array();
 	
 //Assign the ID of each page to its own key of the array for the algorithm after this step
-	while($breadcrumb = mssql_fetch_array($breadcrumbGrabber)) {
+	while($breadcrumb = odbc_fetch_array($breadcrumbGrabber)) {
 		$pagesArray[$breadcrumb['id']] = $breadcrumb;
 	}
 	
@@ -182,8 +182,8 @@
 	echo "<header>\n<h1 class=\"title\">" . $title . "</h1>\n</header>\n\n";
 
 //Use the layout control if the page is displaying a sidebar
-	$sideBarLocationGrabber = mssql_query("SELECT * FROM siteprofiles WHERE id = '1'", $connDBA);
-	$sideBarLocation = mssql_fetch_array($sideBarLocationGrabber);
+	$sideBarLocationGrabber = odbc_exec($connDBA, "SELECT * FROM siteprofiles WHERE id = '1'");
+	$sideBarLocation = odbc_fetch_array($sideBarLocationGrabber);
 	
 	if (!isset($_GET['page']) || empty($_GET['page'])) {
 		$idPrep = query("SELECT * FROM pages WHERE position = '1'");
@@ -232,7 +232,7 @@
 	
 //Display the sidebar	
 	if ($sideBarResult || hasChildren() || hasParents() && $pageInfoPrep !== 0 && $pagesExist == 1) {
-		$sideBarCheck = mssql_query("SELECT * FROM sidebar WHERE visible LIKE 'on' AND published != '0' ORDER BY position ASC", $connDBA);
+		$sideBarCheck = odbc_exec($connDBA,"SELECT * FROM sidebar WHERE visible LIKE 'on' AND published != '0' ORDER BY position ASC");
 		
 		echo "\n<aside class=\"sidebar ";
 		
@@ -259,7 +259,7 @@
 			}
 			
 			if (query("SELECT * FROM pages WHERE parentPage = '{$pagesGrabber['id']}' AND visible LIKE 'on' AND published != '0'")) {
-				while ($childPages = mssql_fetch_array($childPagesGrabber)) {
+				while ($childPages = odbc_fetch_array($childPagesGrabber)) {
 					$childTitle = unserialize($childPages['content' . $childPages['display']]);
 					
 					if ($id == $childPages['id']) {
@@ -275,7 +275,7 @@
 		
 		$counter = 1;
 		
-		while ($sideBarPrep = mssql_fetch_array($sideBarCheck)) {
+		while ($sideBarPrep = odbc_fetch_array($sideBarCheck)) {
 			$sideBar = unserialize($sideBarPrep['content' . $sideBarPrep['display']]);
 						
 			if (!isset($_SESSION['MM_Username']) || (isset($_SESSION['MM_Username']) && privileges("editSideBar") != "true")) {

@@ -10,25 +10,26 @@ ob_start();
 	$dirRoot = str_replace("Connections\connDBA.php", "", __FILE__);
 
 	//Database connection
-	$databaseName = "sgabookx";
-	$connDBA = mssql_connect("gecrc.gcc.edu", "sgabooku", "sgabookp");
-	$dbSelect = mssql_select_db($databaseName, $connDBA);
+	//$databaseName = "sgabookx";
+	//$connDBA = mssql_connect("gecrc.gcc.edu", "sgabooku", "sgabookp");
+	//$dbSelect = mssql_select_db($databaseName, $connDBA);
+	$connDBA = odbc_connect("Driver={SQL Server};Server=gecrc.gcc.edu;Database=sgabookx;", "sgabooku", "sgabookp");
 	
 	//Define time zone
-	$timeZoneGrabber = mssql_query("SELECT * FROM siteprofiles WHERE id = '1'", $connDBA);
-	$timeZone = mssql_fetch_array($timeZoneGrabber);
+	$timeZoneGrabber = odbc_exec($connDBA, "SELECT * FROM siteprofiles WHERE id = '1'");
+	$timeZone = odbc_fetch_array($timeZoneGrabber);
 	date_default_timezone_set($timeZone['timeZone']);
 	
 	//Grab the site's data
-	$siteInfoGrabber = mssql_query("SELECT * FROM siteprofiles WHERE id = '1'", $connDBA);
-	$siteInfo = mssql_fetch_array($siteInfoGrabber);
+	$siteInfoGrabber = odbc_exec($connDBA, "SELECT * FROM siteprofiles WHERE id = '1'");
+	$siteInfo = odbc_fetch_array($siteInfoGrabber);
 	
 	//Grab the user's data
 	function userData() {
 		global $connDBA;
 		
-		$userInfoGrabber = mssql_query("SELECT * FROM users WHERE emailAddress1 = '{$_SESSION['MM_Username']}'", $connDBA);
-		$userInfo = mssql_fetch_array($userInfoGrabber);
+		$userInfoGrabber = odbc_exec($connDBA, "SELECT * FROM users WHERE emailAddress1 = '{$_SESSION['MM_Username']}'");
+		$userInfo = odbc_fetch_array($userInfoGrabber);
 		return $userInfo;
 	}
 	
@@ -45,16 +46,6 @@ ob_start();
 		$userData = userData();
 	} else {
 		$userData = "";
-	}
-	
-	//There isn't any mssql_real_escape_string
-	function mssql_real_escape_string($data) {
-		if (is_numeric($data)) {
-			return $data;
-		}
-		
-		$unpacked = unpack('H*hex', $data);
-		return '0x' . $unpacked['hex'];
 	}
 /* End core functions */	
 
@@ -96,10 +87,10 @@ ob_start();
 	//Include the theme intended for the top of a public webpage
 		if ($type == "public") {
 		//Generate the navigation bar
-			$pageData = mssql_query("SELECT * FROM pages WHERE visible LIKE 'on' AND published != '0' AND parentPage = '0' ORDER BY position ASC", $connDBA);
+			$pageData = odbc_exec($connDBA, "SELECT * FROM pages WHERE visible LIKE 'on' AND published != '0' AND parentPage = '0' ORDER BY position ASC");
 			$navigation = "";
 			
-			while ($page = mssql_fetch_array($pageData)) {			
+			while ($page = odbc_fetch_array($pageData)) {			
 				if ($page['type'] == "page") {
 				//Extract the data from the encoded array
 					$pageInfo = unserialize($page['content' . $page['display']]);
@@ -153,11 +144,11 @@ ob_start();
 	//Include the theme intended for the bottom of a public webpage
 		if ($type == "public") {
 		//Generate the navigation bar
-			$pageData = mssql_query("SELECT * FROM pages WHERE visible LIKE 'on' AND published != '0' AND parentPage = '0' ORDER BY position ASC", $connDBA);
+			$pageData = odbc_exec($connDBA, "SELECT * FROM pages WHERE visible LIKE 'on' AND published != '0' AND parentPage = '0' ORDER BY position ASC");
 			$counter = 1;
 			$navigation = "<ul>\n";
 			
-			while ($page = mssql_fetch_array($pageData)) {
+			while ($page = odbc_fetch_array($pageData)) {
 				$navigation .= "<li>\n<ul>\n";
 				
 				if ($page['type'] == "page") {
@@ -168,9 +159,9 @@ ob_start();
 					$navigation .= "<li><a class=\"item" . $counter . "\" href=\"" . $root . "index.php?page=" . $page['id'] . "\">" . stripslashes($pageInfo['title']) . "</a></li>\n";
 					
 				//Show any sub-pages of the current parent-page
-					$subPageData = mssql_query("SELECT * FROM pages WHERE visible LIKE 'on' AND published != '0' AND parentPage = '" . $page['id'] . "' ORDER BY subPosition ASC");
+					$subPageData = odbc_exec($connDBA, "SELECT * FROM pages WHERE visible LIKE 'on' AND published != '0' AND parentPage = '" . $page['id'] . "' ORDER BY subPosition ASC");
 					
-					while($subPage = mssql_fetch_array($subPageData)) {
+					while($subPage = odbc_fetch_array($subPageData)) {
 					//Extract the data from the encoded array
 						$subPageInfo = unserialize($subPage['content' . $subPage['display']]);
 						
@@ -187,9 +178,9 @@ ob_start();
 					$navigation .= "<li><a class=\"item" . $counter . $class . "\" href=\"" . $page['URL'] . "\">" . stripslashes($page['linkTitle']) . "</a></li>\n";
 					
 				//Show any sub-pages of the current parent-page
-					$subPageData = mssql_query("SELECT * FROM pages WHERE visible LIKE 'on' AND published != '0' AND parentPage = '" . $page['id'] . "' ORDER BY subPosition ASC");
+					$subPageData = odbc_exec($connDBA, "SELECT * FROM pages WHERE visible LIKE 'on' AND published != '0' AND parentPage = '" . $page['id'] . "' ORDER BY subPosition ASC");
 					
-					while($subPage = mssql_fetch_array($subPageData)) {
+					while($subPage = odbc_fetch_array($subPageData)) {
 						if ($subPage['type'] == "page") {
 						//Extract the data from the encoded array
 							$subPageInfo = unserialize($subPage['content' . $subPage['display']]);
@@ -1048,19 +1039,19 @@ ob_start();
 	function query($query, $returnType = false, $showError = true) {
 		global $connDBA;
 		
-		$action = mssql_query($query, $connDBA);
+		$action = odbc_exec($connDBA, $query);
 		
 		if (!$action) {
 			if ($showError == true) {
 				$error = debug_backtrace();
-				die(errorMessage("There is an error with your query: " . $query . "<br /><br />" . mssql_get_last_message() . "<br /><br />Error on line: " . $error['0']['line'] . "<br />Error in file: " . $error['0']['file']));
+				die(errorMessage("There is an error with your query: " . $query . "<br /><br />" . odbc_errormsg() . "<br /><br />Error on line: " . $error['0']['line'] . "<br />Error in file: " . $error['0']['file']));
 			} else {
 				return false;
 			}
 		} else {
 			if (!strstr($query, "INSERT INTO") && !strstr($query, "UPDATE") && !strstr($query, "SET") && !strstr($query, "DELETE FROM") && !strstr($query, "CREATE TABLE") && !strstr($query, "ALTER TABLE")) {
 				if ($returnType == false || $returnType == "array") {
-					$result = mssql_fetch_array($action);
+					$result = odbc_fetch_array($action);
 					
 					if (is_array($result) && !empty($result)) {
 						array_merge_recursive($result);
@@ -1078,8 +1069,8 @@ ob_start();
 					unset($query, $action, $result);
 					exit;
 				} elseif ($returnType == "raw") {
-					$actionTest = mssql_query($query, $connDBA);
-					$result = mssql_fetch_array($actionTest);
+					$actionTest = odbc_exec($connDBA, $query);
+					$result = odbc_fetch_array($actionTest);
 					
 					if ($result) {
 						return $action;
@@ -1090,14 +1081,14 @@ ob_start();
 					unset($query, $action, $result);
 					exit;
 				} elseif ($returnType == "num") {
-					$result = mssql_num_rows($action);
+					$result = odbc_num_rows($action);
 					return $result;
 					unset($query, $action, $result);
 					exit;
 				} elseif ($returnType == "selected") {
 					$return = array();
 					
-					while ($result = mssql_fetch_array($action)) {
+					while ($result = odbc_fetch_array($action)) {
 						array_push($return, $result);
 					} 
 					
@@ -1105,7 +1096,7 @@ ob_start();
 					unset($query, $action, $result);
 					exit;
 				} elseif ($returnType == "assoc") {
-					$result = mssql_fetch_assoc($action);
+					$result = odbc_fetch_array($action);
 					
 					if (is_array($result) && !empty($result)) {
 						array_merge_recursive($result);
@@ -1137,15 +1128,15 @@ ob_start();
 			$additionalCheck = "";
 		}
 		
-		$itemCheckGrabber = mssql_query("SELECT * FROM {$table}{$additionalCheck}", $connDBA);
+		$itemCheckGrabber = odbc_exec($connDBA, "SELECT * FROM {$table}{$additionalCheck}");
 		
 		if ($itemCheckGrabber) {
-			$itemCheck = mssql_num_rows($itemCheckGrabber);
+			$itemCheck = odbc_num_rows($itemCheckGrabber);
 			
 			if ($itemCheck >= 1) {
-				$itemGrabber = mssql_query("SELECT * FROM {$table}{$additionalCheck}", $connDBA);
+				$itemGrabber = odbc_exec($connDBA, "SELECT * FROM {$table}{$additionalCheck}");
 				
-				$item = mssql_fetch_array($itemGrabber);
+				$item = odbc_fetch_array($itemGrabber);
 				
 				return $item;
 			} else {
@@ -2319,22 +2310,22 @@ ob_start();
 			$date = date("M-d-Y");
 			
 			if (exist("dailyhits", "date", $date)) {
-				mssql_query("UPDATE dailyhits SET hits = hits+1 WHERE date = '{$date}'", $connDBA);
+				odbc_exec($connDBA, "UPDATE dailyhits SET hits = hits+1 WHERE date = '{$date}'");
 			} else {
-				mssql_query("INSERT INTO dailyhits (
+				odbc_exec($connDBA, "INSERT INTO dailyhits (
 							date, hits
 							) VALUES (
 							'{$date}', '1'
-							)", $connDBA);
+							)");
 			}
 			
 			if ($publicSpace == "true") {
 				if (isset($_GET['page'])) {
 					$page = $_GET['page'];
 				} else {
-					$pageDataGrabber = mssql_query("SELECT TOP 1 * FROM pages WHERE position = '1'", $connDBA);
+					$pageDataGrabber = odbc_exec($connDBA, "SELECT TOP 1 * FROM pages WHERE position = '1'");
 					
-					if ($pageData = mssql_fetch_array($pageDataGrabber)) {
+					if ($pageData = odbc_fetch_array($pageDataGrabber)) {
 						$page = $pageData['id'];
 					}
 				}
@@ -2346,13 +2337,13 @@ ob_start();
 					if ($pagePublished['published'] != "0") {
 						if (exist("pages", "id", $page)) {
 							if (exist("pagehits", "page", $page)) {
-								mssql_query("UPDATE pagehits SET hits = hits+1 WHERE page = '{$page}'", $connDBA);
+								odbc_exec($connDBA, "UPDATE pagehits SET hits = hits+1 WHERE page = '{$page}'");
 							} else {
-								mssql_query("INSERT INTO pagehits (
+								odbc_exec($connDBA, "INSERT INTO pagehits (
 											page, hits
 											) VALUES (
 											'{$page}', '1'
-											)", $connDBA);
+											)");
 							}
 						}
 					}

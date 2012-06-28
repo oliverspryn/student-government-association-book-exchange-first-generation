@@ -18,11 +18,12 @@
 	if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['action']) && $_POST['action'] == "login") {
 	//Can this user log in, or have they maxed out their login attempts?
 		$yesterday = strtotime("-1 day");
-		$computerName = mssql_real_escape_string(gethostbyaddr($_SERVER['REMOTE_ADDR']));
-		$loginCheck = mssql_query("SELECT failedlogins.*, siteprofiles.failedLogins AS max, COUNT(failedlogins.id) AS total FROM failedlogins RIGHT JOIN (siteprofiles) ON failedlogins WHERE computerName = '{$computerName}' AND timeStamp > '{$yesterday}' GROUP BY computerName", $connDBA);
+		$computerName = gethostbyaddr($_SERVER['REMOTE_ADDR']);
+		$loginStatement = odbc_prepare($connDBA, "SELECT failedlogins.*, siteprofiles.failedlogins AS max, logincount FROM failedlogins RIGHT JOIN siteprofiles ON failedlogins > 0 INNER JOIN ( SELECT computerName, COUNT(*) logincount FROM failedlogins GROUP BY computerName ) logincounter ON failedlogins.computerName = logincounter.computerName WHERE failedlogins.computerName LIKE ? AND timeStamp > ?");
+		$loginCheck = odbc_execute($loginStatement, array($computerName, $yesterday));
 		
-		if ($loginCheck && mssql_num_rows($loginCheck)) {
-			$loginTries = mssql_fetch_assoc($loginCheck);
+		if ($loginCheck && odbc_num_rows($loginCheck)) {
+			$loginTries = odbc_fetch_array($loginCheck);
 			$failed = $loginTries['total'];
 			$total = $loginTries['max'];
 			
@@ -30,7 +31,7 @@
 				redirect("login.php?expired=true");
 			}
 		} else {
-			$totalGrabber = mssql_fetch_assoc(mssql_query("SELECT failedLogins FROM siteprofiles WHERE id = '1'", $connDBA));
+			$totalGrabber = odbc_fetch_array(odbc_exec($connDBA, "SELECT failedLogins FROM siteprofiles WHERE id = '1'"));
 			
 			$failed = "0";
 			$total = $totalGrabber['failedLogins'];
@@ -38,14 +39,15 @@
 		
 	//Process the login
 		$hash = "+y4hn&T/'K";
-		$email = mssql_real_escape_string(Validate::required($_POST['username']));
+		$email = Validate::required($_POST['username']);
 		$password = md5(Validate::required($_POST['password']) . "_" . $hash);
 		
 	//Does a user with this username/password combination exist?
-		$check = mssql_query("SELECT * FROM users WHERE emailAddress1 LIKE '{$email}' AND passWord LIKE PASSWORD('{$password}')", $connDBA);
+		$checkStatement = odbc_prepare($connDBA, "SELECT * FROM users WHERE emailAddress1 LIKE ? AND passWord LIKE ?");
+		$check = odbc_execute($checkStatement, array($email, $password));
 		
-		if ($check && mssql_num_rows($check) == 1) {
-			$userData = mssql_fetch_assoc($check);
+		if ($check && odbc_num_rows($checkStatement) == 1) {
+			$userData = odbc_fetch_array($checkStatement);
 			
 		//Did the user activate his or her account?
 			if ($userData['activation'] != "") {
@@ -75,11 +77,13 @@
 			$timestamp = strtotime("now");
 			$failed++;
 			
-			mssql_query("INSERT INTO failedlogins (
-						 	id, timeStamp, computerName, userName
-						 ) VALUES (
-						 	NULL, '{$timestamp}', '{$computerName}', '{$email}'
-						 )", $connDBA);
+			$failStatement = odbc_prepare($connDBA, "INSERT INTO failedlogins (
+						 								id, timeStamp, computerName, userName
+						 							 ) VALUES (
+						 								NULL, ?, ?, ?
+						 							 )");
+			
+			odbc_execute($failStatement, array($timestamp, $computerName, $email));
 			
 		//Determine where to redirect this user
 			if ($failed >= $total) {
@@ -101,28 +105,30 @@
 		$hash = "+y4hn&T/'K";
 		$activation = randomValue("15");
 		$name = explode(" ", $_POST['name']);
-		$firstName = mssql_real_escape_string(Validate::required($name[0]));
-		$lastName = mssql_real_escape_string(Validate::required($name[1]));
-		$email = mssql_real_escape_string(Validate::isEmail($_POST['username']));
+		$firstName = Validate::required($name[0]);
+		$lastName = Validate::required($name[1]);
+		$email = Validate::isEmail($_POST['username']);
 		$password = md5(Validate::required($_POST['password']) . "_" . $hash);
 		
 	//Is this email from the gcc.edu email domain?
 		$emailSplit = explode("@", $email);
 		
 	//Has the email already been used?
-		$usedCheck = mssql_query("SELECT * FROM users WHERE emailAddress1 = '{$email}'", $connDBA);
+		$usedStatement = odbc_prepare($connDBA, "SELECT * FROM users WHERE emailAddress1 LIKE ?");
+		$usedCheck = odbc_execute($usedStatement, array($email));
 		
-		if ($usedCheck && mssql_num_rows($usedCheck) != 0) {
+		if ($usedCheck && odbc_num_rows($usedCheck) != 0) {
 			redirect("login.php?used=true");
 		}
 		
 		if ($emailSplit[1] == "gcc.edu") {
 		//Add the user to the database
-			mssql_query("INSERT INTO users (
-						 	id, active, activation, firstName, lastName, passWord, changePassword, emailAddress1, emailAddress2, emailAddress3, role
-						 ) VALUES (
-						 	NULL, '1000000000', '{$activation}', '{$firstName}', '{$lastName}', PASSWORD('{$password}'), '', '{$email}', '', '', 'User'
-						 )", $connDBA);
+			$insertStatement = odbc_prepare($connDBA, "INSERT INTO users (
+						 				  	 		   	id, active, activation, firstName, lastName, passWord, changePassword, emailAddress1, emailAddress2, emailAddress3, role
+						 							   ) VALUES (
+						 							    NULL, '1000000000', ?, ?, ?, ?, ?, ?, ?, ?, ?
+						 								)");
+			odbc_execute($insertStatement, array($activation, $firstName, $lastName, $password, '', $email, '', '', 'User'));
 			
 		//Send the user an activation email
 		//SMTP logon information
@@ -160,14 +166,14 @@ Happy selling!
 		//Send a notification email
 			try {
 				$mail = new PHPMailer(true);
-				$mail->IsSMTP();
+				/*$mail->IsSMTP();
 				$mail->SMTPDebug = 0;
 				$mail->SMTPAuth = true;
 				$mail->SMTPSecure = "tls";
 				$mail->Host = "smtp.gmail.com";
 				$mail->Port = 587;
 				$mail->Username = $username;
-				$mail->Password = $password;
+				$mail->Password = $password;*/
 				$mail->AddAddress($_POST['username'], $name);
 				$mail->SetFrom("no-reply@forwardfour.com", "No-Reply");
 				$mail->Subject = $subject;
@@ -189,7 +195,7 @@ Happy selling!
 	}
 	
 //Generate the breadcrumb
-	$home = mssql_fetch_array(mssql_query("SELECT * FROM pages WHERE position = '1' AND published != '0'", $connDBA));
+	$home = odbc_fetch_array(odbc_exec($connDBA, "SELECT * FROM pages WHERE position = '1' AND published != '0'"));
 	$title = unserialize($home['content' . $home['display']]);
 	$breadcrumb = "\n<li><a href=\"" . $root . "index.php?page=" . $home['id'] . "\">" . stripslashes($title['title']) . "</a></li>
 <li>Login</li>\n";
