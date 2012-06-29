@@ -39,6 +39,7 @@ section.welcome div.design h1 {
 	border-bottom: 1px solid #000000;
 	border-top: 1px solid #000000;
 	color: #FFFFFF;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#50000000, endColorstr=#50000000); 
 	font-size: 50px;
 	margin-top: 0px;
 }
@@ -48,6 +49,7 @@ section.welcome div.design div.mask {
 	border-bottom: 1px solid #000000;
 	border-top: 1px solid #000000;
 	color: #FFFFFF;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#50000000, endColorstr=#50000000); 
 	padding: 25px 0px 25px 0px;
 }
 
@@ -137,6 +139,10 @@ section.welcome div.design div.mask div.search span.expand:hover {
 	background-position: 0px -19px;
 }
 
+section.welcome div.design div.mask div.search div.controls {
+	padding: 7px 0px 50px 0px;
+}
+
 section.welcome div.design div.mask div.search span.searchStep {
 	display: inline-block;
 	font-size: 14px;
@@ -157,6 +163,9 @@ section.introduction {
 
 section.introduction section.video {
 	background: #000000;
+	font-size: 48px;
+	min-height: 500px;
+	padding-top: 100px;
 }
 
 section.introduction section.description {
@@ -372,7 +381,8 @@ section.finish {
 	background: url(../images/welcome/money.png) no-repeat top right;
 	display: block;
 	height: 450px;
-	margin: 75px -12.6% -10px -12.5%;
+	margin: 75px -12.5% -10px -12.5%;
+	overflow-x: hidden;
 }
 
 section.finish div.books {

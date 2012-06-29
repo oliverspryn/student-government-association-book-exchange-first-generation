@@ -235,7 +235,7 @@
 	
 //Include other books by this seller
 	$now = strtotime("now");
-	$sellerOtherGrabber = mysql_query("SELECT books.*, exchangesettings.expires, bookcategories.*, users.*, books.id AS bookID, books.course AS courseID FROM books RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (exchangesettings) ON users.id WHERE books.userID = (SELECT userID FROM books WHERE id = '{$_GET['id']}') AND books.id != '{$_GET['id']}' AND books.sold != '1' AND books.userID != '0' AND books.upload + exchangesettings.expires > {$now} GROUP BY books.linkID ORDER BY RAND() LIMIT 4", $connDBA);
+	$sellerOtherGrabber = mysql_query("SELECT books.*, exchangesettings.expires, bookcategories.*, users.*, books.id AS bookID, books.course AS courseID FROM books RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (exchangesettings) ON users.id WHERE books.userID = (SELECT userID FROM books WHERE id = '{$_GET['id']}') AND books.linkID != (SELECT linkID FROM books WHERE id = '{$_GET['id']}' LIMIT 1) AND books.sold != '1' AND books.userID != '0' AND books.upload + exchangesettings.expires > {$now} GROUP BY books.linkID ORDER BY RAND() LIMIT 4", $connDBA);
 	
 	if (mysql_num_rows($sellerOtherGrabber)) {
 		echo "<section class=\"more\">
@@ -317,7 +317,7 @@
 	$SQL = ltrim($SQL, " OR ");
 	$title = ltrim($title, ", ");
 	$now = strtotime("now");
-	$catOtherGrabber = mysql_query("SELECT books.*, exchangesettings.expires, bookcategories.*, users.*, books.id AS bookID, books.course AS courseID FROM books RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (exchangesettings) ON users.id WHERE {$SQL} AND books.id !='{$_GET['id']}' AND books.sold != '1' AND books.userID != '0' AND books.upload + exchangesettings.expires > {$now} GROUP BY books.linkID ORDER BY RAND() LIMIT 4", $connDBA);
+	$catOtherGrabber = mysql_query("SELECT books.*, exchangesettings.expires, bookcategories.*, users.*, books.id AS bookID, books.course AS courseID FROM books RIGHT JOIN (bookcategories) ON books.course = bookcategories.id RIGHT JOIN (users) ON books.userID = users.id RIGHT JOIN (exchangesettings) ON users.id WHERE {$SQL} AND books.linkID != (SELECT linkID FROM books WHERE id = '{$_GET['id']}' LIMIT 1) AND books.sold != '1' AND books.userID != '0' AND books.upload + exchangesettings.expires > {$now} GROUP BY books.linkID ORDER BY RAND() LIMIT 4", $connDBA);
 	
 	if (mysql_num_rows($catOtherGrabber)) {
 		echo "<section class=\"other\">

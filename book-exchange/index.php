@@ -109,13 +109,14 @@
 //Include section two
 	echo "<section class=\"introduction\">
 <section class=\"video\">
-<object width=\"100%\" height=\"600\">
+Quick start video is on its way and will be posted soon!
+<!--<object width=\"100%\" height=\"600\">
 <param name=\"allowfullscreen\" value=\"true\" />
 <param name=\"allowscriptaccess\" value=\"always\" />
 <param name=\"wmode\" value=\"transparent\" />
 <param name=\"movie\" value=\"http://vimeo.com/moogaloop.swf?clip_id=18851690&amp;force_embed=1&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=0&amp;show_portrait=0&amp;color=c9ff23&amp;fullscreen=1&amp;autoplay=0&amp;loop=0\" />
-<embed src=\"http://vimeo.com/moogaloop.swf?clip_id=18851690&amp;force_embed=1&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=0&amp;show_portrait=0&amp;color=c9ff23&amp;fullscreen=1&amp;autoplay=0&amp;loop=0\" type=\"application/x-shockwave-flash\" allowfullscreen=\"true\" allowscriptaccess=\"always\" width=\"100%\" height=\"600\"></embed>
-</object>
+<embed src=\"http://vimeo.com/moogaloop.swf?clip_id=18851690&amp;force_embed=1&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=0&amp;show_portrait=0&amp;color=c9ff23&amp;fullscreen=1&amp;autoplay=0&amp;loop=0\" type=\"application/x-shockwave-flash\" allowfullscreen=\"true\" allowscriptaccess=\"always\" width=\"100%\" height=\"600\" wmode=\"transparent\"></embed>
+</object>-->
 </section>
 
 <section class=\"description\">

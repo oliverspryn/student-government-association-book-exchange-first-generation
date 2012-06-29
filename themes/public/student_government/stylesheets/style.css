@@ -139,7 +139,7 @@ section.login div.design div.register h2 {
 nav.main {
 	background: #F5F5F5;
 	background-image: url(../images/ribbon.png);
-	background-image: url(../images/ribbon.png), linear-gradient(top, #FAFAFA, #F5F5F5);
+	background-image: linear-gradient(top, #FAFAFA, #F5F5F5), url(../images/ribbon.png); /* Order flipped so unsupported browsers show the ribbon */
 	background-image: url(../images/ribbon.png), -moz-linear-gradient(top, #FAFAFA, #F5F5F5);
 	background-image: url(../images/ribbon.png), -ms-linear-gradient(top, #FAFAFA, #F5F5F5);
 	background-image: url(../images/ribbon.png), -o-linear-gradient(top, #FAFAFA, #F5F5F5);
@@ -148,7 +148,6 @@ nav.main {
 	background-repeat: repeat-x;
 	border-bottom: 1px solid #D8DDE1;
 	display: block;
-	filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr=#FAFAFA, EndColorStr=#F5F5F5)";
 	padding-top: 19px;
 	position: relative;
 	width: 100%;
@@ -248,7 +247,7 @@ nav.main ul.exchange {
 	padding: 0px;
 	position: absolute;
 	right: 10%;
-	top: 100px;
+	top: 99px;
 }
 
 nav.main ul.exchange li {
@@ -329,7 +328,7 @@ nav.main section.search span.performSearch {
 	height: 12px;
 	position: absolute;
 	right: 7px;
-	top: 8px;
+	top: 6px;
 	width: 14px;
 }
 
@@ -492,6 +491,11 @@ aside.sidebar section.menu ul li.up:active {
  * Footer common styles
  * ------------------------------------------
  */
+ 
+footer {
+	clear: both;
+	display: block;
+}
 
 footer section.main {
 	background: #F0F1F4;
@@ -682,6 +686,7 @@ footer section.main section p.networking {
  */
 
 footer section.footer {
+	height: 35px;
 	font-size: 12px;
 	padding: 0px 10% 0px 10%;
 }
@@ -698,9 +703,25 @@ footer section.footer ul {
 
 footer section.footer ul li {
 	display: inline-block;
-	padding: 0px 10px 0px 10px;
+	padding: 0px 0px 0px 20px;
 }
 
-footer section.footer ul li:last-child {
-	padding-right: 0px;
+/**
+ * Webkit-specific hacks
+ * ------------------------------------------
+ */
+ 
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+	nav.main ul.exchange {
+		top: 97px;
+	}
+	
+	nav.main ul.exchange li {
+		float: left;
+		padding-bottom: 1px;
+	}
+	
+	nav.main section.search span.performSearch {
+		top: 8px;
+	}
 }

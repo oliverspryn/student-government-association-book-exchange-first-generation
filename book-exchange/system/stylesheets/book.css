@@ -102,10 +102,10 @@ section.allInfo section h2 {
 	padding: 5px 0px 5px 35px;
 }
 
-section.allInfo section.purchase {
-	padding: 30px 0px 30px 0px;
-	text-align: center;
-}
+/**
+ * General information
+ * ------------------------------------
+*/
 
 section.allInfo section.general h2 {
 	background-position: -111px 3px;
@@ -198,9 +198,19 @@ section.allInfo section.general span.marks {
 	padding: 2px 3px 2px 25px;
 }
 
+/**
+ * Seller comments
+ * ------------------------------------
+*/
+
 section.allInfo section.comments h2 {
 	background-position: -75px -33px;
 }
+
+/**
+ * Classes that use a given book
+ * ------------------------------------
+*/
 
 section.allInfo section.classes h2 {
 	background-position: 0px -110px;
@@ -222,6 +232,11 @@ section.allInfo section.classes ul li span.classDetails {
 	text-align: center;
 }
 
+/**
+ * Seller contact information
+ * ------------------------------------
+*/
+
 section.allInfo section.seller h2 {
 	background-position: -38px -75px;
 }
@@ -239,6 +254,12 @@ section.allInfo section.seller span.details strong {
 section.allInfo section.seller span.details strong.extended {
 	width: 110px;
 }
+
+/**
+ * More books by a given seller, and
+ * other books in this section
+ * ------------------------------------
+*/
 
 section.allInfo section.more {
 	margin-left: -35px;
@@ -265,7 +286,7 @@ section.allInfo section.more ul, section.allInfo section.other ul {
 }
 
 section.allInfo section.more ul li, section.allInfo section.other ul li {
-	display: table-cell;
+	display: inline-block;
 	height: 100%;
 	max-width: 130px;
 	min-width: 130px;

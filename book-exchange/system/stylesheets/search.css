@@ -60,6 +60,7 @@ section.searchForm div.mask {
 	border-bottom: 1px solid #000000;
 	border-top: 1px solid #000000;
 	color: #FFFFFF;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#50000000, endColorstr=#50000000);
 	margin-top: 100px;
 	padding: 25px 0px 25px 0px;
 }
@@ -386,6 +387,7 @@ section.results ul li.result ul.classes {
 	height: 37px;
 	position: absolute;
 	right: 0px;
+	text-align: right;
 }
 
 section.results ul li.result ul.classes li {

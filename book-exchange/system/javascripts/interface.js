@@ -52,7 +52,7 @@ $(document).ready(function() {
 	});
 
 //Expand the menu when it is clicked on
-	$('body').delegate('ul.categoryFly', 'click', function() {
+	$('body').delegate('ul.categoryFly:not(.open)', 'click', function() {
 		if (!hovered) {
 			var documentWidth = $(document).width();
 			var documentHeight = $(document).height();
@@ -84,28 +84,46 @@ $(document).ready(function() {
 				newLeft = (documentWidth - width) / 2;
 			}
 			
-		//Slide the unselected menu items into view
-			menu.css({
-				'left' : left + 'px',
-				'position' : 'absolute',
-				'top' : top + 'px',
-				'z-index' : '5'
-			}).animate({
-				'left' : newLeft + 'px',
-				'height' : height + 'px',
-				'top' : newTop + 'px',
-				'width' : width + 'px'
-			}, function() {
-			//Let the application know that the menu is being hovered over
+		//IE8 and below renders complex animations very poorly, so just open the menu without animations
+			if ($.browser.msie && parseInt($.browser.version, 10) <= 8) {
+				menu.css({
+					'left' : newLeft + 'px',
+					'height' : height + 'px',
+					'position' : 'absolute',
+					'top' : newTop + 'px',
+					'width' : width + 'px',
+					'z-index' : '5'
+				}).find('li ul li:not(.selected)').css({
+					'display' : 'list-item',
+					'height' : '40px',
+					'width' : '250px'
+				});
+				
 				events.trigger('menuActive');
-			}).find('li ul li:not(.selected)').css({
-				'display' : 'list-item',
-				'height' : '0px',
-				'width' : '0px'
-			}).animate({
-				'height' : '40px',
-				'width' : '250px'
-			});
+			} else {
+			//Slide the unselected menu items into view
+				menu.css({
+					'left' : left + 'px',
+					'position' : 'absolute',
+					'top' : top + 'px',
+					'z-index' : '5'
+				}).animate({
+					'left' : newLeft + 'px',
+					'height' : height + 'px',
+					'top' : newTop + 'px',
+					'width' : width + 'px'
+				}, function() {
+				//Let the application know that the menu is being hovered over
+					events.trigger('menuActive');
+				}).find('li ul li:not(.selected)').css({
+					'display' : 'list-item',
+					'height' : '0px',
+					'width' : '0px'
+				}).animate({
+					'height' : '40px',
+					'width' : '250px'
+				});
+			}
 		}
 	});
 	
@@ -117,31 +135,40 @@ $(document).ready(function() {
 			var left = menu.parent().offset().left;
 			var top = menu.parent().offset().top;
 			
-		//Slide the unselected menu items out of the way
-			menu.animate({
-				'left' : left + 'px',
-				'height' : '40px',
-				'top' : top + 'px',
-				'width' : '198px'
-			}, function() {
+		//IE8 and below renders complex animations very poorly, so just close the menu without animations
+			if ($.browser.msie && parseInt($.browser.version, 10) <= 8) {
 			//Remove the styles which were added by the mouseover handler
 				menu.removeAttr('style').find('li ul li:not(.selected)').removeAttr('style'); 
 				
-			//In order to fix an issue with Chrome, where the <li> columns only collapse to 1px wide, hide all of the unnecessary columns
-				menu.children('li').each(function() {
-					var currentColumn = $(this);
-					
-					if (!currentColumn.has('li.selected').length) {
-						currentColumn.css('display', 'none');
-					}
-				});
-				
 			//Let the application know that the menu has been hovered out
 				events.trigger('menuInactive');
-			}).find('li ul li:not(.selected)').animate({
-				'height' : '0px',
-				'width' : '0px'
-			});
+			} else {
+			//Slide the unselected menu items out of the way
+				menu.animate({
+					'left' : left + 'px',
+					'height' : '40px',
+					'top' : top + 'px',
+					'width' : '198px'
+				}, function() {
+				//Remove the styles which were added by the mouseover handler
+					menu.removeAttr('style').find('li ul li:not(.selected)').removeAttr('style'); 
+					
+				//In order to fix an issue with Chrome, where the <li> columns only collapse to 1px wide, hide all of the unnecessary columns
+					menu.children('li').each(function() {
+						var currentColumn = $(this);
+						
+						if (!currentColumn.has('li.selected').length) {
+							currentColumn.css('display', 'none');
+						}
+					});
+					
+				//Let the application know that the menu has been hovered out
+					events.trigger('menuInactive');
+				}).find('li ul li:not(.selected)').animate({
+					'height' : '0px',
+					'width' : '0px'
+				});
+			}
 		}
 	});
 	
@@ -166,31 +193,48 @@ $(document).ready(function() {
 		//Grab the value of the selected item and store it in the associated hidden element
 			menu.parent().find('input').attr('value', item.attr('data-value'));
 			
-		//Slide the unselected menu items out of the way
-			menu.animate({
-				'left' : left + 'px',
-				'height' : '40px',
-				'top' : top + 'px',
-				'width' : '198px'
-			}, function() {
+		//IE8 and below renders complex animations very poorly, so just close the menu without animations
+			if ($.browser.msie && parseInt($.browser.version, 10) <= 8) {
 			//Remove the styles which were added by the mouseover handler
-				menu.removeAttr('style').find('li ul li:not(.selected)').removeAttr('style'); 
-				
-			//In order to fix an issue with Chrome, where the <li> columns only collapse to 1px wide, hide all of the unnecessary columns
-				menu.children('li').each(function() {
-					var currentColumn = $(this);
-					
-					if (!currentColumn.has('li.selected').length) {
-						currentColumn.css('display', 'none');
-					}
-				});
+				menu.css({
+					'left' : left + 'px',
+					'height' : '40px',
+					'top' : top + 'px',
+					'width' : '198px'
+				}).removeAttr('style').find('li ul li:not(.selected)').css({
+					'height' : '0px',
+					'width' : '0px'
+				}).removeAttr('style'); 
 				
 			//Let the application know that the menu has been hovered out
 				events.trigger('menuInactive');
-			}).find('li ul li:not(.selected)').animate({
-				'height' : '0px',
-				'width' : '0px'
-			});
+			} else {
+			//Slide the unselected menu items out of the way
+				menu.animate({
+					'left' : left + 'px',
+					'height' : '40px',
+					'top' : top + 'px',
+					'width' : '198px'
+				}, function() {
+				//Remove the styles which were added by the mouseover handler
+					menu.removeAttr('style').find('li ul li:not(.selected)').removeAttr('style'); 
+					
+				//In order to fix an issue with Chrome, where the <li> columns only collapse to 1px wide, hide all of the unnecessary columns
+					menu.children('li').each(function() {
+						var currentColumn = $(this);
+						
+						if (!currentColumn.has('li.selected').length) {
+							currentColumn.css('display', 'none');
+						}
+					});
+					
+				//Let the application know that the menu has been hovered out
+					events.trigger('menuInactive');
+				}).find('li ul li:not(.selected)').animate({
+					'height' : '0px',
+					'width' : '0px'
+				});
+			}
 		}
 	});
 	

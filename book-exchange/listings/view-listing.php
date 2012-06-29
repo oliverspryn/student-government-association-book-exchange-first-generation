@@ -407,7 +407,7 @@
 				}
 				
 			//This unordered list will display if the user is viewing a section, which will require a special class
-				if (isset($_GET['section'])) {
+				if (isset($_GET['number']) || isset($_GET['section'])) {
 					echo "<ul class=\"viewAll\">";
 				} else {
 					echo "<ul>";
@@ -430,8 +430,15 @@
 				$buy = " buy";
 			}
 			
+		//Give the first book in the list a special CSS class
+			if ($sectionCounter == 1 && !isset($_GET['number']) && !isset($_GET['section'])) {
+				$class = " class=\"firstBook\"";
+			} else {
+				$class = "";
+			}
+			
 			echo "
-<li>
+<li" . $class . ">
 <a href=\"../book/?id=" . $books['id'] . "\"><img src=\"" . htmlentities(stripslashes($books['imageURL'])) . "\" /></a>
 <a class=\"title\" href=\"../book/?id=" . $books['id'] . "\" title=\"" . htmlentities(stripslashes($books['title'])) . "\">" . stripslashes($books['title']) . "</a>
 <span class=\"details\" title=\"Author: " . htmlentities(stripslashes($books['author'])) . "\"><strong>Author:</strong> <a href=\"../search?search=" . urlencode(stripslashes($books['author'])) . "&searchBy=author&category=0\">" . stripslashes($books['author']) . "</a></span>

@@ -12,6 +12,7 @@
 <script src="http://delfinicdn.ffstatic.com/javascripts/delfini.all.min.js"></script>
 <script src="<?php echo $root; ?>themes/public/student_government/javascripts/template.min.js.php"></script>
 <script src="https://widget.uservoice.com/JkKcZfC4qw8m0wz3PeMf5Q.js"></script>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <?php
 //We will need the login encryption library to process login requests
 	if (!loggedIn()) {

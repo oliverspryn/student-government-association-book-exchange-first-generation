@@ -216,35 +216,42 @@ section.listing section.books section.courses:first-child h2 {
 section.listing section.books section.courses ul {
 	display: block;
 	list-style: none;
+	margin-bottom: 25px;
 	min-height: 150px;
 	min-width: 30px;
 	overflow: hidden;
-	padding: 5px 0px 25px 0px;
+	padding: 5px 0px 0px 0px;
+	position: relative;
 	width: 100%;
 }
 
 section.listing section.books section.courses ul li {
-	display: table-cell;
-	height: 100%;
-	max-width: 130px;
-	min-width: 130px;
-	padding: 0px 0px 0px 15px;
-	vertical-align: bottom;
-}
-
-section.listing section.books section.courses ul li:first-child {
-	padding-left: 0px;
+	display: inline-block;
+    *display: inline-table;
+    height: 100%;
+    max-width: 130px;
+    min-width: 130px;
+    padding: 0px 0px 0px 15px;
+    vertical-align: bottom;
+	zoom: 1;
 }
 
 section.listing section.books section.courses ul li.section {
 	border-right: 1px solid #999999;
+	bottom: 25px;
 	font-weight: bold;
 	height: 100%;
 	max-width: 30px;
 	min-width: 30px;
 	padding: 0px 0px 0px 15px;
+	position: absolute;
+    top: 5px;
 	vertical-align: top;
 	width: 30px;
+}
+
+section.listing section.books section.courses ul li.firstBook {
+    padding-left: 65px;
 }
 
 section.listing section.books section.courses ul li img {
