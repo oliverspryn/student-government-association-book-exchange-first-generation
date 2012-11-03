@@ -5,13 +5,15 @@ ob_start();
 
 /* Begin core functions */
 	//Root address for entire site
-	$root = "http://" . $_SERVER['HTTP_HOST'] . "/SGA/";
+	$root = "http://" . $_SERVER['HTTP_HOST'] . "/";
 	$strippedRoot = str_replace("http://" . $_SERVER['HTTP_HOST'], "", $root);
-	$dirRoot = str_replace("Connections\connDBA.php", "", __FILE__);
+	$dirRoot = str_replace("Connections/connDBA.php", "", __FILE__);
+	$defaultRoot = "http://sgagcc.co.cc/";
+	$mailerRoot = "http://sga.forwardfour.com/";
 
 	//Database connection
-	$databaseName = "SGA";
-	$connDBA = mysql_connect("localhost", "root", "Oliver99");
+	$databaseName = "pavcsbel_sga";
+	$connDBA = mysql_connect("localhost", "pavcsbel_spryno", "Oliver99");
 	$dbSelect = mysql_select_db($databaseName, $connDBA);
 	
 	//Define time zone
@@ -76,7 +78,7 @@ ob_start();
 	
 	//Include all top-page items
 	function topPage($type, $title, $headerClass = "", $highlight = "", $HTML = "", $breadCrumb = "") {
-		global $dirRoot, $root, $connDBA, $userData;
+		global $dirRoot, $root, $connDBA, $userData, $mailerRoot;
 		
 	//Clean up the given $HTML variables
 		if ($HTML != "") {
@@ -127,6 +129,7 @@ ob_start();
 			$main = $highlight['0'];
 			$subpage = $highlight['1'];
 			$HTML .= "
+<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js\"></script>
 <script src=\"https://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js\"></script>
 <script src=\"" . $root . "javascripts/common/admin.js\"></script>
 <link href=\"http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css\" rel=\"stylesheet\" />

@@ -22,7 +22,7 @@
 			
 			$update = mysql_query("UPDATE users SET passWord = PASSWORD('{$new}'), changePassword = '' WHERE passWord LIKE PASSWORD('{$old}')");
 			
-			if (mysql_affected_rows($update) == 0) {
+			if ($update && mysql_affected_rows($update) == 0) {
 				redirect("reset.php?fail=true");
 			}
 			

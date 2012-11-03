@@ -1,3 +1,52 @@
+/*!
+ * jQuery Cookie Plugin
+ * https://github.com/carhartl/jquery-cookie
+ *
+ * Copyright 2011, Klaus Hartl
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://www.opensource.org/licenses/mit-license.php
+ * http://www.opensource.org/licenses/GPL-2.0
+ */
+ 
+(function($) {
+    $.cookie = function(key, value, options) {
+
+        // key and at least value given, set cookie...
+        if (arguments.length > 1 && (!/Object/.test(Object.prototype.toString.call(value)) || value === null || value === undefined)) {
+            options = $.extend({}, options);
+
+            if (value === null || value === undefined) {
+                options.expires = -1;
+            }
+
+            if (typeof options.expires === 'number') {
+                var days = options.expires, t = options.expires = new Date();
+                t.setDate(t.getDate() + days);
+            }
+
+            value = String(value);
+
+            return (document.cookie = [
+                encodeURIComponent(key), '=', options.raw ? value : encodeURIComponent(value),
+                options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
+                options.path    ? '; path=' + options.path : '',
+                options.domain  ? '; domain=' + options.domain : '',
+                options.secure  ? '; secure' : ''
+            ].join(''));
+        }
+
+        // key and possibly options given, get cookie...
+        options = value || {};
+        var decode = options.raw ? function(s) { return s; } : decodeURIComponent;
+
+        var pairs = document.cookie.split('; ');
+        for (var i = 0, pair; pair = pairs[i] && pairs[i].split('='); i++) {
+            if (decode(pair[0]) === key) return decode(pair[1] || ''); // IE saves cookies with empty string as "c; ", e.g. without "=" as opposed to EOMB, thus pair[1] may be undefined
+        }
+        return null;
+    };
+})(jQuery);
+
 $(document).ready(function() {
 /**
  * If the user has not logged, expand
@@ -358,7 +407,9 @@ $(document).ready(function() {
 							'width' : 500,
 							'buttons' : {
 								'Yes' : function() {
-									var requestURL = location.substring(0, location.indexOf('book-exchange')) + 'book-exchange/system/server/purchase-request.php?id=' + id;
+									var unixTime = Math.round(new Date().getTime() / 1000);
+									var requestURL = 'http://sga.forwardfour.com/book-exchange/system/server/purchase-request.php?id=' + id + '&key=' + unixTime + '&UID=' + $.cookie('UID') + '&callback=?';
+									
 									
 								//Close the open dialogs
 									confirmDialog.dialog('close').remove();
@@ -369,7 +420,10 @@ $(document).ready(function() {
 									
 									$.ajax({
 										'url' : requestURL,
+										'dataType' : 'json',
 										'success' : function(data) {
+											data = data.message;
+										
 											if (data == 'success') {
 											//Update the message to the user
 												message.html('<div class="success">Purchase request sent! The seller will respond via email.</div>');
@@ -514,7 +568,8 @@ $(document).ready(function() {
 		var redirect = document.location.pathname + '?id=' + id;
 		var location = document.location.href;
 		var login = location.substring(0, location.indexOf('book-exchange')) + 'login.php?accesscheck=' + encodeURIComponent(redirect) + "&message=required";
-		var requestURL = location.substring(0, location.indexOf('book-exchange')) + 'book-exchange/system/server/purchase-request.php?id=' + id;
+		var unixTime = Math.round(new Date().getTime() / 1000);
+		var requestURL = 'http://sga.forwardfour.com/book-exchange/system/server/purchase-request.php?id=' + id + '&key=' + unixTime + '&UID=' + $.cookie('UID') + '&callback=?';
 		
 	//The login panel will not exist if the user is logged in
 		if ($('section.login').length) {
@@ -537,7 +592,10 @@ $(document).ready(function() {
 						
 						$.ajax({
 							'url' : requestURL,
+							'dataType' : 'json',
 							'success' : function(data) {
+								data = data.message;
+							
 								if (data == 'success') {
 								//Update the message to the user
 									message.html('<div class="success">Purchase request sent! The seller will respond via email.</div>');

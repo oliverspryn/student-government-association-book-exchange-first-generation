@@ -3,21 +3,34 @@
 	require_once("../../../Connections/connDBA.php");
 	require_once("../../../Connections/PHPMailer/class.phpmailer.php");
 	
+//Output as application/json
+	header("content-type: application/json; charset=utf-8");
+
 //Is this user logged in?
-	if (!loggedIn()) {
-		die("You are not logged in");
+	if (!isset($_GET['key']) || !isset($_GET['UID'])) {
+		die($_GET['callback'] . '(' . "{'message' : 'You are not logged in'}" . ')');
 	}
 	
 //Have we been given the proper parameters?
 	if (!isset($_GET['id'])) {
-		die("What book do you want to buy?");
+		die($_GET['callback'] . '(' . "{'message' : 'What book do you want to buy?'}" . ')');
 	}
 	
 //SMTP logon information
 	$username = "no-reply@forwardfour.com";
-	$password = "n*O^]z%]|c44Q~3";
+	$password = "431fc9b9-b977-4bfd-ab55-1472f0687a40";
 	
 //Grab the buyer's information
+	$UID = mysql_real_escape_string($_GET['UID']);
+	$userDataGrabber = mysql_query("SELECT * FROM users WHERE id = '{$UID}' LIMIT 1", $connDBA);
+	
+	if ($userDataGrabber && mysql_num_rows($userDataGrabber)) {
+		$userData = mysql_fetch_assoc($userDataGrabber);
+	} else {
+		die($_GET['callback'] . '(' . "{'message' : 'Your user ID is invalid'}" . ')');
+	}
+	
+	
 	$fromEamil = $userData['emailAddress1'];
 	$fromName = $userData['firstName'] . " " . $userData['lastName'];
 	
@@ -29,12 +42,12 @@
 		$toEmail = $seller['emailAddress1'];
 		$toName = $seller['firstName'] . " " . $seller['lastName'];
 	} else {
-		die("We cannot find a user for this book or the book is unavaliable");
+		die($_GET['callback'] . '(' . "{'message' : 'We cannot find a user for this book or the book is unavaliable'}" . ')');
 	}
 	
 //Don't let the buyer buy from themself!
 	if ($userData['id'] == $seller['id']) {
-		die("Wait... you can't buy from yourself!");
+		die($_GET['callback'] . '(' . "{'message' : 'Wait... you can't buy from yourself!'}" . ')');
 	}
 	
 //Grab the book information
@@ -44,7 +57,7 @@
 	if ($bookData && mysql_num_rows($bookData)) {
 		$book = mysql_fetch_array($bookData);
 	} else {
-		die("This book does not exist");
+		die($_GET['callback'] . '(' . "{'message' : 'This book does not exist'}" . ')');
 	}
 	
 //Generate the body of the email
@@ -60,7 +73,7 @@
 <table border=\"0\" style=\"background: url(" . $root . "themes/public/student_government/images/ribbon.png) repeat-x; font-family: Arial, Helvetica, sans-serif; font-size: 16px; padding-top: 15px;\" width=\"100%\">
 <tr>
 <td rowspan=\"2\" style=\"padding-right: 15px;\" valign=\"top\" width=\"250\">
-<div align=\"center\"><img alt=\"" . htmlentities(stripslashes($book['title'])) . " Cover - Please enable viewing images to see this picture\" height=\"200\" src=\"" . htmlentities(stripslashes($book['imageURL'])) . "\" style=\"max-height: 200px;\"></div>
+<div align=\"center\"><img alt=\"" . htmlentities(stripslashes($book['title'])) . " Cover - Please enable viewing images to see this picture\" height=\"200\" src=\"" . htmlentities(str_replace("sgagcc.co.cc", "sga.forwardfour.com", stripslashes($book['imageURL']))) . "\" style=\"max-height: 200px;\"></div>
 <h2 style=\"margin-bottom: 0px;\">" . stripslashes($book['title']) . "</h2>
 <div style=\"margin-bottom: 15px;\"><span style=\"background-color: #3D3D3D; border: 1px solid #FFFFFF; color: #FFFFFF; display: inline-block; font-size: 15px; margin: 5px 0px 5px 0px; max-width: 187px; padding: 4px 1px 4px 1px; vertical-align: top; white-space: no-wrap; width: auto;\"><span style=\"background: #42B6C9; border: 1px solid #FFFFFF; padding: 2px 7px 2px 7px;\">\$" . stripslashes($book['price']) . "</span></span></div>
 <div><span style=\"display: block; font-size: 14px; max-width: 240px; overflow: hidden; padding-top: 5px; text-overflow: ellipsis; white-space: nowrap;\" title=\"ISBN: " . htmlentities(stripslashes($book['ISBN'])) . "\"><strong style=\"display: inline-block; width: 55px;\">ISBN:</strong> " . stripslashes($book['ISBN']) . "</span></div>
@@ -142,8 +155,7 @@ Thank you, we hope that was easy!
 		$mail->IsSMTP();
 		$mail->SMTPDebug = 0;
 		$mail->SMTPAuth = true;
-		$mail->SMTPSecure = "tls";
-		$mail->Host = "smtp.gmail.com";
+		$mail->Host = "smtp.mandrillapp.com";
 		$mail->Port = 587;
 		$mail->Username = $username;
 		$mail->Password = $password;
@@ -155,7 +167,7 @@ Thank you, we hope that was easy!
 		$mail->MsgHTML($bodyHTML);
 		$mail->Send();
 		
-		echo "success";
+		echo $_GET['callback'] . '(' . "{'message' : 'success'}" . ')';
 	} catch (phpmailerException $e) {
 		echo $e->errorMessage();
 		exit;

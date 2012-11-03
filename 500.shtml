@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8" />
+<title>Server Error 500</title>
+<script src="https://widget.uservoice.com/lvTkBmeCKPyfimlHLcjeHw.js"></script>
+</head>
+
+<body>
+<p>We are currently experiencing technical difficulties and will be back online shortly...</p>
+<p>Could you take a second and <a href="javascript:UserVoice.showPopupWidget();">let us know</a> about this issue? If you do please mention the error code: <strong>500</strong>.</p>
+<p>System error identifier: <strong>SYS_OVERLOAD_CANNOT_PROCESS_REQUEST</strong></p>
+</body>
+</html>

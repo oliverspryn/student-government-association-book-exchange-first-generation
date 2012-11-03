@@ -33,7 +33,11 @@
 	
 //Renew a book
 	if (isset($_GET['action']) && $_GET['action'] == "renew" && isset($_GET['id'])) {
-		$booksGrabber = mysql_query("SELECT linkID FROM books WHERE books.userID = '{$userData['id']}' AND id = '{$_GET['id']}' AND books.id IS NOT NULL", $connDBA);
+		if ($userData['role'] == "Administrator") {
+			$booksGrabber = mysql_query("SELECT linkID FROM books WHERE id = '{$_GET['id']}' AND books.id IS NOT NULL", $connDBA);
+		} else {
+			$booksGrabber = mysql_query("SELECT linkID FROM books WHERE books.userID = '{$userData['id']}' AND id = '{$_GET['id']}' AND books.id IS NOT NULL", $connDBA);
+		}
 		
 		if (mysql_num_rows($booksGrabber)) {
 			$booksLink = mysql_fetch_assoc($booksGrabber);

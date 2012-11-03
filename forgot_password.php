@@ -29,7 +29,7 @@
 		if (mysql_affected_rows($connDBA)) {
 		//SMTP logon information
 			$username = "no-reply@forwardfour.com";
-			$password = "n*O^]z%]|c44Q~3";
+			$password = "431fc9b9-b977-4bfd-ab55-1472f0687a40";
 			
 		//Generate a subject and message
 			$subject = "Password Recovery Request";
@@ -43,7 +43,7 @@
 <body>
 <h2>Password Recovery Request</h2>
 <p>We have reset your password to: <strong>" . $rawPassword . "</strong></p>
-<p>Once you <a href=\"" . $root . "login\" style=\"color: #4BF; text-decoration: none;\">login</a>, you will be asked to change it to a more suitable password.</p>			
+<p>Once you <a href=\"" . $defaultRoot . "login\" style=\"color: #4BF; text-decoration: none;\">login</a>, you will be asked to change it to a more suitable password.</p>			
 </body>
 </html>";
 			
@@ -52,7 +52,7 @@
 We have reset your password to: " . $rawPassword . "
 Once you login, you will be asked to change it to a more suitable password.
 
-Login here: " . $root . "login";
+Login here: " . $defaultRoot . "login";
 	
 		//Send a notification email
 			try {
@@ -60,8 +60,7 @@ Login here: " . $root . "login";
 				$mail->IsSMTP();
 				$mail->SMTPDebug = 0;
 				$mail->SMTPAuth = true;
-				$mail->SMTPSecure = "tls";
-				$mail->Host = "smtp.gmail.com";
+				$mail->Host = "smtp.mandrillapp.com";
 				$mail->Port = 587;
 				$mail->Username = $username;
 				$mail->Password = $password;
@@ -79,7 +78,7 @@ Login here: " . $root . "login";
 		}
 		
 	//Redirect back to the login page, without giving any signs or hints of success or failure, to protect data
-		redirect("login.php?reset=true");
+		redirect($defaultRoot . "login.php?reset=true");
 	}
 	
 //Generate the breadcrumb
@@ -96,7 +95,7 @@ Login here: " . $root . "login";
 <h2>Password Recovery</h2>
 <p>Forgot your password? No problem, this happens all of the time. Just share your email with us and we can help.</p>
 <br>
-<form action=\"forgot_password.php\" class=\"account\" method=\"post\">
+<form action=\"" . $mailerRoot . "forgot_password.php\" class=\"account\" method=\"post\">
 <p>Email address:</p>
 <input autocomplete=\"off\" name=\"username\" type=\"email\"/>
 <br><br>

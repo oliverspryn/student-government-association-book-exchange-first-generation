@@ -4,6 +4,7 @@
 	
 //Logout the user
 	session_destroy();
+	setcookie("UID", "", time() - 3600);
 	
 //Generate the breadcrumb
 	$home = mysql_fetch_array(mysql_query("SELECT * FROM pages WHERE position = '1' AND `published` != '0'", $connDBA));

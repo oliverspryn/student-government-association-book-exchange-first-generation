@@ -1,5 +1,4 @@
 
-
 <footer>
 <section class="main">
 <nav>
@@ -21,7 +20,7 @@
 
 <ul class="footerDetails">
 <li><a class="highlight" href="http://www2.gcc.edu/ITS/policy/web/disclaimer.htm" target="_blank">Disclaimer</a></li>
-<li>Site developed by <a class="highlight" href="mailto:sprynoj1@gcc.edu">Oliver Spryn</a> and maintained by <a class="highlight" href="mailto:sga@gcc.edu">SGA members</a></li>
+<li>Maintained by <a class="highlight" href="mailto:sga@gcc.edu">SGA members</a></li>
 </ul>
 </section>
 </footer>

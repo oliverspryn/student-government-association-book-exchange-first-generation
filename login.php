@@ -55,6 +55,8 @@
 		//Establish the user's session
 			$_SESSION['MM_Username'] = $userData['emailAddress1'];
 			$_SESSION['MM_UserGroup'] = $userData['role'];
+
+			setcookie("UID", $userData['id']);
 			
 		//Determine where to redirect the user
 			if (isset($_GET['accesscheck']) && $_GET['accesscheck'] != "") {
@@ -99,6 +101,7 @@
 //Process a registration request
 	if (isset($_POST['name']) && isset($_POST['username']) && isset($_POST['password']) && isset($_POST['action']) && $_POST['action'] == "register") {
 		$hash = "+y4hn&T/'K";
+		$time = strtotime("now");
 		$activation = randomValue("15");
 		$name = explode(" ", $_POST['name']);
 		$firstName = mysql_real_escape_string(Validate::required($name[0]));
@@ -113,7 +116,7 @@
 		$usedCheck = mysql_query("SELECT * FROM users WHERE emailAddress1 = '{$email}'", $connDBA);
 		
 		if ($usedCheck && mysql_num_rows($usedCheck) != 0) {
-			redirect("login.php?used=true");
+			redirect($defaultRoot . "login.php?used=true");
 		}
 		
 		if ($emailSplit[1] == "gcc.edu") {
@@ -121,13 +124,13 @@
 			mysql_query("INSERT INTO users (
 						 	id, active, activation, firstName, lastName, passWord, changePassword, emailAddress1, emailAddress2, emailAddress3, role
 						 ) VALUES (
-						 	NULL, '1000000000', '{$activation}', '{$firstName}', '{$lastName}', PASSWORD('{$password}'), '', '{$email}', '', '', 'User'
+						 	NULL, '{$time}', '{$activation}', '{$firstName}', '{$lastName}', PASSWORD('{$password}'), '', '{$email}', '', '', 'User'
 						 )", $connDBA);
 			
 		//Send the user an activation email
 		//SMTP logon information
 			$username = "no-reply@forwardfour.com";
-			$password = "n*O^]z%]|c44Q~3";
+			$password = "431fc9b9-b977-4bfd-ab55-1472f0687a40";
 			
 		//Generate a subject and message
 			$subject = "Student Government Association Book Exchange Activation";
@@ -141,7 +144,7 @@
 <body>
 <h2>Student Government Association Book Exchange Activation</h2>
 <p>Welcome aboard " . $firstName . "!</p>
-<p>To get started, click <a href=\"" . $root . "activate.php?id=" . urlencode($activation) . "&email=" . urlencode($_POST['username']) . "\" style=\"color: #4BF; text-decoration: none;\">here</a> to activate your account.</p>
+<p>To get started, click <a href=\"" . $defaultRoot . "activate.php?id=" . urlencode($activation) . "&email=" . urlencode($_POST['username']) . "\" style=\"color: #4BF; text-decoration: none;\">here</a> to activate your account.</p>
 <br><br>
 <p>~ The Student Government Association</p>			
 </body>
@@ -152,7 +155,7 @@
 Welcome aboard " . $firstName . "!
 To get started, copy and paste the link below into your web browser to activate your account:
 
-" . $root . "activate.php?id=" . urlencode($activation) . "&email=" . urlencode($_POST['username']) . "
+" . $defaultRoot . "activate.php?id=" . urlencode($activation) . "&email=" . urlencode($_POST['username']) . "
 
 Happy selling!
 ~ The Student Government Association";
@@ -163,12 +166,11 @@ Happy selling!
 				$mail->IsSMTP();
 				$mail->SMTPDebug = 0;
 				$mail->SMTPAuth = true;
-				$mail->SMTPSecure = "tls";
-				$mail->Host = "smtp.gmail.com";
+				$mail->Host = "smtp.mandrillapp.com";
 				$mail->Port = 587;
 				$mail->Username = $username;
 				$mail->Password = $password;
-				$mail->AddAddress($_POST['username'], $name);
+				$mail->AddAddress($_POST['username'], $name[0] . " " . $name[1]);
 				$mail->SetFrom("no-reply@forwardfour.com", "No-Reply");
 				$mail->Subject = $subject;
 				$mail->AltBody = $altBody;
@@ -182,9 +184,9 @@ Happy selling!
 				exit;
 			}
 			
-			redirect("login.php?registered=true");
+			redirect($defaultRoot . "login.php?registered=true");
 		} else {
-			redirect("login.php?domain=true");
+			redirect($defaultRoot . "login.php?domain=true");
 		}
 	}
 	
@@ -271,7 +273,7 @@ Happy selling!
 <div class=\"login\">
 <h2>Login</h2>
 
-<form action=\"" . $_SERVER['REQUEST_URI'] . "\" method=\"post\">
+<form action=\"login.php\" method=\"post\">
 <p>Email address:</p><input autocomplete=\"off\" name=\"username\" type=\"text\" />
 <p>Password: </p><input autocomplete=\"off\" name=\"password\" type=\"password\" />
 <input name=\"action\" type=\"hidden\" value=\"login\" />
@@ -284,7 +286,7 @@ Happy selling!
 <span class=\"toggle\"></span>
 
 <div class=\"register\">
-<form action=\"" . $_SERVER['REQUEST_URI'] . "\" method=\"post\">
+<form action=\"" . $mailerRoot . "login.php\" method=\"post\">
 <h2>Register</h2>
 <p>First and last name:</p><input autocomplete=\"off\" name=\"name\" type=\"text\">
 <p>Email address:</p><input autocomplete=\"off\" name=\"username\" type=\"email\">

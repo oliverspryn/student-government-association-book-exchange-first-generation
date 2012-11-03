@@ -13,14 +13,25 @@
 <script src="<?php echo $root; ?>themes/public/student_government/javascripts/template.min.js.php"></script>
 <script src="https://widget.uservoice.com/JkKcZfC4qw8m0wz3PeMf5Q.js"></script>
 <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-11478926-19']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
 <?php
 //We will need the login encryption library to process login requests
-	if (!loggedIn()) {
+    if (!loggedIn()) {
 ?>
 <script src="<?php echo $root; ?>javascripts/common/md5.min.js"></script>
 <?php
 //Finish the encryption library condition
-	}
+    }
 ?>
 <?php echo $HTML; ?>
 </head>
@@ -28,7 +39,7 @@
 <body>
 <?php
 //Include the login bar only if the user is logged out
-	if (!loggedIn()) {
+    if (!loggedIn()) {
 ?>
 <section class="login">
 <div class="design">
@@ -64,7 +75,7 @@
 
 <?php
 //Finish the login bar condition
-	}
+    }
 ?>
 <nav class="main">
 <ul class="nav">
@@ -80,20 +91,20 @@
 <li><a href="<?php echo $root; ?>book-exchange/listings">Browse</a></li>
 <?php
 //Include the account and administration tools only if the user is logged in
-	if (loggedIn() && basename($_SERVER['PHP_SELF']) != "logout.php") {
+    if (loggedIn() && basename($_SERVER['PHP_SELF']) != "logout.php") {
 ?>
 <li class="myAccount"><a href="<?php echo $root; ?>book-exchange/account">My Account</a></li>
 <?php
 //Include this if the user is an administrator
-		//if ($userData['role'] == 'Administrator') { //Delete the line below once the administration is done
-		if ($userData['role'] == 'Exotic') {
+        //if ($userData['role'] == 'Administrator') { //Delete the line below once the administration is done
+        if ($userData['role'] == 'Exotic') {
 ?>
 <li class="admin"><a href="<?php echo $root; ?>admin/index.php">Administration</a></li>
 <?php
 //Finish the administrative tools condition
-		}
+        }
 //Finish the tools condition
-	}
+    }
 ?>
 </ul>
 
@@ -108,19 +119,18 @@
 
 <?php
 //The login flag will change depending on login status
-	if (!loggedIn() || basename($_SERVER['PHP_SELF']) == "logout.php") {
+    if (!loggedIn() || basename($_SERVER['PHP_SELF']) == "logout.php") {
 ?>
 <section class="flag">
 <img class="tag" src="<?php echo $root; ?>themes/public/student_government/images/login.png" />
 </section>
 <?php
-	} else {
+    } else {
 ?>
 <section class="flag">
 <a href="<?php echo $root; ?>logout.php"><img class="tag" src="<?php echo $root; ?>themes/public/student_government/images/logout.png" /></a>
 </section>
 <?php
-	}
+    }
 ?>
 </nav>
-
