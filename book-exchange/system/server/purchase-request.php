@@ -31,7 +31,7 @@
 	}
 	
 	
-	$fromEamil = $userData['emailAddress1'];
+	$fromEmail = $userData['emailAddress1'];
 	$fromName = $userData['firstName'] . " " . $userData['lastName'];
 	
 //Grab the seller's information
@@ -150,31 +150,8 @@ Thank you, we hope that was easy!
 ~ The Student Government Association";
 	
 //Send a notification email
-	try {
-		$mail = new PHPMailer(true);
-		$mail->IsSMTP();
-		$mail->SMTPDebug = 0;
-		$mail->SMTPAuth = true;
-		$mail->Host = "smtp.mandrillapp.com";
-		$mail->Port = 587;
-		$mail->Username = $username;
-		$mail->Password = $password;
-		$mail->AddAddress($toEmail, $toName);
-		$mail->SetFrom($fromEamil, $fromName);
-		$mail->AddReplyTo($fromEamil, $fromName);
-		$mail->Subject = $subject;
-		$mail->AltBody = $altBody;
-		$mail->MsgHTML($bodyHTML);
-		$mail->Send();
-		
-		echo $_GET['callback'] . '(' . "{'message' : 'success'}" . ')';
-	} catch (phpmailerException $e) {
-		echo $e->errorMessage();
-		exit;
-	} catch (Exception $e) {
-		echo $e->getMessage();
-		exit;
-	}
+	email($toEmail, $toName, $fromEmail, $fromName, $subject, $bodyHTML, $altBody);
+	echo $_GET['callback'] . '(' . "{'message' : 'success'}" . ')';
 	
 //Mark the book as sold
 	mysql_query("UPDATE books SET sold = '1' WHERE linkID = '{$book['linkID']}'", $connDBA);

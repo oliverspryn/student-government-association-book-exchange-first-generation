@@ -55,26 +55,7 @@ Once you login, you will be asked to change it to a more suitable password.
 Login here: " . $defaultRoot . "login";
 	
 		//Send a notification email
-			try {
-				$mail = new PHPMailer(true);
-				$mail->IsSMTP();
-				$mail->SMTPDebug = 0;
-				$mail->SMTPAuth = true;
-				$mail->Host = "smtp.mandrillapp.com";
-				$mail->Port = 587;
-				$mail->Username = $username;
-				$mail->Password = $password;
-				$mail->AddAddress($_POST['username']);
-				$mail->SetFrom("no-reply@forwardfour.com", "No-Reply");
-				$mail->Subject = $subject;
-				$mail->AltBody = $altBody;
-				$mail->MsgHTML($bodyHTML);
-				$mail->Send();
-			} catch (phpmailerException $e) {
-				//Oh well, ignore. Probably a bad email address
-			} catch (Exception $e) {
-				//Oh well, ignore. Probably a bad email address
-			}
+			email($_POST['username'], $_POST['username'], "no-reply@forwardfour.com", "No-Reply", $subject, $bodyHTML, $altBody);
 		}
 		
 	//Redirect back to the login page, without giving any signs or hints of success or failure, to protect data

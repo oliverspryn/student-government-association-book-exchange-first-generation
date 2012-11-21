@@ -161,29 +161,7 @@ Happy selling!
 ~ The Student Government Association";
 	
 		//Send a notification email
-			try {
-				$mail = new PHPMailer(true);
-				$mail->IsSMTP();
-				$mail->SMTPDebug = 0;
-				$mail->SMTPAuth = true;
-				$mail->Host = "smtp.mandrillapp.com";
-				$mail->Port = 587;
-				$mail->Username = $username;
-				$mail->Password = $password;
-				$mail->AddAddress($_POST['username'], $name[0] . " " . $name[1]);
-				$mail->SetFrom("no-reply@forwardfour.com", "No-Reply");
-				$mail->Subject = $subject;
-				$mail->AltBody = $altBody;
-				$mail->MsgHTML($bodyHTML);
-				$mail->Send();
-			} catch (phpmailerException $e) {
-				echo $e->errorMessage();
-				exit;
-			} catch (Exception $e) {
-				echo $e->getMessage();
-				exit;
-			}
-			
+			email($_POST['username'], $name[0] . " " . $name[1], "no-reply@forwardfour.com", "No-Reply", $subject, $bodyHTML, $altBody);			
 			redirect($defaultRoot . "login.php?registered=true");
 		} else {
 			redirect($defaultRoot . "login.php?domain=true");
@@ -209,9 +187,13 @@ Happy selling!
 			$more = "more times";
 		}
 		
-		echo "<div class=\"center\"><div class=\"error\">Your user name or password is incorrect. You may try logging in <strong>" . $_GET['remaining'] . "</strong> " . $more . ".</div></div>
+		echo "<div class=\"center\"><div class=\"error\">Your user name or password is incorrect.</div></div>
 		
 ";
+		
+		//echo "<div class=\"center\"><div class=\"error\">Your user name or password is incorrect. You may try logging in <strong>" . $_GET['remaining'] . "</strong> " . $more . ".</div></div>
+		//
+//";
 	}
 	
 	if (isset($_GET['expired'])) {

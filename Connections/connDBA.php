@@ -2363,4 +2363,35 @@ ob_start();
 			redirect($root . "reset.php");
 		}
 	}
+	
+//Send an email via the Mandrill API
+	function email($toEmail, $toName, $fromEmail, $fromName, $subject, $HTMLBody, $textBody) {
+	//Assemble the API call
+		$args = array(
+			"key" => "431fc9b9-b977-4bfd-ab55-1472f0687a40",
+			"message" => array(
+				"to" => array(array("email" => $toEmail, "name" => $toName)),
+				"from_name" => $fromName,
+				"from_email" => $fromEmail,
+				"subject" => $subject,
+				"html" => $HTMLBody,
+				"text" => $textBody,
+				"track_opens" => true,
+				"track_clicks" => true,
+				"auto_text" => false
+			)
+		);
+		
+	//Open a cURL session for making the call
+		$curl = curl_init('https://mandrillapp.com/api/1.0/messages/send.json');
+		
+		curl_setopt($curl, CURLOPT_POST, true);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($curl, CURLOPT_HEADER, false);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+		curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($args));
+		
+		$response = curl_exec($curl);
+	}
 ?>

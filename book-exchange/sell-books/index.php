@@ -86,12 +86,12 @@
 		//No other book with this ISBN has been approved
 			} else {
 				$imageID = $_POST['imageID'];
-				$imageURL = mysql_real_escape_string($root . "book-exchange/system/images/icons/default_book.png");
+				$imageURL = mysql_real_escape_string("/book-exchange/system/images/icons/default_book.png");
 				$awaitingImage = mysql_real_escape_string(Validate::required($_POST['imageURL']));
 			}
 		} else {
 			$imageID = md5($userID . "_" . $upload);
-			$imageURL = mysql_real_escape_string($root . "book-exchange/system/images/icons/default_book.png");
+			$imageURL = mysql_real_escape_string("/book-exchange/system/images/icons/default_book.png");
 			$awaitingImage = mysql_real_escape_string(Validate::required($_POST['imageURL']));
 		}
 		

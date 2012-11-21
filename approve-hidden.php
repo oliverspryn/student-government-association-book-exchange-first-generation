@@ -21,7 +21,7 @@
 		
 		if (isset($_POST['inappropriate'])) {
 			$SQL = "";
-			$URL = $root . "book-exchange/system/images/icons/inappropriate_book.png";
+			$URL = "/book-exchange/system/images/icons/inappropriate_book.png";
 			
 			foreach($_POST['inappropriate'] as $cover) {
 				$SQL .= " OR `imageID` = '{$cover}'";
@@ -35,7 +35,7 @@
 		
 		if (isset($_POST['none'])) {
 			$SQL = "";
-			$URL = $root . "book-exchange/system/images/icons/no_cover.png";
+			$URL = "/book-exchange/system/images/icons/no_cover.png";
 			
 			foreach($_POST['none'] as $cover) {
 				$SQL .= " OR `imageID` = '{$cover}'";
